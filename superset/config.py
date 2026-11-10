@@ -623,6 +623,11 @@ LANGUAGES = {
 # incomplete and not well maintained.
 LANGUAGES = {}
 
+# Locale codes of languages written right-to-left. When the active locale's
+# base language is listed here, the HTML document is rendered with
+# ``dir="rtl"`` and Ant Design components switch to their RTL layout.
+RTL_LANGUAGES: list[str] = ["ar", "fa", "he", "ur"]
+
 
 # Override the default d3 locale format
 # Default values are equivalent to
@@ -1293,7 +1298,7 @@ _THEME_DEFAULT_BASE: Theme = {
         "colorInfo": "#66bcfe",
         # Fonts
         "fontUrls": [],
-        "fontFamily": "Inter, Helvetica, Arial, sans-serif",
+        "fontFamily": "Inter, Vazirmatn, Helvetica, Arial, sans-serif",
         "fontFamilyCode": "'IBM Plex Mono', 'Courier New', monospace",
         # Extra tokens
         "transitionTiming": 0.3,

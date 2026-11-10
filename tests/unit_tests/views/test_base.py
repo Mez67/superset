@@ -472,3 +472,64 @@ def test_language_pack_endpoint_rejects_invalid_lang(app: "SupersetApp") -> None
     with app.test_client() as client:
         resp = client.get("/language_pack/zz/")
         assert resp.status_code in (400, 404)
+
+
+@pytest.mark.parametrize(
+    "language,expected_direction",
+    [
+        ("fa", "rtl"),
+        ("fa_IR", "rtl"),
+        ("fa-IR", "rtl"),
+        ("ar", "rtl"),
+        ("he", "rtl"),
+        ("en", "ltr"),
+        ("pt_BR", "ltr"),
+        ("", "ltr"),
+        (None, "ltr"),
+    ],
+)
+def test_get_text_direction(
+    app_context: None, language: str | None, expected_direction: str
+) -> None:
+    """RTL languages resolve to "rtl", including region-specific codes."""
+    from superset.views import base as base_module
+
+    with patch.dict(base_module.app.config, {"RTL_LANGUAGES": ["ar", "fa", "he"]}):
+        assert base_module.get_text_direction(language) == expected_direction
+
+
+def test_get_text_direction_respects_config(app_context: None) -> None:
+    """Languages removed from RTL_LANGUAGES render left-to-right."""
+    from superset.views import base as base_module
+
+    with patch.dict(base_module.app.config, {"RTL_LANGUAGES": []}):
+        assert base_module.get_text_direction("fa") == "ltr"
+
+
+@pytest.mark.parametrize(
+    "locale,expected_lang,expected_dir",
+    [
+        ("fa", "fa", "rtl"),
+        ("pt_BR", "pt-BR", "ltr"),
+        (None, "en", "ltr"),
+    ],
+)
+@patch("superset.views.base.get_spa_payload")
+@patch("superset.views.base.app")
+def test_spa_template_context_sets_html_lang_and_dir(
+    mock_app: MagicMock,
+    mock_payload: MagicMock,
+    locale: str | None,
+    expected_lang: str,
+    expected_dir: str,
+) -> None:
+    """spa.html receives the document language and text direction."""
+    from superset.views.base import get_spa_template_context
+
+    mock_app.config = {"RTL_LANGUAGES": ["ar", "fa"]}
+    mock_payload.return_value = {"common": {"locale": locale, "theme": {}}}
+
+    result = get_spa_template_context("spa")
+
+    assert result["html_lang"] == expected_lang
+    assert result["html_dir"] == expected_dir

@@ -24,7 +24,7 @@ import os
 import re
 import traceback
 from datetime import datetime
-from typing import Any, Callable, cast
+from typing import Any, Callable, cast, Literal
 from urllib.parse import SplitResult, urlsplit
 
 from flask import (
@@ -673,6 +673,7 @@ def cached_common_bootstrap_data(  # pylint: disable=unused-argument
         "static_assets_prefix": app.config["STATIC_ASSETS_PREFIX"],
         "conf": frontend_config,
         "locale": language,
+        "direction": get_text_direction(language),
         "d3_format": app.config.get("D3_FORMAT"),
         "d3_time_format": app.config.get("D3_TIME_FORMAT"),
         "currencies": app.config.get("CURRENCIES"),
@@ -693,6 +694,18 @@ def cached_common_bootstrap_data(  # pylint: disable=unused-argument
     bootstrap_data.update(get_theme_bootstrap_data())
 
     return bootstrap_data
+
+
+def get_text_direction(language: str | None) -> Literal["ltr", "rtl"]:
+    """Return the text direction (``"ltr"`` or ``"rtl"``) for a locale code.
+
+    Region-specific codes (e.g. ``fa_IR``) are matched on their base language.
+    """
+    if not language:
+        return "ltr"
+    base_language = language.replace("-", "_").split("_")[0].lower()
+    rtl_languages = {lang.lower() for lang in app.config.get("RTL_LANGUAGES") or []}
+    return "rtl" if base_language in rtl_languages else "ltr"
 
 
 def common_bootstrap_payload() -> dict[str, Any]:
@@ -888,8 +901,13 @@ def get_spa_template_context(
     dark_theme_tokens = dark_theme.get("token", {}) if dark_theme else {}
     dark_theme_bg = dark_theme_tokens.get("colorBgBase", "#000") if dark_theme else None
 
+    common = payload.get("common") or {}
+    html_lang = str(common.get("locale") or "en").replace("_", "-")
+
     return {
         "entry": entry,
+        "html_lang": html_lang,
+        "html_dir": get_text_direction(common.get("locale")),
         "bootstrap_data": json.dumps(
             payload, default=json.pessimistic_json_iso_dttm_ser
         ),

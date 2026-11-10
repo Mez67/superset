@@ -155,6 +155,14 @@ test('LOCALE_MAPPING contains pt_BR entry', () => {
   expect(LOCALE_MAPPING).toHaveProperty('pt_BR');
 });
 
+test.each(['fa', 'ar'])('LOCALE_MAPPING contains RTL locale %s', locale => {
+  expect(LOCALE_MAPPING).toHaveProperty(locale);
+});
+
+test('toDayjsLocale maps fa to the dayjs Persian locale', () => {
+  expect(toDayjsLocale('fa')).toBe('fa');
+});
+
 test('LOCALE_MAPPING zh_TW is a callable that returns a Promise', () => {
   const result = LOCALE_MAPPING.zh_TW();
   expect(result).toBeInstanceOf(Promise);

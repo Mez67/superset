@@ -41,6 +41,11 @@ export {
 } from '@emotion/react';
 export { default as createEmotionCache } from '@emotion/cache';
 export { default as exampleThemes } from './exampleThemes';
+export {
+  type TextDirection,
+  getDocumentDirection,
+  createSupersetEmotionCache,
+} from './direction';
 
 declare module '@emotion/react' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface

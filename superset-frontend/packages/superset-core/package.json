@@ -117,12 +117,15 @@
     "@emotion/styled": "^11.14.1",
     "@fontsource/ibm-plex-mono": "^5.2.7",
     "@fontsource/inter": "^5.2.6",
+    "@fontsource/vazirmatn": "^5.2.6",
     "antd": "^6.0.0",
     "jed": "^1.1.1",
     "lodash": "^4.18.1",
     "nanoid": "*",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
+    "stylis": "^4.2.0",
+    "stylis-plugin-rtl": "^2.1.1",
     "tinycolor2": "*"
   }
 }

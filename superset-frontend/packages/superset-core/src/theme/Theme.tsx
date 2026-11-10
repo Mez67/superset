@@ -24,9 +24,9 @@ import {
   ThemeProvider,
   CacheProvider as EmotionCacheProvider,
 } from '@emotion/react';
-import createCache from '@emotion/cache';
 import { mergeWith } from 'lodash-es';
 import { GlobalStyles } from './GlobalStyles';
+import { createSupersetEmotionCache, getDocumentDirection } from './direction';
 import {
   AntdThemeConfig,
   AnyThemeConfig,
@@ -160,7 +160,7 @@ export class Theme {
     this.notifyProviders(
       this.theme,
       this.antdConfig,
-      createCache({ key: 'superset' }),
+      createSupersetEmotionCache(),
     );
   }
 
@@ -259,7 +259,7 @@ export class Theme {
     const [themeState, setThemeState] = React.useState({
       theme: this.theme,
       antdConfig: this.antdConfig,
-      emotionCache: createCache({ key: 'superset' }),
+      emotionCache: createSupersetEmotionCache(),
     });
 
     // Register (and, on unmount, deregister) this provider instance's own
@@ -303,7 +303,10 @@ export class Theme {
       <EmotionCacheProvider value={themeState.emotionCache}>
         <ThemeProvider theme={themeState.theme}>
           <GlobalStyles />
-          <ConfigProvider theme={themeState.antdConfig}>
+          <ConfigProvider
+            theme={themeState.antdConfig}
+            direction={getDocumentDirection()}
+          >
             {children}
           </ConfigProvider>
         </ThemeProvider>
