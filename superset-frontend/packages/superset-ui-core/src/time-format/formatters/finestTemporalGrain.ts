@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import { utcFormat, timeFormat } from 'd3-time-format';
+import { getCalendarTimeFormatLocale } from '../calendar';
 import { utcUtils, localTimeUtils } from '../utils/d3Time';
 import TimeFormatter from '../TimeFormatter';
 
@@ -28,7 +28,10 @@ export default function finestTemporalGrain(
   values: any[],
   useLocalTime = false,
 ) {
-  const format = useLocalTime ? timeFormat : utcFormat;
+  const calendarLocale = getCalendarTimeFormatLocale();
+  const format = useLocalTime
+    ? calendarLocale.format
+    : calendarLocale.utcFormat;
 
   const formatMillisecond = format('%Y-%m-%d %H:%M:%S.%L');
   const formatSecond = format('%Y-%m-%d %H:%M:%S');

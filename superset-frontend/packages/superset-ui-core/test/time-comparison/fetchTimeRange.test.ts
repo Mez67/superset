@@ -18,7 +18,7 @@
  */
 
 import fetchMock from 'fetch-mock';
-import { fetchTimeRange } from '@superset-ui/core';
+import { fetchTimeRange, setCalendarSystem } from '@superset-ui/core';
 import {
   buildTimeRangeString,
   formatTimeRange,
@@ -238,4 +238,18 @@ test('formatTimeRangeComparison', () => {
   ).toEqual(
     'col_name: 2021-04-13 to 2021-04-14 vs\n  2021-03-13 to 2021-03-14',
   );
+});
+
+test('formatTimeRange shows Jalali endpoints when the Jalali calendar is active', () => {
+  setCalendarSystem('jalali');
+  try {
+    expect(formatTimeRange('2024-03-20T00:00:00 : 2025-03-21T00:00:00')).toBe(
+      '1403-01-01 ≤ col < 1404-01-01',
+    );
+    expect(formatTimeRange('2024-12-21T10:30:00 : ')).toBe(
+      '1403-10-01T10:30:00 ≤ col < ∞',
+    );
+  } finally {
+    setCalendarSystem('gregorian');
+  }
 });

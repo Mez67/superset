@@ -110,7 +110,19 @@ test('passes bootstrap locale to setupFormatters', async () => {
 
   await runPreamble();
 
-  expect(mockSetupFormatters).toHaveBeenCalledWith({}, {}, 'pt_BR');
+  expect(mockSetupFormatters).toHaveBeenCalledWith({}, {}, 'pt_BR', undefined);
+});
+
+test('passes the bootstrap calendar to setupFormatters', async () => {
+  const data = bootstrapData('fa');
+  mockGetBootstrapData.mockReturnValue({
+    ...data,
+    common: { ...data.common, calendar: 'jalali' },
+  });
+
+  await runPreamble();
+
+  expect(mockSetupFormatters).toHaveBeenCalledWith({}, {}, 'fa', 'jalali');
 });
 
 test('falls back to en when passing locale to setupFormatters', async () => {
@@ -118,7 +130,7 @@ test('falls back to en when passing locale to setupFormatters', async () => {
 
   await runPreamble();
 
-  expect(mockSetupFormatters).toHaveBeenCalledWith({}, {}, 'en');
+  expect(mockSetupFormatters).toHaveBeenCalledWith({}, {}, 'en', undefined);
 });
 
 // --- language pack loading semantics (issues #35330, PR #41780) -----------

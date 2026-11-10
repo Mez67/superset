@@ -676,6 +676,7 @@ def cached_common_bootstrap_data(  # pylint: disable=unused-argument
         "direction": get_text_direction(language),
         "d3_format": app.config.get("D3_FORMAT"),
         "d3_time_format": app.config.get("D3_TIME_FORMAT"),
+        "calendar": app.config.get("CALENDAR", "gregorian"),
         "currencies": app.config.get("CURRENCIES"),
         "deckgl_tiles": app.config.get("DECKGL_BASE_MAP"),
         "feature_flags": get_feature_flags(),

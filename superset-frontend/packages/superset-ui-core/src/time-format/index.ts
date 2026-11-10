@@ -24,6 +24,14 @@ export {
   isEmptyDateInput,
 } from './DateWithFormatter';
 export { DEFAULT_D3_TIME_FORMAT } from './D3FormatConfig';
+export type { CalendarSystem, CalendarTimeFormatLocale } from './calendar';
+export {
+  JALALI_MONTHS_EN,
+  JALALI_MONTHS_FA,
+  getCalendarSystem,
+  getCalendarTimeFormatLocale,
+  setCalendarSystem,
+} from './calendar';
 
 export {
   default as getTimeFormatterRegistry,

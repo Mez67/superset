@@ -27,7 +27,10 @@ import {
 } from 'react';
 
 import { RouteComponentProps, useHistory } from 'react-router-dom';
-import { extendedDayjs } from '@superset-ui/core/utils/dates';
+import {
+  extendedDayjs,
+  formatLocalDateTime,
+} from '@superset-ui/core/utils/dates';
 import { t } from '@apache-superset/core/translation';
 import {
   Behavior,
@@ -493,9 +496,7 @@ const SliceHeaderControls = (
     </div>
   ));
 
-  const queriedLabel = queriedDttm
-    ? extendedDayjs.utc(queriedDttm).local().format('L LTS')
-    : null;
+  const queriedLabel = queriedDttm ? formatLocalDateTime(queriedDttm) : null;
   const fullscreenLabel = isFullSize
     ? t('Exit fullscreen')
     : t('Enter fullscreen');

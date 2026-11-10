@@ -18,17 +18,33 @@
  */
 import { DatePicker as AntdDatePicker } from 'antd';
 import { css } from '@apache-superset/core/theme';
+import { getCalendarSystem } from '../../time-format';
+import { jalaliGenerateConfig } from './jalaliGenerateConfig';
 import type { DatePickerProps, RangePickerProps } from './types';
 
-export const DatePicker = (props: DatePickerProps) => (
-  <AntdDatePicker
-    css={css`
-      width: 100%;
-    `}
-    {...props}
-  />
-);
+// Same picker components, driven by the Jalali calendar (see
+// jalaliGenerateConfig). Values remain Gregorian Dayjs instances.
+const JalaliDatePicker = AntdDatePicker.generatePicker(jalaliGenerateConfig);
 
-export const { RangePicker } = AntdDatePicker;
+const isJalali = () => getCalendarSystem() === 'jalali';
+
+export const DatePicker = (props: DatePickerProps) => {
+  const Picker = isJalali() ? JalaliDatePicker : AntdDatePicker;
+  return (
+    <Picker
+      css={css`
+        width: 100%;
+      `}
+      {...props}
+    />
+  );
+};
+
+export const RangePicker = (props: RangePickerProps) => {
+  const Picker = isJalali()
+    ? JalaliDatePicker.RangePicker
+    : AntdDatePicker.RangePicker;
+  return <Picker {...props} />;
+};
 
 export type { DatePickerProps, RangePickerProps };

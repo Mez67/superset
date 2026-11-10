@@ -16,12 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import { TimeLocaleDefinition } from 'd3-time-format';
 import {
-  timeFormatLocale,
-  TimeLocaleDefinition,
-  timeFormat,
-  utcFormat,
-} from 'd3-time-format';
+  getCalendarSystem,
+  getCalendarTimeFormatLocale,
+  toJalaliParts,
+} from '../calendar';
 import { utcUtils, localTimeUtils } from '../utils/d3Time';
 import TimeFormatter from '../TimeFormatter';
 
@@ -62,14 +62,10 @@ export default function createMultiFormatter({
     year = '%Y',
   } = formats;
 
-  let formatFunc;
-
-  if (typeof locale === 'undefined') {
-    formatFunc = useLocalTime ? timeFormat : utcFormat;
-  } else {
-    const formatLocale = timeFormatLocale(locale);
-    formatFunc = useLocalTime ? formatLocale.format : formatLocale.utcFormat;
-  }
+  const formatLocale = getCalendarTimeFormatLocale(locale);
+  const formatFunc = useLocalTime
+    ? formatLocale.format
+    : formatLocale.utcFormat;
 
   const formatMillisecond = formatFunc(millisecond);
   const formatSecond = formatFunc(second);
@@ -85,10 +81,20 @@ export default function createMultiFormatter({
     hasSecond,
     hasMinute,
     hasHour,
-    isNotFirstDayOfMonth,
+    isNotFirstDayOfMonth: isNotFirstDayOfGregorianMonth,
     isNotFirstDayOfWeek,
-    isNotFirstMonth,
+    isNotFirstMonth: isNotFirstGregorianMonth,
   } = useLocalTime ? localTimeUtils : utcUtils;
+
+  // Month and year boundaries follow the active calendar. Time-of-day checks
+  // run first in multiFormatFunc, so only the date part matters here.
+  const isJalali = getCalendarSystem() === 'jalali';
+  const isNotFirstDayOfMonth = isJalali
+    ? (date: Date) => toJalaliParts(date, !useLocalTime).jd !== 1
+    : isNotFirstDayOfGregorianMonth;
+  const isNotFirstMonth = isJalali
+    ? (date: Date) => toJalaliParts(date, !useLocalTime).jm !== 1
+    : isNotFirstGregorianMonth;
 
   function multiFormatFunc(date: Date) {
     if (hasMillisecond(date)) {

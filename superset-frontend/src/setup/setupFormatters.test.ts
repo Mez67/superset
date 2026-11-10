@@ -17,23 +17,27 @@
  * under the License.
  */
 
-const mockSetCurrencyLocale = jest.fn();
-
 // Stub the formatter registries so the test focuses on the currency-locale
 // wiring without exercising real d3/Intl registry setup.
-const chainableRegistry = () => {
+function chainableRegistryFactory() {
   const registry: Record<string, jest.Mock> = {};
   ['setD3Format', 'registerValue', 'setDefaultKey'].forEach(method => {
     registry[method] = jest.fn(() => registry);
   });
   registry.d3Format = jest.fn() as unknown as jest.Mock;
   return registry;
-};
+}
+const chainableRegistry = chainableRegistryFactory;
+
+const mockSetCurrencyLocale = jest.fn();
+const mockSetCalendarSystem = jest.fn();
+const mockTimeRegistry = chainableRegistryFactory();
 
 jest.mock('@superset-ui/core', () => ({
   setCurrencyLocale: mockSetCurrencyLocale,
   getNumberFormatterRegistry: jest.fn(() => chainableRegistry()),
-  getTimeFormatterRegistry: jest.fn(() => chainableRegistry()),
+  getTimeFormatterRegistry: jest.fn(() => mockTimeRegistry),
+  setCalendarSystem: mockSetCalendarSystem,
   getNumberFormatter: jest.fn(() => jest.fn()),
   createDurationFormatter: jest.fn(() => jest.fn()),
   createMemoryFormatter: jest.fn(() => jest.fn()),
@@ -48,10 +52,14 @@ jest.mock('@superset-ui/core', () => ({
   SMART_DATE_VERBOSE_ID: 'smart_date_verbose',
 }));
 
-async function runSetupFormatters(locale: string) {
+async function runSetupFormatters(
+  locale: string,
+  calendar?: 'gregorian' | 'jalali',
+  d3TimeFormat: Record<string, unknown> = {},
+) {
   // Imported lazily so the jest.mock factory above is initialized first.
   const { default: setupFormatters } = await import('./setupFormatters');
-  setupFormatters({}, {}, locale);
+  setupFormatters({}, d3TimeFormat, locale, calendar);
 }
 
 beforeEach(() => {
@@ -91,4 +99,28 @@ test('registers both network throughput formats with matching converters', async
 
   expect(registered.get('NETWORK_THROUGHPUT')).toBe(bitsFormatter);
   expect(registered.get('NETWORK_THROUGHPUT_FROM_BYTES')).toBe(bytesFormatter);
+});
+
+test('setupFormatters applies the configured calendar', async () => {
+  await runSetupFormatters('fa', 'jalali');
+  expect(mockSetCalendarSystem).toHaveBeenCalledWith('jalali');
+});
+
+test('setupFormatters uses Persian day and month names for fa', async () => {
+  await runSetupFormatters('fa');
+  const [timeLocale] = mockTimeRegistry.setD3Format.mock.calls[0];
+  expect(timeLocale.days[6]).toBe('شنبه');
+  expect(timeLocale.date).toBe('%Y/%m/%d');
+});
+
+test('D3_TIME_FORMAT overrides the built-in language defaults', async () => {
+  await runSetupFormatters('fa_IR', undefined, { date: '%d.%m.%Y' });
+  const [timeLocale] = mockTimeRegistry.setD3Format.mock.calls[0];
+  expect(timeLocale.date).toBe('%d.%m.%Y');
+  expect(timeLocale.days[6]).toBe('شنبه');
+});
+
+test('languages without built-in defaults keep the configured format', async () => {
+  await runSetupFormatters('de');
+  expect(mockTimeRegistry.setD3Format).toHaveBeenCalledWith({});
 });

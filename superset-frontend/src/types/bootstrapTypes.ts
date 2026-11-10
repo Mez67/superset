@@ -175,6 +175,7 @@ export interface CommonBootstrapData {
   menu_data: MenuData;
   d3_format: Partial<FormatLocaleDefinition>;
   d3_time_format: Partial<TimeLocaleDefinition>;
+  calendar?: 'gregorian' | 'jalali';
   pdf_compression_level: 'NONE' | 'FAST' | 'MEDIUM' | 'SLOW';
   user_subject_id?: number;
   user_subjects?: number[];

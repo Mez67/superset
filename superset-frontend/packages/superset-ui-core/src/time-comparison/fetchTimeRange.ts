@@ -22,6 +22,7 @@ import {
   SupersetClient,
   getClientErrorObject,
   ensureIsArray,
+  getCalendarSystem,
   getTimeFormatter,
 } from '@superset-ui/core';
 import { extendedDayjs } from '@superset-ui/core/utils/dates';
@@ -41,6 +42,17 @@ const formatDateEndpoint = (
     const parsedDttm = extendedDayjs.utc(dttm);
     if (parsedDttm.isValid()) {
       return getTimeFormatter(dateFormat)(parsedDttm.toDate());
+    }
+  }
+  if (getCalendarSystem() === 'jalali') {
+    // Raw endpoints are Gregorian ISO strings; show them in the Jalali
+    // calendar, omitting the time when it is midnight.
+    const parsedDttm = extendedDayjs.utc(dttm);
+    if (parsedDttm.isValid()) {
+      const isMidnight = dttm.endsWith('T00:00:00') || !dttm.includes('T');
+      return getTimeFormatter(isMidnight ? '%Y-%m-%d' : '%Y-%m-%dT%H:%M:%S')(
+        parsedDttm.toDate(),
+      );
     }
   }
   return dttm.replace('T00:00:00', '');

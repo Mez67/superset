@@ -23,7 +23,9 @@ import {
   epochTimeXDaysAgo,
   epochTimeXYearsAgo,
   extendedDayjs,
+  formatLocalDateTime,
 } from './dates';
+import { setCalendarSystem } from '../time-format';
 
 describe('extendedDayjs', () => {
   test('returns dayjs object with extended methods', () => {
@@ -98,4 +100,25 @@ describe('epochTimeXYearsAgo', () => {
   test('returns a number', () => {
     expect(typeof epochTimeXYearsAgo(1)).toBe('number');
   });
+});
+
+test('formatLocalDateTime uses the localized Gregorian format by default', () => {
+  const expected = extendedDayjs
+    .utc('2024-12-21T10:30:00')
+    .local()
+    .format('L LTS');
+  expect(formatLocalDateTime('2024-12-21T10:30:00')).toBe(expected);
+  expect(formatLocalDateTime('not a date')).toBeNull();
+});
+
+test('formatLocalDateTime uses the Jalali calendar when active', () => {
+  setCalendarSystem('jalali');
+  try {
+    // Noon UTC is the same calendar day in every timezone used in CI.
+    expect(formatLocalDateTime('2024-12-21T12:00:00')).toMatch(
+      /^1403\/10\/01 /,
+    );
+  } finally {
+    setCalendarSystem('gregorian');
+  }
 });

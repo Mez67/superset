@@ -384,3 +384,27 @@ def test_semantic_setup_documentation_drops_unsafe_url(
         and "SEMANTIC_LAYER_DOCUMENTATION_URL" in record.getMessage()
     ] == ["Dropped invalid SEMANTIC_LAYER_DOCUMENTATION_URL"]
     assert "secret" not in caplog.text
+
+
+def test_bootstrap_exposes_calendar_and_direction(app_context: None) -> None:
+    """The configured calendar and the locale's text direction reach the
+    frontend bootstrap payload."""
+    with (
+        patch("superset.views.base.menu_data", return_value={}),
+        patch.dict(
+            "flask.current_app.config",
+            {"CALENDAR": "jalali", "RTL_LANGUAGES": ["fa"]},
+        ),
+    ):
+        payload = cached_common_bootstrap_data.uncached(user_id=1, locale="fa")
+
+    assert payload["calendar"] == "jalali"
+    assert payload["direction"] == "rtl"
+
+
+def test_bootstrap_defaults_to_gregorian_calendar(app_context: None) -> None:
+    with patch("superset.views.base.menu_data", return_value={}):
+        payload = cached_common_bootstrap_data.uncached(user_id=1, locale=None)
+
+    assert payload["calendar"] == "gregorian"
+    assert payload["direction"] == "ltr"

@@ -33,14 +33,22 @@ import {
   createLengthFormatter,
   createThroughputFormatter,
   FormatLocaleDefinition,
+  setCalendarSystem,
+  type CalendarSystem,
 } from '@superset-ui/core';
 import { TimeLocaleDefinition } from 'd3-time-format';
+import { getLanguageTimeFormat } from './languageTimeFormats';
 
 export default function setupFormatters(
   d3NumberFormat: Partial<FormatLocaleDefinition>,
   d3TimeFormat: Partial<TimeLocaleDefinition>,
   locale: string,
+  calendar?: CalendarSystem,
 ) {
+  // Set before any time formatter is created: formatters capture the
+  // calendar when they are built and the registry caches them.
+  setCalendarSystem(calendar);
+
   // Resolve the default currency symbol position (prefix/suffix) according to
   // the deployment locale's conventions when a chart leaves it unset.
   setCurrencyLocale(locale);
@@ -126,7 +134,7 @@ export default function setupFormatters(
   const timeFormatterRegistry = getTimeFormatterRegistry();
 
   timeFormatterRegistry
-    .setD3Format(d3TimeFormat)
+    .setD3Format({ ...getLanguageTimeFormat(locale), ...d3TimeFormat })
     .registerValue(
       SMART_DATE_ID,
       createSmartDateFormatter(timeFormatterRegistry.d3Format),

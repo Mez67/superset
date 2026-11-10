@@ -26,6 +26,11 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import duration from 'dayjs/plugin/duration';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
+import {
+  getCalendarSystem,
+  getTimeFormatter,
+  LOCAL_PREFIX,
+} from '../time-format';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -108,4 +113,22 @@ export const isDST = function (date: Dayjs, timezoneName: string): boolean {
   const standardOffset = dayjs.tz('2021-01-01', timezoneName).utcOffset();
   const currentOffset = date.tz(timezoneName).utcOffset();
   return currentOffset !== standardOffset;
+};
+
+/**
+ * Format a UTC timestamp as a local date and time for status labels (e.g.
+ * "last queried"). Follows the active calendar: the localized dayjs format
+ * for Gregorian, a Jalali year/month/day for the Jalali calendar.
+ */
+export const formatLocalDateTime = (utcDttm: ConfigType): string | null => {
+  const parsed = dayjs.utc(utcDttm);
+  if (!parsed.isValid()) {
+    return null;
+  }
+  if (getCalendarSystem() === 'jalali') {
+    return getTimeFormatter(`${LOCAL_PREFIX}%Y/%m/%d %H:%M:%S`)(
+      parsed.toDate(),
+    );
+  }
+  return parsed.local().format('L LTS');
 };

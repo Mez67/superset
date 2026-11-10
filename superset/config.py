@@ -705,6 +705,12 @@ class D3TimeFormat(TypedDict, total=False):
 
 D3_TIME_FORMAT: D3TimeFormat = {}
 
+# Calendar used to display dates in charts, tables and date pickers.
+# - "gregorian": the standard calendar (default).
+# - "jalali": the Solar Hijri (Persian) calendar. Dates are converted for
+#   display only; queries, filters and stored values stay in Gregorian.
+CALENDAR: Literal["gregorian", "jalali"] = "gregorian"
+
 CURRENCIES = ["USD", "EUR", "GBP", "INR", "MXN", "JPY", "CNY"]
 
 # ---------------------------------------------------
