@@ -243,7 +243,7 @@ export const RequiredFieldIndicator = () => (
     css={(theme: SupersetTheme) => ({
       color: theme.colorError,
       fontSize: `${theme.fontSizeSM}px`,
-      paddingLeft: '1px',
+      paddingInlineStart: '1px',
     })}
   >
     *

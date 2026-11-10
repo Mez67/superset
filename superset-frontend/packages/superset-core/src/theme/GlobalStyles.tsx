@@ -35,6 +35,19 @@ import '@fontsource/vazirmatn/600.css';
 import { css, useTheme, Global } from '@emotion/react';
 import { useThemeMode } from './utils/themeUtils';
 
+// `data-test` names (derived from the icon file name) of directional icons
+// that should point the other way in right-to-left layouts.
+const MIRRORED_ICONS = [
+  'right',
+  'left',
+  'arrow-right',
+  'arrow-left',
+  'double-right',
+  'double-left',
+  'menu-fold',
+  'menu-unfold',
+];
+
 export const GlobalStyles = () => {
   const theme = useTheme();
   const isDark = useThemeMode();
@@ -108,6 +121,16 @@ export const GlobalStyles = () => {
         }
         [role='button'] {
           cursor: pointer;
+        }
+
+        /* Mirror plain directional arrows rendered through Superset's Icons */
+        /* in right-to-left layouts. Ant Design widgets already swap their */
+        /* own arrows; media-style carets (e.g. "run") and physical icons */
+        /* (e.g. "pin column left") are intentionally left untouched. */
+        html[dir='rtl'] .anticon:is(${MIRRORED_ICONS.map(
+          icon => `[data-test='${icon}']`,
+        ).join(',')}) {
+          transform: scaleX(-1);
         }
 
         /* antd 6 removed the Tag's default trailing margin (v5 shipped */

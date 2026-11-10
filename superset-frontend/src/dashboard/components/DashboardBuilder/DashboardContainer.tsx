@@ -363,7 +363,7 @@ const DashboardContainer: FC<DashboardContainerProps> = ({ topLevelTabs }) => {
           fullHeight
           onFocus={handleFocus}
           items={tabItems}
-          tabBarStyle={{ paddingLeft: 0 }}
+          tabBarStyle={{ paddingInlineStart: 0 }}
         />
       );
     },

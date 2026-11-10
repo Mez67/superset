@@ -460,7 +460,7 @@ export const SaveDatasetModal = ({
                   setIncludeTemplateParameters(e.target.checked ?? false)
                 }
               />
-              <span style={{ marginLeft: '5px' }}>
+              <span style={{ marginInlineStart: '5px' }}>
                 {t('Include Template Parameters')}
               </span>
             </div>

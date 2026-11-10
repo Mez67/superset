@@ -379,7 +379,7 @@ const DatasourceModal: FunctionComponent<DatasourceModalProps> = ({
             />
             <span
               css={theme => ({
-                marginLeft: theme.marginXS,
+                marginInlineStart: theme.marginXS,
               })}
             >
               {t('Automatically sync columns')}

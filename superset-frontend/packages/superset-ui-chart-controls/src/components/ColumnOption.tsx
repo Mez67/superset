@@ -105,7 +105,7 @@ export function ColumnOption({
           type="warning"
           tooltip={<SafeMarkdown source={warningMarkdown} />}
           label={`warn-${column.column_name}`}
-          iconStyle={{ marginLeft: 0 }}
+          iconStyle={{ marginInlineStart: 0 }}
           {...(column.error_text && {
             type: 'error',
           })}

@@ -374,7 +374,7 @@ const TabsRenderer = memo<TabsRendererProps>(
             data-test="nav-list"
             type={editMode ? 'editable-card' : 'card'}
             items={tabItems}
-            tabBarStyle={{ paddingLeft: tabBarPaddingLeft }}
+            tabBarStyle={{ paddingInlineStart: tabBarPaddingLeft }}
             fullHeight
             {...(editMode && {
               renderTabBar: (tabBarProps, DefaultTabBar) => (

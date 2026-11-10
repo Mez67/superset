@@ -178,7 +178,7 @@ const RequiredFieldIndicator = () => (
     css={(theme: SupersetTheme) => ({
       color: theme.colorError,
       fontSize: `${theme.fontSizeSM}px`,
-      paddingLeft: '1px',
+      paddingInlineStart: '1px',
     })}
   >
     *
@@ -208,7 +208,7 @@ const DescriptionTooltip = ({ description }: { description: string }) => (
         // eslint-disable-next-line jsx-a11y/prefer-tag-over-role
         role="button"
         css={theme => ({
-          paddingLeft: `${theme.sizeUnit}px`,
+          paddingInlineStart: `${theme.sizeUnit}px`,
         })}
       />
     </Tooltip>

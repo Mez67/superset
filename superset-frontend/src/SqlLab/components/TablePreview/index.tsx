@@ -432,7 +432,7 @@ const TablePreview: FC<Props> = ({ dbId, catalog, schema, tableName }) => {
                     css={css`
                       height: ${height}px;
                     `}
-                    tabBarStyle={{ paddingLeft: theme.sizeUnit * 4 }}
+                    tabBarStyle={{ paddingInlineStart: theme.sizeUnit * 4 }}
                     items={tabItems}
                   />
                 );

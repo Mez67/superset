@@ -712,7 +712,7 @@ const DashboardBuilder = () => {
 
   const draggableStyle = useMemo(
     () => ({
-      marginLeft:
+      marginInlineStart:
         !isNotMobile ||
         dashboardFiltersOpen ||
         editMode ||

@@ -19,6 +19,7 @@
 import { FC, ReactNode } from 'react';
 import { Resizable } from 're-resizable';
 import { styled } from '@apache-superset/core/theme';
+import { toDirectionalEdges } from 'src/utils/directionalEdges';
 import useStoredSidebarWidth from './useStoredSidebarWidth';
 
 const ResizableWrapper = styled.div`
@@ -66,13 +67,13 @@ const ResizableSidebar: FC<Props> = ({
     <>
       <ResizableWrapper>
         <Resizable
-          enable={{ right: enable }}
-          handleClasses={{
+          enable={toDirectionalEdges({ right: enable })}
+          handleClasses={toDirectionalEdges({
             right: 'sidebar-resizer',
             bottom: 'hidden',
             bottomRight: 'hidden',
             bottomLeft: 'hidden',
-          }}
+          })}
           size={{ width, height: '100%' }}
           minWidth={minWidth}
           maxWidth={maxWidth}

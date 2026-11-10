@@ -187,7 +187,7 @@ function GroupKebab({
   }
   const itemStyle = {
     height: theme.controlHeightLG,
-    paddingLeft: theme.sizeUnit * 6,
+    paddingInlineStart: theme.sizeUnit * 6,
     paddingRight: theme.sizeUnit * 6,
     display: 'flex',
     alignItems: 'center',

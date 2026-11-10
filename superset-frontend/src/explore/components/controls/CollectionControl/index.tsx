@@ -139,7 +139,7 @@ function SortableItem({
       <div
         css={(theme: SupersetTheme) => ({
           flex: 1,
-          marginLeft: theme.sizeUnit * 2,
+          marginInlineStart: theme.sizeUnit * 2,
           marginRight: theme.sizeUnit * 2,
         })}
       >

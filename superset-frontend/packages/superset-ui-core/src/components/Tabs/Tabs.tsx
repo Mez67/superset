@@ -69,7 +69,11 @@ const StyledTabs = ({
       }
       .ant-tabs-nav-wrap {
         ${
-          !(tabBarStyle && 'paddingLeft' in tabBarStyle)
+          !(
+            tabBarStyle &&
+            ('paddingLeft' in tabBarStyle ||
+              'paddingInlineStart' in tabBarStyle)
+          )
             ? `padding: 0 ${theme.sizeUnit * 4}px;`
             : ''
         }

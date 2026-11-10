@@ -637,9 +637,17 @@ export default function TableChart<D extends DataRecord = DataRecord>(
   const getSharedStyle = useCallback(
     (column: DataColumnMeta): CSSProperties => {
       const { isNumeric, config = {} } = column;
-      const textAlign =
+      const physicalAlign =
         config.horizontalAlign ||
         (isNumeric && !isUsingTimeComparison ? 'right' : 'left');
+      // Logical values keep header, body and footer cells aligned the same
+      // way in both LTR and RTL layouts.
+      const textAlign =
+        physicalAlign === 'left'
+          ? 'start'
+          : physicalAlign === 'right'
+            ? 'end'
+            : physicalAlign;
       return {
         textAlign,
       };

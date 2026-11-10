@@ -214,9 +214,9 @@ function ButtonInner(props: ButtonProps, ref: Ref<HTMLElement>) {
         borderRadius: resolvedStyleConfig.borderRadius,
         minWidth: cta ? resolvedStyleConfig.ctaMinWidth : undefined,
         minHeight: cta ? resolvedStyleConfig.ctaMinHeight : undefined,
-        marginLeft: 0,
+        marginInlineStart: 0,
         '& + .superset-button:not(.ant-btn-compact-item)': {
-          marginLeft: theme.sizeUnit * 2,
+          marginInlineStart: theme.sizeUnit * 2,
         },
         '& > span > :first-of-type': {
           marginRight: firstChildMargin,
@@ -248,7 +248,7 @@ function ButtonInner(props: ButtonProps, ref: Ref<HTMLElement>) {
             css={{
               cursor: 'not-allowed',
               '& > .superset-button': {
-                marginLeft: theme.sizeUnit * 2,
+                marginInlineStart: theme.sizeUnit * 2,
               },
             }}
           >

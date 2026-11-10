@@ -44,7 +44,9 @@ export function getDocumentDirection(): TextDirection {
  * In RTL documents, styles are passed through `stylis-plugin-rtl`, which
  * mirrors physical properties (`margin-left`, `left`, `text-align: left`,
  * etc.) so that existing styled components lay out correctly without
- * per-component changes. A rule can opt out with a `/* @noflip *\/` comment.
+ * per-component changes. Styles that must not be mirrored should live
+ * outside Emotion (inline styles or third-party stylesheets are untouched);
+ * `@noflip` comments are not reliable because the build strips comments.
  */
 export function createSupersetEmotionCache(
   direction: TextDirection = getDocumentDirection(),

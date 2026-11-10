@@ -747,7 +747,7 @@ export const ControlPanelsContainer = (props: ControlPanelsContainerProps) => {
             .filter(Boolean)}
         />
         {isVisible && (
-          <div style={{ paddingLeft: theme.sizeUnit * 2 }}>
+          <div style={{ paddingInlineStart: theme.sizeUnit * 2 }}>
             {section.controlSetRows.map((controlSets, i) => {
               // Detect sub-section header rows (React elements with no name prop)
               const isSubSectionHeaderRow = controlSets.some(
@@ -814,7 +814,10 @@ export const ControlPanelsContainer = (props: ControlPanelsContainerProps) => {
                   ? theme.sizeUnit * 3
                   : 0;
               return paddingLeft ? (
-                <div key={`controlsetrow-${i}`} style={{ paddingLeft }}>
+                <div
+                  key={`controlsetrow-${i}`}
+                  style={{ paddingInlineStart: paddingLeft }}
+                >
                   <ControlRow controls={renderedControls} />
                 </div>
               ) : (

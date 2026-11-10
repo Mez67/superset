@@ -110,6 +110,10 @@ import SaveModal from '../SaveModal';
 import DataSourcePanel from '../DatasourcePanel';
 import ConnectedExploreChartHeader from '../ExploreChartHeader';
 import ExploreContainer from '../ExploreContainer';
+import { toDirectionalEdges } from 'src/utils/directionalEdges';
+
+// Side panels resize from their inner edge, which is mirrored in RTL.
+const INLINE_END_RESIZE_HANDLE = toDirectionalEdges({ right: true });
 
 // Lazy-loaded so deployments with the VersionHistory flag off never pay
 // the bundle cost of the feature's component graph.
@@ -1139,7 +1143,7 @@ function ExploreViewContainer(props: ExploreViewContainerProps) {
           }}
           minWidth={defaultSidebarsWidth[LocalStorageKeys.DatasourceWidth]}
           maxWidth="33%"
-          enable={{ right: true }}
+          enable={INLINE_END_RESIZE_HANDLE}
           className={
             isCollapsed ? 'no-show' : 'explore-column data-source-selection'
           }
@@ -1228,7 +1232,7 @@ function ExploreViewContainer(props: ExploreViewContainerProps) {
           }}
           minWidth={defaultSidebarsWidth[LocalStorageKeys.ControlsWidth]}
           maxWidth="33%"
-          enable={{ right: true }}
+          enable={INLINE_END_RESIZE_HANDLE}
           className="col-sm-3 explore-column controls-column"
         >
           <div

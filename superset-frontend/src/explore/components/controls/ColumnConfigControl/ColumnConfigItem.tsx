@@ -63,12 +63,12 @@ export default memo(function ColumnConfigItem({
   const nameContainerStyle = css({
     display: 'flex',
     alignItems: 'center',
-    paddingLeft: column.isChildColumn ? sizeUnit * 7 : sizeUnit,
+    paddingInlineStart: column.isChildColumn ? sizeUnit * 7 : sizeUnit,
     flex: 1,
   });
 
   const nameTextStyle = css({
-    paddingLeft: sizeUnit,
+    paddingInlineStart: sizeUnit,
   });
 
   const iconContainerStyle = css({

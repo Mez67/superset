@@ -37,6 +37,7 @@ import {
 } from './ResizableHandle';
 import { isMobileConsumptionEnabled } from 'src/hooks/useIsMobile';
 import { RESIZE_HANDLE_Z_INDEX } from 'src/dashboard/constants';
+import { toDirectionalEdges } from 'src/utils/directionalEdges';
 import resizableConfig from '../../util/resizableConfig';
 import {
   GRID_BASE_UNIT,
@@ -73,10 +74,10 @@ export interface ResizableContainerProps {
 // because columns are not multiples of a single variable (width = n*cols + (n-1) * gutters)
 // we snap to the base unit and then snap to _actual_ column multiples on stop
 const SNAP_TO_GRID: [number, number] = [GRID_BASE_UNIT, GRID_BASE_UNIT];
-const HANDLE_CLASSES = {
+const HANDLE_CLASSES = toDirectionalEdges({
   right: 'resizable-container-handle--right',
   bottom: 'resizable-container-handle--bottom',
-};
+});
 
 const CursorLabel = styled.div`
   ${({ theme }) => css`
@@ -329,25 +330,26 @@ export default function ResizableContainer({
   );
 
   const handleComponent = useMemo(
-    () => ({
-      right: <RightResizeHandle />,
-      bottom: <BottomResizeHandle />,
-      bottomRight: <BottomRightResizeHandle />,
-    }),
+    () =>
+      toDirectionalEdges({
+        right: <RightResizeHandle />,
+        bottom: <BottomResizeHandle />,
+        bottomRight: <BottomRightResizeHandle />,
+      }),
     [],
   );
 
   const enableConfig = useMemo(() => {
     if (editMode && adjustableWidth && adjustableHeight) {
-      return resizableConfig.widthAndHeight;
+      return toDirectionalEdges(resizableConfig.widthAndHeight);
     }
     if (editMode && adjustableWidth) {
-      return resizableConfig.widthOnly;
+      return toDirectionalEdges(resizableConfig.widthOnly);
     }
     if (editMode && adjustableHeight) {
-      return resizableConfig.heightOnly;
+      return toDirectionalEdges(resizableConfig.heightOnly);
     }
-    return resizableConfig.notAdjustable;
+    return toDirectionalEdges(resizableConfig.notAdjustable);
   }, [editMode, adjustableWidth, adjustableHeight]);
 
   return (

@@ -24,6 +24,7 @@ import { Icons, Typography } from '@superset-ui/core/components';
 import ColumnElement from 'src/SqlLab/components/ColumnElement';
 import { ActionButton } from '@superset-ui/core/components/ActionButton';
 import copyTextToClipboard from 'src/utils/copy';
+import { toLogicalIndent } from 'src/utils/directionalEdges';
 import type { TreeNodeData } from './types';
 
 const StyledColumnNode = styled.div`
@@ -101,7 +102,7 @@ export interface TreeNodeRendererProps extends NodeRendererProps<TreeNodeData> {
 
 const TreeNodeRenderer: React.FC<TreeNodeRendererProps> = ({
   node,
-  style,
+  style: treeStyle,
   loadingNodes,
   searchTerm,
   catalog,
@@ -117,6 +118,8 @@ const TreeNodeRenderer: React.FC<TreeNodeRendererProps> = ({
   sortedTables,
   toggleSortColumns,
 }) => {
+  // Indent on the inline-start edge so the tree mirrors in RTL layouts.
+  const style = toLogicalIndent(treeStyle);
   const theme = useTheme();
   const { data } = node;
   const parts = data.id.split(':');

@@ -132,7 +132,7 @@ export function MetricOption({
           type="warning"
           tooltip={<SafeMarkdown source={warningMarkdown} />}
           label={`warn-${metric.metric_name}`}
-          iconStyle={{ marginLeft: 0 }}
+          iconStyle={{ marginInlineStart: 0 }}
           {...(metric.error_text && {
             type: 'error',
           })}

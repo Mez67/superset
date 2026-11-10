@@ -440,7 +440,7 @@ export const DrillBySubmenu = ({
       arrow={false}
       styles={{
         root: {
-          paddingLeft: 0,
+          paddingInlineStart: 0,
         },
         // antd v6 renamed the inner content slot `body` -> `container`
         container: {
