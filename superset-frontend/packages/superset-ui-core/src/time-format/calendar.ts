@@ -19,7 +19,7 @@
 
 import { timeFormat, timeFormatLocale, utcFormat } from 'd3-time-format';
 import type { TimeLocaleDefinition } from 'd3-time-format';
-import { toJalaali } from 'jalaali-js';
+import { toGregorian, toJalaali } from 'jalaali-js';
 
 /**
  * Calendar systems supported when formatting dates.
@@ -116,6 +116,96 @@ export function toJalaliParts(
         date.getUTCDate(),
       )
     : toJalaali(date.getFullYear(), date.getMonth() + 1, date.getDate());
+}
+
+/** Number of Jalali months in each Jalali time grain. */
+export const JALALI_GRAIN_MONTHS: Record<string, number> = {
+  JALALI_MONTH: 1,
+  JALALI_QUARTER: 3,
+  JALALI_YEAR: 12,
+};
+
+export const isJalaliGrain = (granularity?: string | null): boolean =>
+  !!granularity && granularity in JALALI_GRAIN_MONTHS;
+
+/**
+ * Start of the Jalali bucket following the one that starts at `start`.
+ *
+ * `start` is the value a Jalali time grain produces (the first day of a
+ * Jalali month, quarter or year, at midnight). Returns `undefined` for
+ * grains that are not Jalali.
+ */
+export function getNextJalaliBucketStart(
+  start: Date,
+  granularity: string,
+  useUtc = true,
+): Date | undefined {
+  const months = JALALI_GRAIN_MONTHS[granularity];
+  if (!months) {
+    return undefined;
+  }
+  const { jy, jm } = toJalaliParts(start, useUtc);
+  const total = jy * 12 + (jm - 1) + months;
+  const { gy, gm, gd } = toGregorian(
+    Math.floor(total / 12),
+    (total % 12) + 1,
+    1,
+  );
+  return useUtc ? new Date(Date.UTC(gy, gm - 1, gd)) : new Date(gy, gm - 1, gd);
+}
+
+/**
+ * Timestamps of Jalali calendar boundaries within `[min, max]`, for pinning
+ * the ticks of a time axis so they fall on Jalali months, quarters or years
+ * rather than Gregorian ones.
+ *
+ * Uses the finest step that yields at most `maxTicks` ticks: months, then
+ * quarters, then years, then every n years. Returns `undefined` when the
+ * range spans fewer than two month boundaries, where day-based ticks (which
+ * are the same in both calendars) are more useful.
+ */
+export function getJalaliBoundaryTicks(
+  min: number,
+  max: number,
+  maxTicks = 12,
+  useUtc = true,
+): number[] | undefined {
+  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) {
+    return undefined;
+  }
+  const { jy, jm, jd } = toJalaliParts(new Date(min), useUtc);
+  const toTime = (monthIndex: number) => {
+    const { gy, gm, gd } = toGregorian(
+      Math.floor(monthIndex / 12),
+      (monthIndex % 12) + 1,
+      1,
+    );
+    return useUtc
+      ? Date.UTC(gy, gm - 1, gd)
+      : new Date(gy, gm - 1, gd).getTime();
+  };
+  // First Jalali month start on or after `min`.
+  let first = jy * 12 + (jm - 1);
+  if (jd !== 1 || toTime(first) < min) {
+    first += 1;
+  }
+  const months: number[] = [];
+  for (let index = first; toTime(index) <= max; index += 1) {
+    months.push(index);
+  }
+  if (months.length < 2) {
+    return undefined;
+  }
+  const steps = [1, 3, 12];
+  let step = steps.find(
+    size => months.filter(index => index % size === 0).length <= maxTicks,
+  );
+  if (step === undefined) {
+    const years = Math.ceil(months.length / 12);
+    step = 12 * Math.ceil(years / maxTicks);
+  }
+  const ticks = months.filter(index => index % step! === 0).map(toTime);
+  return ticks.length ? ticks : undefined;
 }
 
 function pad(value: number, padChar: string, width: number): string {

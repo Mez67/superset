@@ -79,6 +79,11 @@ from superset.databases.utils import (
     make_url_safe,
     validated_embedded_credentials,
 )
+from superset.db_engine_specs.jalali import (
+    jalali_time_grain_expressions,
+    JalaliDialect,
+    JalaliTimeGrain,
+)
 from superset.errors import ErrorLevel, SupersetError, SupersetErrorType
 from superset.exceptions import (
     OAuth2Error,
@@ -198,6 +203,9 @@ builtin_time_grains: dict[str | None, str] = {
     TimeGrainConstants.WEEK_STARTING_MONDAY: _("Week starting Monday"),
     TimeGrainConstants.WEEK_ENDING_SATURDAY: _("Week ending Saturday"),
     TimeGrainConstants.WEEK_ENDING_SUNDAY: _("Week ending Sunday"),
+    JalaliTimeGrain.MONTH: _("Jalali month"),
+    JalaliTimeGrain.QUARTER: _("Jalali quarter"),
+    JalaliTimeGrain.YEAR: _("Jalali year"),
 }
 
 
@@ -461,6 +469,9 @@ class BaseEngineSpec:  # pylint: disable=too-many-public-methods
 
     _date_trunc_functions: dict[str, str] = {}
     _time_grain_expressions: dict[str | None, str] = {}
+    # SQL building blocks for Jalali calendar time grains, offered when
+    # ``CALENDAR = "jalali"``. ``None`` means the engine does not support them.
+    jalali_dialect: JalaliDialect | None = None
 
     # Whether the output of ``normalize_custom_sql_metric`` may be embedded in
     # generated SQL verbatim (after line comments are converted to block
@@ -1659,6 +1670,10 @@ class BaseEngineSpec:  # pylint: disable=too-many-public-methods
         """
         # TODO: use @memoize decorator or similar to avoid recomputation on every call
         time_grain_expressions = cls._time_grain_expressions.copy()
+        if cls.jalali_dialect and app.config.get("CALENDAR") == "jalali":
+            time_grain_expressions.update(
+                jalali_time_grain_expressions(cls.jalali_dialect)
+            )
         grain_addon_expressions = app.config["TIME_GRAIN_ADDON_EXPRESSIONS"]
         time_grain_expressions.update(grain_addon_expressions.get(cls.engine, {}))
         denylist: list[str] = app.config["TIME_GRAIN_DENYLIST"]

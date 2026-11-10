@@ -20,6 +20,7 @@
 import {
   CurrencyFormatter,
   ensureIsArray,
+  getCalendarSystem,
   getNumberFormatter,
   getTimeFormatter,
   isSavedMetric,
@@ -56,6 +57,28 @@ export const getSmartDateFormatter = (timeGrain?: string) => {
 
       // Always remove milliseconds to prevent .XXXms format
       normalizedDate.setMilliseconds(0);
+
+      // Gregorian month/quarter/year snapping would move a Jalali tick (for
+      // example 1 Dey, which is 21 December) to the Gregorian bucket start
+      // and label it mid-month. In the Jalali calendar those grains, like
+      // the Jalali grains, keep the day and only drop the time of day.
+      const isCalendarGrain =
+        timeGrain === TimeGranularity.YEAR ||
+        timeGrain === TimeGranularity.QUARTER ||
+        timeGrain === TimeGranularity.MONTH ||
+        timeGrain === TimeGranularity.JALALI_YEAR ||
+        timeGrain === TimeGranularity.JALALI_QUARTER ||
+        timeGrain === TimeGranularity.JALALI_MONTH;
+      if (isCalendarGrain && getCalendarSystem() === 'jalali') {
+        const cleanDate = new Date(
+          Date.UTC(
+            normalizedDate.getUTCFullYear(),
+            normalizedDate.getUTCMonth(),
+            normalizedDate.getUTCDate(),
+          ),
+        );
+        return baseFormatter(cleanDate);
+      }
 
       // For all time grains, normalize using UTC methods to avoid timezone issues
       if (timeGrain === TimeGranularity.YEAR) {

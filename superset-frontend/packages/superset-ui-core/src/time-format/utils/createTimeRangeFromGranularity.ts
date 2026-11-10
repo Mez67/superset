@@ -19,6 +19,7 @@
 
 import { TimeGranularity } from '../types';
 import createTime from './createTime';
+import { getNextJalaliBucketStart } from '../calendar';
 
 const MS_IN_SECOND = 1000;
 const MS_IN_MINUTE = 60 * MS_IN_SECOND;
@@ -67,6 +68,12 @@ function computeEndTimeFromGranularity(
       );
     case TimeGranularity.YEAR:
       return deductOneMs(createTime(mode, year + 1));
+    case TimeGranularity.JALALI_MONTH:
+    case TimeGranularity.JALALI_QUARTER:
+    case TimeGranularity.JALALI_YEAR:
+      return deductOneMs(
+        getNextJalaliBucketStart(time, granularity, !useLocalTime) as Date,
+      );
     // For the WEEK_ENDING_XXX cases,
     // currently assume "time" returned from database is supposed to be the end time
     // (in contrast to all other granularities that the returned time is start time).

@@ -23264,3 +23264,12 @@ msgstr[1] "…و %s نمودار دیگر"
 # sr_Latn]
 msgid "№"
 msgstr "№"
+
+msgid "Jalali month"
+msgstr "ماه شمسی"
+
+msgid "Jalali quarter"
+msgstr "فصل شمسی"
+
+msgid "Jalali year"
+msgstr "سال شمسی"

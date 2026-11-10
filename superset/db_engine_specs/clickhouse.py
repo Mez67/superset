@@ -44,6 +44,7 @@ from superset.db_engine_specs.base import (
     DatabaseCategory,
 )
 from superset.db_engine_specs.exceptions import SupersetDBAPIDatabaseError
+from superset.db_engine_specs.jalali import JalaliDialect
 from superset.errors import ErrorLevel, SupersetError, SupersetErrorType
 from superset.extensions import cache_manager
 from superset.superset_typing import ResultSetColumnType
@@ -155,6 +156,11 @@ class ClickHouseBaseEngineSpec(BaseEngineSpec):
         """
         message = str(ex)
         return "TOO_MANY_ROWS" in message or "Code: 158" in message
+
+    jalali_dialect = JalaliDialect(
+        epoch_days="dateDiff('day', toDate('1970-01-01'), toDate({col}))",
+        minus_days="toDateTime(subtractDays(toDate({col}), {days}))",
+    )
 
     _time_grain_expressions = {
         None: "{col}",

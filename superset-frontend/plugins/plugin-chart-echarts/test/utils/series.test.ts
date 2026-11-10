@@ -22,6 +22,7 @@ import {
   DataRecord,
   getNumberFormatter,
   getTimeFormatter,
+  setCalendarSystem,
   TimeGranularity,
 } from '@superset-ui/core';
 import { supersetTheme as theme } from '@apache-superset/core/theme';
@@ -2553,4 +2554,60 @@ test('sortRows by axis value is case-sensitive', () => {
       ({ row }) => row.my_x_axis,
     ),
   ).toEqual(['a', 'B']);
+});
+
+describe('getTemporalTickValues with the Jalali calendar', () => {
+  const xAxisLabel = '__timestamp';
+  const rows = (...days: number[]): DataRecord[] =>
+    days.map(day => ({ [xAxisLabel]: day }));
+
+  beforeEach(() => setCalendarSystem('jalali'));
+  afterEach(() => setCalendarSystem('gregorian'));
+
+  test('pins ticks to the data for Jalali grains', () => {
+    const data = rows(Date.UTC(2024, 11, 21), Date.UTC(2025, 0, 20));
+    expect(
+      getTemporalTickValues(
+        data,
+        xAxisLabel,
+        AxisType.Time,
+        TimeGranularity.JALALI_MONTH,
+      ),
+    ).toEqual([Date.UTC(2024, 11, 21), Date.UTC(2025, 0, 20)]);
+  });
+
+  test('ticks on Jalali month starts for Gregorian grains', () => {
+    const data = rows(Date.UTC(2024, 11, 1), Date.UTC(2025, 2, 1));
+    expect(
+      getTemporalTickValues(
+        data,
+        xAxisLabel,
+        AxisType.Time,
+        TimeGranularity.DAY,
+      ),
+    ).toEqual([
+      Date.UTC(2024, 11, 21),
+      Date.UTC(2025, 0, 20),
+      Date.UTC(2025, 1, 19),
+    ]);
+  });
+
+  test('keeps weekly grains pinned to their buckets', () => {
+    const data = rows(Date.UTC(2025, 0, 6), Date.UTC(2025, 0, 13));
+    expect(
+      getTemporalTickValues(
+        data,
+        xAxisLabel,
+        AxisType.Time,
+        TimeGranularity.WEEK,
+      ),
+    ).toEqual([Date.UTC(2025, 0, 6), Date.UTC(2025, 0, 13)]);
+  });
+
+  test('leaves non-time axes alone', () => {
+    const data = rows(Date.UTC(2024, 11, 1), Date.UTC(2025, 2, 1));
+    expect(
+      getTemporalTickValues(data, xAxisLabel, AxisType.Category, undefined),
+    ).toBeUndefined();
+  });
 });

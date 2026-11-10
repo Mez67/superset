@@ -46,6 +46,7 @@ from superset.common.db_query_status import QueryStatus
 from superset.constants import TimeGrain
 from superset.db_engine_specs.base import BaseEngineSpec, DatabaseCategory
 from superset.db_engine_specs.exceptions import SupersetDBAPIProgrammingError
+from superset.db_engine_specs.jalali import JalaliDialect
 from superset.errors import SupersetErrorType
 from superset.exceptions import SupersetTemplateException
 from superset.models.sql_lab import Query
@@ -288,6 +289,11 @@ class PrestoBaseEngineSpec(BaseEngineSpec, metaclass=ABCMeta):
     )
 
     # pylint: disable=line-too-long
+    jalali_dialect = JalaliDialect(
+        epoch_days="date_diff('day', DATE '1970-01-01', CAST({col} AS DATE))",
+        minus_days="CAST(date_add('day', -{days}, CAST({col} AS DATE)) AS TIMESTAMP)",
+    )
+
     _time_grain_expressions = {
         None: "{col}",
         TimeGrain.SECOND: "date_trunc('second', CAST({col} AS TIMESTAMP))",

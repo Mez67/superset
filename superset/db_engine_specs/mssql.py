@@ -29,6 +29,7 @@ from sqlalchemy.engine.url import URL
 
 from superset.constants import TimeGrain
 from superset.db_engine_specs.base import BaseEngineSpec, DatabaseCategory
+from superset.db_engine_specs.jalali import JalaliDialect
 from superset.errors import SupersetErrorType
 from superset.models.sql_types.mssql_sql_types import GUID
 from superset.utils.core import GenericDataType
@@ -101,6 +102,11 @@ class MssqlEngineSpec(BaseEngineSpec):
     # no generic IS <literal> predicate, so a boolean filter compiled with
     # SQLAlchemy's default IS true/false emits invalid syntax (IS 1 / IS 0).
     use_equality_for_boolean_filters = True
+
+    jalali_dialect = JalaliDialect(
+        epoch_days="DATEDIFF(DAY, '1970-01-01', {col})",
+        minus_days="DATEADD(DAY, -{days}, CAST({col} AS DATE))",
+    )
 
     _time_grain_expressions = {
         None: "{col}",

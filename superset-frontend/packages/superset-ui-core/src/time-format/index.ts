@@ -26,6 +26,10 @@ export {
 export { DEFAULT_D3_TIME_FORMAT } from './D3FormatConfig';
 export type { CalendarSystem, CalendarTimeFormatLocale } from './calendar';
 export {
+  JALALI_GRAIN_MONTHS,
+  getJalaliBoundaryTicks,
+  getNextJalaliBucketStart,
+  isJalaliGrain,
   JALALI_MONTHS_EN,
   JALALI_MONTHS_FA,
   getCalendarSystem,

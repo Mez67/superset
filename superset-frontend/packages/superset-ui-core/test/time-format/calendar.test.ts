@@ -24,6 +24,11 @@ import {
   getCalendarTimeFormatLocale,
   setCalendarSystem,
   finestTemporalGrainFormatter,
+  getJalaliBoundaryTicks,
+  getNextJalaliBucketStart,
+  isJalaliGrain,
+  createTimeRangeFromGranularity,
+  TimeGranularity,
 } from '@superset-ui/core';
 
 // 1403-01-01 (Nowruz) in the Jalali calendar.
@@ -150,4 +155,75 @@ test('finest temporal grain formatter follows the active calendar', () => {
   setCalendarSystem('jalali');
   const formatter = finestTemporalGrainFormatter([NOWRUZ_1403.getTime()]);
   expect(formatter(NOWRUZ_1403)).toBe('1403-01-01');
+});
+
+test.each([
+  // 1 Dey 1403 -> 1 Bahman 1403
+  ['JALALI_MONTH', Date.UTC(2024, 11, 21), Date.UTC(2025, 0, 20)],
+  // 1 Dey 1403 (Q4) -> Nowruz 1404
+  ['JALALI_QUARTER', Date.UTC(2024, 11, 21), Date.UTC(2025, 2, 21)],
+  // Nowruz 1403 -> Nowruz 1404, across the 30-day Esfand of a leap year
+  ['JALALI_YEAR', Date.UTC(2024, 2, 20), Date.UTC(2025, 2, 21)],
+  // 1 Esfand 1403 -> Nowruz 1404 rolls the year over
+  ['JALALI_MONTH', Date.UTC(2025, 1, 19), Date.UTC(2025, 2, 21)],
+])('getNextJalaliBucketStart(%s)', (grain, start, expected) => {
+  expect(getNextJalaliBucketStart(new Date(start), grain)?.getTime()).toBe(
+    expected,
+  );
+});
+
+test('getNextJalaliBucketStart ignores non-Jalali grains', () => {
+  expect(getNextJalaliBucketStart(NOWRUZ_1403, 'P1M')).toBeUndefined();
+  expect(isJalaliGrain('JALALI_MONTH')).toBe(true);
+  expect(isJalaliGrain('P1M')).toBe(false);
+  expect(isJalaliGrain(undefined)).toBe(false);
+});
+
+test('createTimeRangeFromGranularity spans a whole Jalali month', () => {
+  const [start, end] = createTimeRangeFromGranularity(
+    new Date(Date.UTC(2024, 11, 21)),
+    TimeGranularity.JALALI_MONTH,
+  );
+  expect(start.toISOString()).toBe('2024-12-21T00:00:00.000Z');
+  expect(end.toISOString()).toBe('2025-01-19T23:59:59.999Z');
+});
+
+const isoDays = (ticks?: number[]) =>
+  ticks?.map(tick => new Date(tick).toISOString().slice(0, 10));
+
+test('getJalaliBoundaryTicks ticks on Jalali month starts', () => {
+  // 10 Dey 1403 .. 15 Farvardin 1404
+  expect(
+    isoDays(
+      getJalaliBoundaryTicks(Date.UTC(2024, 11, 30), Date.UTC(2025, 3, 4)),
+    ),
+  ).toEqual(['2025-01-20', '2025-02-19', '2025-03-21']);
+});
+
+test('getJalaliBoundaryTicks steps up to quarters and years on long ranges', () => {
+  // Two Jalali years: too many months, so quarter starts.
+  const quarters = isoDays(
+    getJalaliBoundaryTicks(Date.UTC(2023, 2, 21), Date.UTC(2025, 2, 20)),
+  );
+  expect(quarters?.[0]).toBe('2023-03-21');
+  expect(quarters).toContain('2024-03-20');
+  expect(quarters).toHaveLength(8);
+  // Twenty years: Nowruz every other year at most 12 ticks.
+  const years = getJalaliBoundaryTicks(
+    Date.UTC(2005, 0, 1),
+    Date.UTC(2025, 0, 1),
+  );
+  expect(years!.length).toBeLessThanOrEqual(12);
+  expect(
+    isoDays(years)?.every(
+      day => day.slice(5) === '03-21' || day.slice(5) === '03-20',
+    ),
+  ).toBe(true);
+});
+
+test('getJalaliBoundaryTicks leaves short ranges to day ticks', () => {
+  expect(
+    getJalaliBoundaryTicks(Date.UTC(2025, 0, 1), Date.UTC(2025, 0, 25)),
+  ).toBeUndefined();
+  expect(getJalaliBoundaryTicks(5, 5)).toBeUndefined();
 });

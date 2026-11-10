@@ -36,6 +36,7 @@ from sqlalchemy.sql.elements import ColumnElement
 from superset.constants import TimeGrain
 from superset.databases.utils import make_url_safe
 from superset.db_engine_specs.base import BaseEngineSpec, DatabaseCategory
+from superset.db_engine_specs.jalali import JalaliDialect
 from superset.errors import ErrorLevel, SupersetError, SupersetErrorType
 from superset.utils.core import GenericDataType, get_user_agent, QuerySource
 
@@ -291,6 +292,11 @@ class DuckDBEngineSpec(DuckDBParametersMixin, BaseEngineSpec):
             types.SmallInteger(),
             GenericDataType.NUMERIC,
         ),
+    )
+
+    jalali_dialect = JalaliDialect(
+        epoch_days="(CAST({col} AS DATE) - DATE '1970-01-01')",
+        minus_days="CAST(CAST({col} AS DATE) - CAST({days} AS INTEGER) AS TIMESTAMP)",
     )
 
     _time_grain_expressions = {

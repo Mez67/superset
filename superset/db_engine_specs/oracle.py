@@ -26,6 +26,7 @@ from sqlalchemy.dialects.oracle.base import OracleDialect
 
 from superset.constants import TimeGrain
 from superset.db_engine_specs.base import BaseEngineSpec, DatabaseCategory
+from superset.db_engine_specs.jalali import JalaliDialect
 from superset.sql.parse import LimitMethod
 from superset.utils.core import GenericDataType
 
@@ -183,6 +184,12 @@ class OracleEngineSpec(BaseEngineSpec):
         if column_type and cls._long_raw_type.match(column_type):
             return None
         return super().get_column_types(column_type)
+
+    jalali_dialect = JalaliDialect(
+        epoch_days="(TRUNC(CAST({col} AS DATE)) - DATE '1970-01-01')",
+        minus_days="(TRUNC(CAST({col} AS DATE)) - {days})",
+        mod="MOD({a}, {b})",
+    )
 
     _time_grain_expressions = {
         None: "{col}",

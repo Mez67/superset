@@ -44,6 +44,9 @@ const TimeFormatsForGranularity: Record<TimeGranularity, string> = {
   [TimeGranularity.WEEK_STARTING_MONDAY]: DATABASE_DATE,
   [TimeGranularity.WEEK_ENDING_SATURDAY]: DATABASE_DATE,
   [TimeGranularity.WEEK_ENDING_SUNDAY]: DATABASE_DATE,
+  [TimeGranularity.JALALI_MONTH]: '%B %Y',
+  [TimeGranularity.JALALI_QUARTER]: '%Y Q%q',
+  [TimeGranularity.JALALI_YEAR]: '%Y',
 };
 
 export default TimeFormatsForGranularity;

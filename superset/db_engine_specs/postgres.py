@@ -46,6 +46,7 @@ from superset.db_engine_specs.base import (
     DatabaseCategory,
     TimestampExpression,
 )
+from superset.db_engine_specs.jalali import JalaliDialect
 from superset.errors import ErrorLevel, SupersetError, SupersetErrorType
 from superset.exceptions import SupersetException, SupersetSecurityException
 from superset.models.sql_lab import Query
@@ -196,6 +197,11 @@ class PostgresBaseEngineSpec(BaseEngineSpec):
     def normalize_custom_sql_metric(cls, expression: str) -> str:
         """Canonicalize DATE_TRUNC units to match generated time grains."""
         return normalize_date_trunc_units(expression)
+
+    jalali_dialect = JalaliDialect(
+        epoch_days="(CAST({col} AS DATE) - DATE '1970-01-01')",
+        minus_days="CAST(CAST({col} AS DATE) - CAST({days} AS INTEGER) AS TIMESTAMP)",
+    )
 
     _time_grain_expressions = {
         None: "{col}",

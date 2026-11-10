@@ -54,6 +54,7 @@ from superset.db_engine_specs.base import (
     BasicParametersMixin,
     DatabaseCategory,
 )
+from superset.db_engine_specs.jalali import JalaliDialect
 from superset.errors import SupersetErrorType
 from superset.models.sql_lab import Query
 from superset.utils import json
@@ -510,6 +511,11 @@ class MySQLEngineSpec(BasicParametersMixin, BaseEngineSpec):
     column_type_mutators: dict[types.TypeEngine, Callable[[Any], Any]] = {
         DECIMAL: lambda val: Decimal(val) if isinstance(val, str) else val
     }
+
+    jalali_dialect = JalaliDialect(
+        epoch_days="DATEDIFF({col}, '1970-01-01')",
+        minus_days="DATE_SUB(DATE({col}), INTERVAL {days} DAY)",
+    )
 
     _time_grain_expressions = {
         None: "{col}",

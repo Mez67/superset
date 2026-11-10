@@ -18,6 +18,7 @@
  */
 import {
   BinaryQueryObjectFilterClause,
+  getNextJalaliBucketStart,
   QueryFormColumn,
   TimeGranularity,
 } from '@superset-ui/core';
@@ -94,6 +95,13 @@ export const getTimeBucketRange = (
     case TimeGranularity.YEAR:
       until.setUTCFullYear(until.getUTCFullYear() + 1);
       break;
+    case TimeGranularity.JALALI_MONTH:
+    case TimeGranularity.JALALI_QUARTER:
+    case TimeGranularity.JALALI_YEAR:
+      return {
+        since: new Date(bucketLabel.getTime()),
+        until: getNextJalaliBucketStart(bucketLabel, grain) as Date,
+      };
     default:
       return undefined;
   }

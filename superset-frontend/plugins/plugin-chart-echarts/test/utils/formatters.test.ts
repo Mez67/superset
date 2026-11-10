@@ -23,6 +23,7 @@ import {
   NumberFormats,
   SMART_DATE_ID,
   SMART_DATE_VERBOSE_ID,
+  setCalendarSystem,
   TimeFormatter,
   TimeGranularity,
 } from '@superset-ui/core';
@@ -830,4 +831,25 @@ describe('getXAxisDomain', () => {
       undefined,
     ]);
   });
+});
+
+test('getSmartDateFormatter labels Jalali month boundaries in the Jalali calendar', () => {
+  const registry = getTimeFormatterRegistry();
+  setCalendarSystem('jalali');
+  registry.registerValue(SMART_DATE_ID, createSmartDateFormatter());
+  try {
+    for (const grain of [TimeGranularity.MONTH, TimeGranularity.JALALI_MONTH]) {
+      const formatter = getXAxisFormatter(
+        SMART_DATE_ID,
+        grain,
+      ) as TimeFormatter;
+      // 1 Dey 1403 (21 December 2024) is a Jalali month start.
+      expect(formatter.format(new Date('2024-12-21T00:00:00Z'))).toBe('Dey');
+      // Nowruz shows the Jalali year.
+      expect(formatter.format(new Date('2024-03-20T00:00:00Z'))).toBe('1403');
+    }
+  } finally {
+    setCalendarSystem('gregorian');
+    registry.registerValue(SMART_DATE_ID, createSmartDateFormatter());
+  }
 });

@@ -44,6 +44,9 @@ export const TimeGranularity = {
   MONTH: 'P1M',
   QUARTER: 'P3M',
   YEAR: 'P1Y',
+  JALALI_MONTH: 'JALALI_MONTH',
+  JALALI_QUARTER: 'JALALI_QUARTER',
+  JALALI_YEAR: 'JALALI_YEAR',
 } as const;
 
 type ValueOf<T> = T[keyof T];

@@ -33,6 +33,7 @@ from superset.db_engine_specs.base import (
     DatabaseCategory,
     TimestampExpression,
 )
+from superset.db_engine_specs.jalali import JalaliDialect
 from superset.errors import SupersetErrorType
 
 if TYPE_CHECKING:
@@ -65,6 +66,13 @@ class SqliteEngineSpec(BaseEngineSpec):
         "connection_string": "sqlite:///path/to/file.db?check_same_thread=false",
         "notes": "No additional library needed. SQLite is bundled with Python.",
     }
+
+    jalali_dialect = JalaliDialect(
+        epoch_days=(
+            "CAST(julianday(DATE({col})) - julianday('1970-01-01') AS INTEGER)"
+        ),
+        minus_days="DATETIME(DATE({col}), '-' || {days} || ' days')",
+    )
 
     _time_grain_expressions = {
         None: "{col}",

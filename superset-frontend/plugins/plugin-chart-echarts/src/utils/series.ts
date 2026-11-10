@@ -25,6 +25,9 @@ import {
   DataRecordValue,
   DTTM_ALIAS,
   ensureIsArray,
+  getCalendarSystem,
+  getJalaliBoundaryTicks,
+  isJalaliGrain,
   isTimeseriesAnnotationLayer,
   LegendState,
   normalizeTimestamp,
@@ -1190,11 +1193,7 @@ export function getTemporalTickValues(
   xAxisType: AxisType,
   timeGrain?: string,
 ): number[] | undefined {
-  if (
-    xAxisType !== AxisType.Time ||
-    !timeGrain ||
-    !WEEKLY_TIME_GRAINS.has(timeGrain)
-  ) {
+  if (xAxisType !== AxisType.Time) {
     return undefined;
   }
   const values = new Set<number>();
@@ -1204,7 +1203,26 @@ export function getTemporalTickValues(
       values.add(timestamp);
     }
   });
-  return values.size ? [...values].sort((a, b) => a - b) : undefined;
+  const sorted = [...values].sort((a, b) => a - b);
+  if (
+    getCalendarSystem() === 'jalali' &&
+    !WEEKLY_TIME_GRAINS.has(timeGrain ?? '')
+  ) {
+    // ECharts places time ticks on Gregorian months and years, which land
+    // mid-month in the Jalali calendar. Jalali grains already bucket on
+    // Jalali boundaries, so their data points are the ticks; otherwise tick
+    // on the Jalali boundaries spanned by the data.
+    if (isJalaliGrain(timeGrain)) {
+      return sorted.length ? sorted : undefined;
+    }
+    return sorted.length
+      ? getJalaliBoundaryTicks(sorted[0], sorted[sorted.length - 1])
+      : undefined;
+  }
+  if (!timeGrain || !WEEKLY_TIME_GRAINS.has(timeGrain)) {
+    return undefined;
+  }
+  return sorted.length ? sorted : undefined;
 }
 
 /**

@@ -236,3 +236,26 @@ test('getTemporalXAxisDrillByFilter returns undefined for unusable input', () =>
     getTemporalXAxisDrillByFilter('', 1609459200000, TimeGranularity.DAY),
   ).toBeUndefined();
 });
+
+test('getTimeBucketRange computes Jalali calendar buckets', () => {
+  // 1 Dey 1403 -> 1 Bahman 1403
+  expectRange(
+    '2024-12-21T00:00:00',
+    TimeGranularity.JALALI_MONTH,
+    '2024-12-21T00:00:00',
+    '2025-01-20T00:00:00',
+  );
+  // Q4 1403 ends at Nowruz 1404
+  expectRange(
+    '2024-12-21T00:00:00',
+    TimeGranularity.JALALI_QUARTER,
+    '2024-12-21T00:00:00',
+    '2025-03-21T00:00:00',
+  );
+  expectRange(
+    '2024-03-20T00:00:00',
+    TimeGranularity.JALALI_YEAR,
+    '2024-03-20T00:00:00',
+    '2025-03-21T00:00:00',
+  );
+});

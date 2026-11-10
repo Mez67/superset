@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { TimeGranularity } from '@superset-ui/core';
+import { getNextJalaliBucketStart, TimeGranularity } from '@superset-ui/core';
 
 /**
  * Calculates the inclusive/exclusive temporal range for a bucket.
@@ -74,6 +74,13 @@ export default function getTimeRangeFromGranularity(
       ];
     case TimeGranularity.YEAR:
       return [startTime, new Date(Date.UTC(year + 1, 0, 1))];
+    case TimeGranularity.JALALI_MONTH:
+    case TimeGranularity.JALALI_QUARTER:
+    case TimeGranularity.JALALI_YEAR:
+      return [
+        startTime,
+        getNextJalaliBucketStart(startTime, granularity) as Date,
+      ];
     default:
       return [startTime, new Date(Date.UTC(year, month, date + 1))];
   }
