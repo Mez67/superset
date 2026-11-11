@@ -556,6 +556,74 @@ PKCE (`S256`) is recommended for all OAuth2 flows, even when a client secret is 
 
 For a complete Keycloak example (PKCE, group-to-role mapping, access denial and single logout), see [OAuth Configuration](/admin-docs/security/oauth).
 
+## Right-to-left languages
+
+When the active locale is a right-to-left language, Superset renders the page
+with `dir="rtl"` and mirrors the interface: Ant Design components switch to
+their RTL layout, styled components have their physical properties
+(`margin-left`, `text-align: right`, ...) flipped, and resize handles and
+directional arrows move to the mirrored side. Code editors such as SQL Lab
+stay left-to-right. Chart axes are not mirrored; time still runs left to
+right, as is customary in dashboards.
+
+The languages treated as right-to-left are listed in `RTL_LANGUAGES`:
+
+```python
+RTL_LANGUAGES = ["ar", "fa", "he", "ur"]
+```
+
+Persian text is rendered with the bundled Vazirmatn font, which is part of
+the default font stack and is served with Superset, so no external font
+request is made.
+
+## Jalali (Persian) calendar
+
+Set `CALENDAR` to show dates in the Jalali (Solar Hijri) calendar instead of
+the Gregorian one:
+
+```python
+BABEL_DEFAULT_LOCALE = "fa"
+CALENDAR = "jalali"
+```
+
+With `CALENDAR = "jalali"`:
+
+- Dates in charts, tables, tooltips, time-range labels and status labels
+  (such as "last queried") are shown in the Jalali calendar. With a Persian
+  locale, month and day names are in Persian.
+- Date pickers navigate Jalali months and years and accept typed Jalali
+  dates, with ASCII or Persian digits.
+- Temporal chart axes place their ticks on Jalali month, quarter or year
+  boundaries.
+- The **Jalali month**, **Jalali quarter** and **Jalali year** time grains
+  become available, so data can be grouped by Jalali periods.
+
+The calendar only affects how dates are shown and grouped. Stored values,
+filters, query results and API payloads stay Gregorian, so `CALENDAR` can be
+changed at any time without migrating content.
+
+### Jalali time grains
+
+The Jalali grains are computed in SQL from the number of days since
+1970-01-01, so they need no calendar table or database extension. They are
+available for PostgreSQL and Redshift, MySQL and MariaDB, SQL Server,
+Oracle, SQLite, DuckDB, Presto and Trino, and ClickHouse. Hide any of them
+with `TIME_GRAIN_DENYLIST`, for example
+`TIME_GRAIN_DENYLIST = ["JALALI_QUARTER"]`.
+
+### Limitations
+
+- **Forecasting** is not available with the Jalali grains: the forecasting
+  model needs a fixed, Gregorian frequency (such as "month end"). Use a
+  Gregorian grain, such as Month, to forecast.
+- **Time comparison** offsets such as "1 month ago" or "1 year ago" are
+  applied in the Gregorian calendar. A "1 month ago" comparison of a Jalali
+  month is therefore shifted by a Gregorian month, which can straddle two
+  Jalali months. Comparisons in days, weeks, and "1 year ago" on daily data
+  are not affected.
+- **Partition filter mapping** does not mirror time-range filters through a
+  Jalali grain.
+
 ## LDAP Authentication
 
 FAB supports authenticating user credentials against an LDAP server.
@@ -595,6 +663,62 @@ Note: This requires `AUTH_LDAP_SEARCH` to be set. For more details, please see t
 ### Syncing roles at login
 
 You can also use the `AUTH_ROLES_SYNC_AT_LOGIN` configuration variable to control how often Flask-AppBuilder syncs the user's roles with the LDAP/OAUTH groups. If `AUTH_ROLES_SYNC_AT_LOGIN` is set to True, Flask-AppBuilder will sync the user's roles each time they log in. If `AUTH_ROLES_SYNC_AT_LOGIN` is set to False, Flask-AppBuilder will only sync the user's roles when they first register.
+
+## Microsoft Active Directory
+
+Active Directory works with `AUTH_TYPE = AUTH_LDAP`. Enabling
+`AUTH_LDAP_ACTIVE_DIRECTORY` adds handling for a few AD specifics:
+
+- **Usernames** are normalized: `CORP\ali`, `ali@corp.example` and `Ali` all
+  sign in as `ali`, instead of creating separate users.
+- **Nested groups** are resolved with AD's `LDAP_MATCHING_RULE_IN_CHAIN`, so
+  a user in a group that is itself a member of a mapped group receives the
+  mapped roles. `memberOf` alone only lists direct groups.
+- **`AUTH_ROLES_MAPPING` keys** can be a group's short name (its `CN`) or its
+  full DN, matched without regard to case or spacing.
+- **Synced groups** (`AUTH_GROUPS_SYNC_AT_LOGIN`) are named after the AD
+  group's short name rather than its DN.
+
+A typical configuration uses a read-only service account to look users up,
+and LDAPS:
+
+```python
+import os
+
+from flask_appbuilder.security.manager import AUTH_LDAP
+
+AUTH_TYPE = AUTH_LDAP
+AUTH_LDAP_SERVER = "ldaps://dc01.corp.example:636"
+AUTH_LDAP_TLS_CACERTFILE = "/etc/ssl/certs/corp-ca.pem"
+AUTH_LDAP_BIND_USER = "svc-superset@corp.example"
+AUTH_LDAP_BIND_PASSWORD = os.environ["AD_BIND_PASSWORD"]
+AUTH_LDAP_SEARCH = "OU=Staff,DC=corp,DC=example"
+AUTH_LDAP_UID_FIELD = "sAMAccountName"
+AUTH_LDAP_ACTIVE_DIRECTORY = True
+
+# Create users at first sign-in and keep their roles in sync with AD
+AUTH_USER_REGISTRATION = True
+AUTH_USER_REGISTRATION_ROLE = "Public"
+AUTH_ROLES_SYNC_AT_LOGIN = True
+AUTH_ROLES_MAPPING = {
+    "BI-Admins": ["Admin"],
+    "BI-Analysts": ["Alpha"],
+    "CN=BI-Viewers,OU=Groups,DC=corp,DC=example": ["Gamma"],
+}
+```
+
+Recent Active Directory versions reject simple binds over unencrypted
+connections, so use `ldaps://` or set `AUTH_LDAP_USE_TLS = True` with an
+`ldap://` server. Disabled and locked AD accounts cannot bind, so they cannot
+sign in.
+
+Additional settings:
+
+- `AUTH_LDAP_AD_NESTED_GROUPS` (default `True`): resolve nested membership.
+  Turn it off to only use direct groups.
+- `AUTH_LDAP_AD_GROUP_SEARCH` (default: the root of the user's domain): base
+  DN to search for groups, which can speed up the lookup in large
+  directories.
 
 ## Flask app Configuration Hook
 

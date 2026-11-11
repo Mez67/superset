@@ -94,6 +94,7 @@ from superset.exceptions import (
     DatasetInvalidPermissionEvaluationException,
     SupersetSecurityException,
 )
+from superset.security.active_directory import ActiveDirectoryMixin
 from superset.security.guest_token import (
     DEFAULT_GUEST_TOKEN_REVOCATION_VERSION,
     get_current_guest_token_revocation_version,
@@ -2104,7 +2105,7 @@ def query_context_modified(query_context: "QueryContext") -> bool:
 
 
 class SupersetSecurityManager(  # pylint: disable=too-many-public-methods
-    SecurityManager
+    ActiveDirectoryMixin, SecurityManager
 ):
     userstatschartview = None
     register_superset_auth_view = True

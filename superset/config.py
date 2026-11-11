@@ -566,6 +566,18 @@ AUTH_TYPE = AUTH_DB
 # When using LDAP Auth, setup the LDAP server
 # AUTH_LDAP_SERVER = "ldap://ldapserver.new"
 
+# Microsoft Active Directory, used with AUTH_TYPE = AUTH_LDAP.
+# When enabled, usernames are normalized (CORP\ali, ali@corp.example and Ali
+# all become "ali"), nested group membership is resolved, AUTH_ROLES_MAPPING
+# keys may be a group's DN or short name (matched case-insensitively), and
+# synced Superset groups are named after the AD group's short name.
+# See superset/security/active_directory.py.
+AUTH_LDAP_ACTIVE_DIRECTORY = False
+# Resolve nested group membership (LDAP_MATCHING_RULE_IN_CHAIN).
+AUTH_LDAP_AD_NESTED_GROUPS = True
+# Base DN searched for groups. Defaults to the root of the user's domain.
+AUTH_LDAP_AD_GROUP_SEARCH = ""
+
 # Uncomment to setup OpenID providers example for OpenID authentication
 # OPENID_PROVIDERS = [
 #    { 'name': 'Yahoo', 'url': 'https://open.login.yahoo.com/' },
