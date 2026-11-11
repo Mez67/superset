@@ -1357,6 +1357,17 @@ _THEME_DARK_BASE: Theme = {
     "algorithm": "dark",
 }
 
+# Brand look of this distribution, kept in superset/brand_theme.py so upstream
+# changes to the defaults above merge cleanly.
+from superset.brand_theme import (  # noqa: E402
+    BRAND_COLOR_SCHEME,
+    with_brand_theme,
+)
+
+_THEME_DEFAULT_BASE = THEME_DEFAULT = with_brand_theme(_THEME_DEFAULT_BASE)
+_THEME_DARK_BASE = with_brand_theme(_THEME_DARK_BASE, dark=True)
+EXTRA_CATEGORICAL_COLOR_SCHEMES = [BRAND_COLOR_SCHEME]
+
 THEME_DARK: Optional[Theme] = _THEME_DARK_BASE
 
 

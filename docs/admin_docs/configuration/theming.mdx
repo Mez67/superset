@@ -88,6 +88,18 @@ THEME_DARK = {
 # - OS preference detection is automatically enabled
 ```
 
+### Built-in Brand Theme
+
+This distribution layers a brand theme over the built-in light and dark themes. It sets the indigo palette, softer surfaces and borders, 8–12px corner radii, light shadows, per-component tokens (tables, menus, tabs, modals, inputs), card-style chart tooltips and a default categorical color scheme, `brandIndigo`. The values live in `superset/brand_theme.py`. Visual polish that tokens cannot express, such as the lifted navbar, card-style list tables and home page sections, and the sign-in page, lives in `superset-frontend/packages/superset-core/src/theme/BrandGlobalStyles.tsx` and reads every color from the active theme.
+
+`THEME_DEFAULT` and `THEME_DARK` in `superset_config.py`, system themes set in the UI and dashboard themes still override any brand value. For example, to keep the brand look with your own primary color:
+
+```python
+THEME_DEFAULT = {"token": {"colorPrimary": "#0b7285", "colorLink": "#0b7285"}}
+```
+
+Setting `EXTRA_CATEGORICAL_COLOR_SCHEMES` in `superset_config.py` replaces the brand color scheme.
+
 ### Default Theme Mode
 
 By default, Superset mimics the visitor's OS/browser preference (light or dark) for

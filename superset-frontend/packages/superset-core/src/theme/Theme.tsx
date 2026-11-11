@@ -26,6 +26,7 @@ import {
 } from '@emotion/react';
 import { mergeWith } from 'lodash-es';
 import { GlobalStyles } from './GlobalStyles';
+import { BrandGlobalStyles } from './BrandGlobalStyles';
 import { createSupersetEmotionCache, getDocumentDirection } from './direction';
 import {
   AntdThemeConfig,
@@ -303,6 +304,7 @@ export class Theme {
       <EmotionCacheProvider value={themeState.emotionCache}>
         <ThemeProvider theme={themeState.theme}>
           <GlobalStyles />
+          <BrandGlobalStyles />
           <ConfigProvider
             theme={themeState.antdConfig}
             direction={getDocumentDirection()}
