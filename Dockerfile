@@ -243,6 +243,7 @@ ENV PLAYWRIGHT_BROWSERS_PATH=/usr/local/share/playwright-browsers
 ARG INCLUDE_CHROMIUM="false"
 RUN --mount=type=cache,target=${SUPERSET_HOME}/.cache/uv \
     if [ "${INCLUDE_CHROMIUM}" = "true" ]; then \
+        /app/docker/apt-install.sh libatomic1 && \
         uv pip install playwright && \
         playwright install-deps && \
         NODE_OPTIONS=--use-openssl-ca SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \
@@ -360,8 +361,12 @@ RUN --mount=type=cache,target=${SUPERSET_HOME}/.cache/uv \
 # FROM lean, which is already past that arg. Chromium ships for both
 # linux/amd64 and linux/arm64, so this works on multi-platform builds.
 # See the INCLUDE_CHROMIUM step in python-common for --use-openssl-ca.
+# The Node.js driver bundled with Playwright (1.65+) links against
+# libatomic.so.1, which the slim base image lacks; without it the
+# `playwright` CLI cannot start, so it is installed before the CLI runs.
 RUN --mount=type=cache,target=${SUPERSET_HOME}/.cache/uv \
-    uv pip install playwright \
+    /app/docker/apt-install.sh libatomic1 \
+    && uv pip install playwright \
     && playwright install-deps \
     && NODE_OPTIONS=--use-openssl-ca SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \
         playwright install chromium
