@@ -795,3 +795,27 @@ def test_send_mime_email_server_auth_disabled_skips_context(
 
     assert not create_default_context.called
     smtp_ssl.assert_called_once_with("localhost", 25, context=None, timeout=30)
+
+
+def test_with_frame_ancestors_adds_origins() -> None:
+    """EMBEDDED_FRAME_ANCESTORS extends frame-ancestors and keeps existing ones."""
+    from superset.config import _with_frame_ancestors
+
+    base: dict[str, Any] = {
+        "force_https": False,
+        "content_security_policy": {"default-src": ["'self'"]},
+    }
+    result = _with_frame_ancestors(base, ["https://app.example.com"])
+    assert result["content_security_policy"]["frame-ancestors"] == [
+        "'self'",
+        "https://app.example.com",
+    ]
+    assert result["content_security_policy"]["default-src"] == ["'self'"]
+    assert "frame-ancestors" not in base["content_security_policy"]
+
+    custom = {"content_security_policy": {"frame-ancestors": "'self' https://a.io"}}
+    assert _with_frame_ancestors(custom, ["https://a.io", "https://b.io"])[
+        "content_security_policy"
+    ]["frame-ancestors"] == ["'self'", "https://a.io", "https://b.io"]
+
+    assert _with_frame_ancestors(base, []) is base

@@ -3436,6 +3436,14 @@ WEBSOCKET_JWT_EXPIRATION_SECONDS = int(timedelta(minutes=15).total_seconds())
 REALTIME_CHANNEL_PREFIX: Callable[[], str] | str = ""
 
 # Embedded config options
+# Origins allowed to show Superset in an iframe, e.g. the app that embeds
+# dashboards with the embedded SDK: ["https://app.example.com"]. They are added
+# to the content security policy's frame-ancestors (in TALISMAN_CONFIG and
+# TALISMAN_DEV_CONFIG), so TALISMAN_CONFIG does not need to be copied and
+# edited to allow embedding. Browsers that honour frame-ancestors ignore the
+# X-Frame-Options header.
+EMBEDDED_FRAME_ANCESTORS: list[str] = []
+
 GUEST_ROLE_NAME = "Public"
 GUEST_TOKEN_JWT_SECRET = CHANGE_ME_GUEST_TOKEN_JWT_SECRET
 GUEST_TOKEN_JWT_ALGO = "HS256"  # noqa: S105
@@ -3987,6 +3995,28 @@ for env_var in ENV_VAR_KEYS:
     if env_var in os.environ:
         config_var = env_var.replace("SUPERSET__", "")
         globals()[config_var] = os.environ[env_var]
+
+
+def _with_frame_ancestors(
+    talisman_config: dict[str, Any], ancestors: list[str]
+) -> dict[str, Any]:
+    """Copy of a Talisman config whose CSP allows framing by ``ancestors``."""
+    if not ancestors:
+        return talisman_config
+    policy = dict(talisman_config.get("content_security_policy") or {})
+    existing = policy.get("frame-ancestors") or ["'self'"]
+    if isinstance(existing, str):
+        existing = existing.split()
+    policy["frame-ancestors"] = list(dict.fromkeys([*existing, *ancestors]))
+    return {**talisman_config, "content_security_policy": policy}
+
+
+# Applied after the overrides above so EMBEDDED_FRAME_ANCESTORS works with the
+# default or a custom TALISMAN_CONFIG alike.
+TALISMAN_CONFIG = _with_frame_ancestors(TALISMAN_CONFIG, EMBEDDED_FRAME_ANCESTORS)
+TALISMAN_DEV_CONFIG = _with_frame_ancestors(
+    TALISMAN_DEV_CONFIG, EMBEDDED_FRAME_ANCESTORS
+)
 
 # THEME_DEFAULT / THEME_DARK are defined before the overrides above are applied,
 # so re-sync the logo link from the final LOGO_TARGET_PATH value here. This lets

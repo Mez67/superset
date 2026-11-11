@@ -533,3 +533,22 @@ def test_spa_template_context_sets_html_lang_and_dir(
 
     assert result["html_lang"] == expected_lang
     assert result["html_dir"] == expected_dir
+
+
+@pytest.mark.parametrize(
+    "locale,expected",
+    [
+        ("fa", {"html_lang": "fa", "html_dir": "rtl"}),
+        ("pt_BR", {"html_lang": "pt-BR", "html_dir": "ltr"}),
+        (None, {"html_lang": "en", "html_dir": "ltr"}),
+    ],
+)
+@patch("superset.views.base.app")
+def test_get_document_language_context(
+    mock_app: MagicMock, locale: str | None, expected: dict[str, str]
+) -> None:
+    """Shared by spa.html renders, including the embedded dashboard page."""
+    from superset.views.base import get_document_language_context
+
+    mock_app.config = {"RTL_LANGUAGES": ["ar", "fa"]}
+    assert get_document_language_context({"locale": locale}) == expected

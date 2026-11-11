@@ -768,6 +768,18 @@ def get_language_pack_template_context(common: dict[str, Any]) -> dict[str, Any]
     }
 
 
+def get_document_language_context(common: dict[str, Any]) -> dict[str, str]:
+    """Template vars for the ``<html lang dir>`` attributes of spa.html.
+
+    ``common`` is the common bootstrap payload of the request.
+    """
+    locale = common.get("locale")
+    return {
+        "html_lang": str(locale or "en").replace("_", "-"),
+        "html_dir": get_text_direction(locale),
+    }
+
+
 def get_spa_payload(extra_data: dict[str, Any] | None = None) -> dict[str, Any]:
     """Generate standardized payload for spa.html template rendering.
 
@@ -902,13 +914,9 @@ def get_spa_template_context(
     dark_theme_tokens = dark_theme.get("token", {}) if dark_theme else {}
     dark_theme_bg = dark_theme_tokens.get("colorBgBase", "#000") if dark_theme else None
 
-    common = payload.get("common") or {}
-    html_lang = str(common.get("locale") or "en").replace("_", "-")
-
     return {
         "entry": entry,
-        "html_lang": html_lang,
-        "html_dir": get_text_direction(common.get("locale")),
+        **get_document_language_context(payload.get("common") or {}),
         "bootstrap_data": json.dumps(
             payload, default=json.pessimistic_json_iso_dttm_ser
         ),

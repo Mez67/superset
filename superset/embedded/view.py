@@ -28,6 +28,7 @@ from superset.utils import json
 from superset.views.base import (
     BaseSupersetView,
     common_bootstrap_payload,
+    get_document_language_context,
     get_language_pack_template_context,
 )
 
@@ -125,4 +126,5 @@ class EmbeddedView(BaseSupersetView):
                 bootstrap_data, default=json.pessimistic_json_iso_dttm_ser
             ),
             **get_language_pack_template_context(bootstrap_data["common"]),
+            **get_document_language_context(bootstrap_data["common"]),
         )

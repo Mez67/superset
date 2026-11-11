@@ -96,6 +96,18 @@ To enable this entry, add the following line to the `.env` file:
 SUPERSET_FEATURE_EMBEDDED_SUPERSET=true
 ```
 
+### Allowing Your Application to Frame Embedded Dashboards
+
+With Talisman enabled (the default), Superset sends `X-Frame-Options: SAMEORIGIN`, so browsers refuse to show an SDK-embedded dashboard on another origin. List the origins of the applications that embed Superset in `EMBEDDED_FRAME_ANCESTORS`:
+
+```python
+EMBEDDED_FRAME_ANCESTORS = ["https://app.example.com"]
+```
+
+Superset adds these origins to the `frame-ancestors` directive of both `TALISMAN_CONFIG` and `TALISMAN_DEV_CONFIG`, keeping `'self'` and any `frame-ancestors` entries you already set. Browsers that support `frame-ancestors` ignore `X-Frame-Options`..
+
+The embedded page follows the server's language, text direction and calendar: with `BABEL_DEFAULT_LOCALE = "fa"` and `CALENDAR = "jalali"`, embedded dashboards render right-to-left with Jalali dates. A React example, including a guest-token endpoint with row level security, is in `superset-embedded-sdk/examples/react`.
+
 ### Hiding the Logout Button in Embedded Contexts
 
 When Superset is embedded in an application that manages authentication via SSO (OAuth2, SAML, or JWT), the logout button should be hidden since session management is handled by the parent application.
