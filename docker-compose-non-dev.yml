@@ -35,6 +35,10 @@ x-common-build: &common-build
   # tags), not the `dev` image: this compose runs a prod-like stack from source,
   # and `superset` bundles the metadata/analytics drivers it needs.
   target: superset
+  args:
+    # Compile the translation catalogs into the image (needed for any UI
+    # language other than English). Set BUILD_TRANSLATIONS=true when building.
+    BUILD_TRANSLATIONS: ${BUILD_TRANSLATIONS:-false}
   cache_from:
     - apache/superset-cache:3.11-slim-trixie
 
