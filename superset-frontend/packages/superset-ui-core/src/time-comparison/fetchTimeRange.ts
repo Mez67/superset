@@ -22,9 +22,9 @@ import {
   SupersetClient,
   getClientErrorObject,
   ensureIsArray,
-  getCalendarSystem,
   getTimeFormatter,
 } from '@superset-ui/core';
+import { getCalendarSystem } from '../time-format/calendar';
 import { extendedDayjs } from '@superset-ui/core/utils/dates';
 
 export const SEPARATOR = ' : ';

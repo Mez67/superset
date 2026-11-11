@@ -27,6 +27,7 @@ import pandas as pd
 import parsedatetime
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
+from flask import current_app, has_app_context
 from flask_babel import lazy_gettext as _
 from holidays import country_holidays
 from pyparsing import (
@@ -495,6 +496,36 @@ def is_no_time_range(time_range: str | None) -> bool:
     return time_range == NO_TIME_RANGE or time_range == _(NO_TIME_RANGE)
 
 
+_JALALI_CALENDAR_RANGES = {
+    "previous calendar month": ("month", -1),
+    "previous calendar quarter": ("quarter", -1),
+    "previous calendar year": ("year", -1),
+    "current month": ("month", 0),
+    "current quarter": ("quarter", 0),
+    "current year": ("year", 0),
+}
+
+
+def _jalali_calendar_range(time_range: str) -> str | None:
+    """With ``CALENDAR = "jalali"``, resolve calendar-period shorthands such as
+    "previous calendar month" or "Current year" to Jalali boundaries.
+
+    Returns an explicit ``since : until`` range, or ``None`` when the
+    Gregorian handling applies.
+    """
+    if not has_app_context() or current_app.config.get("CALENDAR") != "jalali":
+        return None
+    period = _JALALI_CALENDAR_RANGES.get(time_range.strip().lower())
+    if period is None:
+        return None
+    from superset.utils.jalali import jalali_period
+
+    start, end = jalali_period(
+        period[0], parse_human_datetime("today").date(), period[1]
+    )
+    return f"{start.isoformat()}T00:00:00 : {end.isoformat()}T00:00:00"
+
+
 def get_since_until(  # pylint: disable=too-many-arguments,too-many-locals,too-many-branches,too-many-statements  # noqa: C901
     time_range: str | None = None,
     since: str | None = None,
@@ -541,6 +572,9 @@ def get_since_until(  # pylint: disable=too-many-arguments,too-many-locals,too-m
     if time_range and time_range.startswith("Next") and separator not in time_range:
         _start = relative_start or get_default_bound_for_shorthand(time_range)
         time_range = _start + separator + time_range
+
+    if time_range and separator not in time_range:
+        time_range = _jalali_calendar_range(time_range) or time_range
 
     if (
         time_range

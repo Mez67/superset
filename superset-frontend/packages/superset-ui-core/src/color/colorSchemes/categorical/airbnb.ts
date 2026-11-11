@@ -17,13 +17,14 @@
  * under the License.
  */
 
+import { t } from '@apache-superset/core/translation';
 import CategoricalScheme from '../../CategoricalScheme';
 
 // TODO: add the colors to the theme while working on SIP https://github.com/apache/superset/issues/20159
 const schemes = [
   {
     id: 'bnbColors',
-    label: 'Airbnb Colors',
+    label: t('Airbnb Colors'),
     colors: [
       '#29696B',
       '#5BCACE',

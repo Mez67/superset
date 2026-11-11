@@ -48,7 +48,10 @@ import { Icons } from '@superset-ui/core/components/Icons';
 import QueryPreviewModal from 'src/features/queries/QueryPreviewModal';
 import { addSuccessToast } from 'src/components/MessageToasts/actions';
 import getUserName from 'src/utils/getUserName';
-import { extendedDayjs } from '@superset-ui/core/utils/dates';
+import {
+  extendedDayjs,
+  formatDisplayDate,
+} from '@superset-ui/core/utils/dates';
 
 const PAGE_SIZE = 25;
 const SQL_PREVIEW_MAX_LINES = 4;
@@ -235,9 +238,11 @@ function QueryList({ addDangerToast }: QueryListProps) {
           },
         }: any) => {
           const start = extendedDayjs.utc(start_time).local();
-          const formattedStartTimeData = start
-            .format(DATETIME_WITH_TIME_ZONE)
-            .split(' ');
+          const formattedStartTimeData = formatDisplayDate(
+            start,
+            DATETIME_WITH_TIME_ZONE,
+            '%Y-%m-%d %H:%M:%S',
+          ).split(' ');
 
           const formattedStartTime = (
             <>

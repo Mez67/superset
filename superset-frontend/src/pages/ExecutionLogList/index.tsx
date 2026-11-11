@@ -19,10 +19,7 @@
 
 import { t } from '@apache-superset/core/translation';
 import { css, styled } from '@apache-superset/core/theme';
-import {
-  extendedDayjs as dayjs,
-  fDuration,
-} from '@superset-ui/core/utils/dates';
+import { fDuration, formatDisplayDate } from '@superset-ui/core/utils/dates';
 import { useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Label, Tooltip } from '@superset-ui/core/components';
@@ -125,7 +122,11 @@ function ExecutionLog({
             original: { scheduled_dttm: scheduledDttm },
           },
         }: any) =>
-          dayjs(new Date(scheduledDttm)).format('YYYY-MM-DD hh:mm:ss a'),
+          formatDisplayDate(
+            new Date(scheduledDttm),
+            'YYYY-MM-DD hh:mm:ss a',
+            '%Y-%m-%d %H:%M:%S',
+          ),
         accessor: 'scheduled_dttm',
         Header: t('Scheduled at (UTC)'),
         id: 'scheduled_dttm',
@@ -137,7 +138,12 @@ function ExecutionLog({
           },
         }: {
           row: { original: AnnotationObject };
-        }) => dayjs(new Date(startDttm)).format('YYYY-MM-DD hh:mm:ss a'),
+        }) =>
+          formatDisplayDate(
+            new Date(startDttm),
+            'YYYY-MM-DD hh:mm:ss a',
+            '%Y-%m-%d %H:%M:%S',
+          ),
         Header: t('Start at (UTC)'),
         accessor: 'start_dttm',
         id: 'start_dttm',

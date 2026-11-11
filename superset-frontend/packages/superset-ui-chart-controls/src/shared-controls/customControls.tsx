@@ -44,14 +44,14 @@ import { isSortable } from '../utils/isSortable';
 // Aggregation choices with computation methods for plugins and controls
 export const aggregationChoices = {
   raw: {
-    label: 'Overall value',
+    label: t('Overall value'),
     compute: (data: number[]) => {
       if (!data.length) return null;
       return data[0];
     },
   },
   LAST_VALUE: {
-    label: 'Last Value',
+    label: t('Last Value'),
     compute: (data: number[]) => {
       if (!data.length) return null;
       return data[0];

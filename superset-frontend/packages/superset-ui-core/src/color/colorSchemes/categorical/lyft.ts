@@ -17,13 +17,14 @@
  * under the License.
  */
 
+import { t } from '@apache-superset/core/translation';
 import CategoricalScheme from '../../CategoricalScheme';
 
 // TODO: add the colors to the theme while working on SIP https://github.com/apache/superset/issues/20159
 const schemes = [
   {
     id: 'lyftColors',
-    label: 'Lyft Colors',
+    label: t('Lyft Colors'),
     colors: [
       '#EA0B8C',
       '#6C838E',

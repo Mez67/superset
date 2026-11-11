@@ -17,13 +17,14 @@
  * under the License.
  */
 
+import { t } from '@apache-superset/core/translation';
 import CategoricalScheme from '../../CategoricalScheme';
 
 // TODO: add the colors to the theme while working on SIP https://github.com/apache/superset/issues/20159
 const schemes = [
   {
     id: 'echarts4Colors',
-    label: 'ECharts v4.x Colors',
+    label: t('ECharts v4.x Colors'),
     colors: [
       '#c23531',
       '#2f4554',
@@ -40,7 +41,7 @@ const schemes = [
   },
   {
     id: 'echarts5Colors',
-    label: 'ECharts v5.x Colors',
+    label: t('ECharts v5.x Colors'),
     colors: [
       '#5470C6',
       '#91CC75',

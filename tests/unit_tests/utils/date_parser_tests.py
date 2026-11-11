@@ -1129,3 +1129,49 @@ def test_legacy_bounds_without_time_range() -> None:
         datetime(2025, 3, 15),
         datetime(2025, 4, 1),
     )
+
+
+@pytest.mark.parametrize(
+    "time_range,expected",
+    [
+        # 20 Aban 1405 -> Mehr 1405
+        ("previous calendar month", (datetime(2026, 9, 23), datetime(2026, 10, 23))),
+        ("Current month", (datetime(2026, 10, 23), datetime(2026, 11, 22))),
+        # Q3 1405 (Mehr-Azar) -> previous quarter is Q2 (Tir-Shahrivar)
+        (
+            "previous calendar quarter",
+            (datetime(2026, 6, 22), datetime(2026, 9, 23)),
+        ),
+        ("Current quarter", (datetime(2026, 9, 23), datetime(2026, 12, 22))),
+        ("previous calendar year", (datetime(2025, 3, 21), datetime(2026, 3, 21))),
+        ("Current year", (datetime(2026, 3, 21), datetime(2027, 3, 21))),
+    ],
+)
+def test_get_since_until_jalali_calendar_ranges(
+    app_context: None, time_range: str, expected: tuple[datetime, datetime]
+) -> None:
+    from flask import current_app
+
+    with (
+        patch.dict(current_app.config, {"CALENDAR": "jalali"}),
+        patch(
+            "superset.utils.date_parser.parse_human_datetime",
+            side_effect=lambda s: datetime(2026, 11, 11)
+            if s == "today"
+            else parse_human_datetime(s),
+        ),
+    ):
+        assert get_since_until(time_range) == expected
+
+
+def test_get_since_until_gregorian_calendar_ranges_unchanged(
+    app_context: None,
+) -> None:
+    from flask import current_app
+
+    with patch.dict(current_app.config, {"CALENDAR": "gregorian"}):
+        since, until = get_since_until("previous calendar month")
+    assert since is not None
+    assert until is not None
+    assert since.day == 1
+    assert until.day == 1

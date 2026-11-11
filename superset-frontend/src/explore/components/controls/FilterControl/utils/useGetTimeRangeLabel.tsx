@@ -17,6 +17,7 @@
  * under the License.
  */
 import { useEffect, useState } from 'react';
+import { t } from '@apache-superset/core/translation';
 import { NO_TIME_RANGE, fetchTimeRange } from '@superset-ui/core';
 import { Operators } from 'src/explore/constants';
 import AdhocFilter from '../AdhocFilter';
@@ -42,8 +43,9 @@ export const useGetTimeRangeLabel = (adhocFilter: AdhocFilter): Results => {
       adhocFilter.comparator === NO_TIME_RANGE
     ) {
       setActualTimeRange({
-        actualTimeRange: `${adhocFilter.subject} (${NO_TIME_RANGE})`,
-        title: NO_TIME_RANGE,
+        // NO_TIME_RANGE is the stored value; show its translated label.
+        actualTimeRange: `${adhocFilter.subject} (${t('No filter')})`,
+        title: t('No filter'),
       });
     }
 

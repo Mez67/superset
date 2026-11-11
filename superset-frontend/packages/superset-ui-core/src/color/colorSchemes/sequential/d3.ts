@@ -17,12 +17,13 @@
  * under the License.
  */
 
+import { t } from '@apache-superset/core/translation';
 import SequentialScheme from '../../SequentialScheme';
 
 const schemes = [
   {
     id: 'schemeRdBu',
-    label: 'red/blue',
+    label: t('red/blue'),
     isDiverging: true,
     colors: [
       '#67001f',
@@ -39,7 +40,7 @@ const schemes = [
   },
   {
     id: 'schemeBrBG',
-    label: 'brown/green',
+    label: t('brown/green'),
     isDiverging: true,
     colors: [
       '#543005',
@@ -56,7 +57,7 @@ const schemes = [
   },
   {
     id: 'schemePRGn',
-    label: 'purple/green',
+    label: t('purple/green'),
     isDiverging: true,
     colors: [
       '#40004b',
@@ -73,7 +74,7 @@ const schemes = [
   },
   {
     id: 'schemePiYG',
-    label: 'pink/green',
+    label: t('pink/green'),
     isDiverging: true,
     colors: [
       '#8e0152',
@@ -90,7 +91,7 @@ const schemes = [
   },
   {
     id: 'schemePuOr',
-    label: 'purple/orange',
+    label: t('purple/orange'),
     isDiverging: true,
     colors: [
       '#2d004b',
@@ -107,7 +108,7 @@ const schemes = [
   },
   {
     id: 'schemeRdGy',
-    label: 'red/gray/black',
+    label: t('red/gray/black'),
     isDiverging: true,
     colors: [
       '#67001f',
@@ -124,7 +125,7 @@ const schemes = [
   },
   {
     id: 'schemeRdYlBu',
-    label: 'red/yellow/blue',
+    label: t('red/yellow/blue'),
     colors: [
       '#a50026',
       '#d73027',
@@ -141,7 +142,7 @@ const schemes = [
   },
   {
     id: 'schemeRdYlGn',
-    label: 'red/yellow/green',
+    label: t('red/yellow/green'),
     colors: [
       '#a50026',
       '#d73027',
@@ -158,7 +159,7 @@ const schemes = [
   },
   {
     id: 'schemeSpectral',
-    label: 'rainbow',
+    label: t('rainbow'),
     colors: [
       '#9e0142',
       '#d53e4f',
@@ -174,7 +175,7 @@ const schemes = [
   },
   {
     id: 'schemeBlues',
-    label: 'blues',
+    label: t('blues'),
     colors: [
       '#b5d4e9',
       '#93c3df',
@@ -188,7 +189,7 @@ const schemes = [
   },
   {
     id: 'schemeGreens',
-    label: 'greens',
+    label: t('greens'),
     colors: [
       '#b7e2b1',
       '#97d494',
@@ -202,7 +203,7 @@ const schemes = [
   },
   {
     id: 'schemeGrays',
-    label: 'grays',
+    label: t('grays'),
     colors: [
       '#cecece',
       '#b4b4b4',
@@ -216,7 +217,7 @@ const schemes = [
   },
   {
     id: 'schemeOranges',
-    label: 'oranges',
+    label: t('oranges'),
     colors: [
       '#fdc28c',
       '#fda762',
@@ -230,7 +231,7 @@ const schemes = [
   },
   {
     id: 'schemePurples',
-    label: 'purples',
+    label: t('purples'),
     colors: [
       '#cecee5',
       '#b6b5d8',
@@ -244,7 +245,7 @@ const schemes = [
   },
   {
     id: 'schemeReds',
-    label: 'reds',
+    label: t('reds'),
     colors: [
       '#fcaa8e',
       '#fc8a6b',
@@ -258,7 +259,7 @@ const schemes = [
   },
   {
     id: 'schemeViridis',
-    label: 'Viridis',
+    label: t('Viridis'),
     colors: [
       '#482475',
       '#414487',
@@ -274,7 +275,7 @@ const schemes = [
   },
   {
     id: 'schemeInferno',
-    label: 'Inferno',
+    label: t('Inferno'),
     colors: [
       '#160b39',
       '#420a68',
@@ -290,7 +291,7 @@ const schemes = [
   },
   {
     id: 'schemeMagma',
-    label: 'Magma',
+    label: t('Magma'),
     colors: [
       '#140e36',
       '#3b0f70',
@@ -306,7 +307,7 @@ const schemes = [
   },
   {
     id: 'schemeWarm',
-    label: 'Warm',
+    label: t('Warm'),
     colors: [
       '#963db3',
       '#bf3caf',
@@ -322,7 +323,7 @@ const schemes = [
   },
   {
     id: 'schemeCool',
-    label: 'Cool',
+    label: t('Cool'),
     colors: [
       '#6054c8',
       '#4c6edb',
@@ -338,7 +339,7 @@ const schemes = [
   },
   {
     id: 'schemeCubehelixDefault',
-    label: 'Cube Helix',
+    label: t('Cube Helix'),
     colors: [
       '#1a1530',
       '#163d4e',
@@ -354,7 +355,7 @@ const schemes = [
   },
   {
     id: 'schemeBuGn',
-    label: 'blue/green',
+    label: t('blue/green'),
     colors: [
       '#b7e4da',
       '#8fd3c1',
@@ -368,7 +369,7 @@ const schemes = [
   },
   {
     id: 'schemeBuPu',
-    label: 'blue/purple',
+    label: t('blue/purple'),
     colors: [
       '#b2cae1',
       '#9cb3d5',
@@ -382,7 +383,7 @@ const schemes = [
   },
   {
     id: 'schemeGnBu',
-    label: 'green/blue',
+    label: t('green/blue'),
     colors: [
       '#bde5bf',
       '#9ed9bb',
@@ -396,7 +397,7 @@ const schemes = [
   },
   {
     id: 'schemeOrRd',
-    label: 'orange/red',
+    label: t('orange/red'),
     colors: [
       '#fdca94',
       '#fdb07a',
@@ -410,7 +411,7 @@ const schemes = [
   },
   {
     id: 'schemePuBuGn',
-    label: 'purple/blue/green',
+    label: t('purple/blue/green'),
     colors: [
       '#bec9e2',
       '#98b9d9',
@@ -424,7 +425,7 @@ const schemes = [
   },
   {
     id: 'schemePuBu',
-    label: 'purple/blue',
+    label: t('purple/blue'),
     colors: [
       '#bfc9e2',
       '#9bb9d9',
@@ -438,7 +439,7 @@ const schemes = [
   },
   {
     id: 'schemePuRd',
-    label: 'purple/red',
+    label: t('purple/red'),
     colors: [
       '#d0aad2',
       '#d08ac2',
@@ -452,7 +453,7 @@ const schemes = [
   },
   {
     id: 'schemeRdPu',
-    label: 'red/purple',
+    label: t('red/purple'),
     colors: [
       '#fbb5bc',
       '#f993b0',
@@ -466,7 +467,7 @@ const schemes = [
   },
   {
     id: 'schemeYlGnBu',
-    label: 'yellow/green/blue',
+    label: t('yellow/green/blue'),
     colors: [
       '#d5eeb3',
       '#a9ddb7',
@@ -481,7 +482,7 @@ const schemes = [
   },
   {
     id: 'schemeYlGn',
-    label: 'yellow/green',
+    label: t('yellow/green'),
     colors: [
       '#e4f4ac',
       '#c7e89b',
@@ -496,7 +497,7 @@ const schemes = [
   },
   {
     id: 'schemeYlOrBr',
-    label: 'yellow/orange/brown',
+    label: t('yellow/orange/brown'),
     colors: [
       '#feeaa1',
       '#fed676',
@@ -511,7 +512,7 @@ const schemes = [
   },
   {
     id: 'schemeYlOrRd',
-    label: 'yellow/orange/red',
+    label: t('yellow/orange/red'),
     colors: [
       '#fee087',
       '#fec965',

@@ -17,7 +17,10 @@
  * under the License.
  */
 import { Fragment, useMemo, useCallback, RefObject, createRef } from 'react';
-import { extendedDayjs } from '@superset-ui/core/utils/dates';
+import {
+  extendedDayjs,
+  formatCalendarDate,
+} from '@superset-ui/core/utils/dates';
 import { useDispatch } from 'react-redux';
 import ReactDiffViewer from 'react-diff-viewer-continued';
 import { useInView } from 'react-intersection-observer';
@@ -179,12 +182,12 @@ const OverrideConfirmModal = ({ overwriteConfirmMetadata }: Props) => {
                     newValue={newValue}
                     leftTitle={t(
                       'Last Updated %s by %s',
-                      extendedDayjs
-                        .utc(overwriteConfirmMetadata.updatedAt)
-                        .calendar(),
+                      formatCalendarDate(
+                        extendedDayjs.utc(overwriteConfirmMetadata.updatedAt),
+                      ),
                       overwriteConfirmMetadata.updatedBy,
                     )}
-                    rightTitle="new value"
+                    rightTitle={t('New value')}
                   />
                 </Fragment>
               ),

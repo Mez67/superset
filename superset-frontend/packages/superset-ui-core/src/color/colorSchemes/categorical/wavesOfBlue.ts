@@ -17,6 +17,7 @@
  * under the License.
  */
 
+import { t } from '@apache-superset/core/translation';
 import CategoricalScheme from '../../CategoricalScheme';
 import { ColorSchemeGroup } from '../../types';
 
@@ -24,7 +25,7 @@ import { ColorSchemeGroup } from '../../types';
 const schemes = [
   {
     id: 'wavesOfBlue',
-    label: 'Waves of blue',
+    label: t('Waves of blue'),
     group: ColorSchemeGroup.Featured,
     colors: [
       '#070061',

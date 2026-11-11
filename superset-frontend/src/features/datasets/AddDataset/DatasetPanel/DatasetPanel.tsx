@@ -181,7 +181,7 @@ const DEFAULT_PAGE_SIZE = 25;
 // Define the columns for Table instance
 export const tableColumnDefinition: ColumnsType<ITableColumn> = [
   {
-    title: 'Column Name',
+    title: t('Column Name'),
     dataIndex: 'name',
     key: 'name',
     sorter: (a: ITableColumn, b: ITableColumn) => a.name.localeCompare(b.name),

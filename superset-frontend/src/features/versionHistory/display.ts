@@ -17,7 +17,10 @@
  * under the License.
  */
 import { t, tn } from '@apache-superset/core/translation';
-import { extendedDayjs } from '@superset-ui/core/utils/dates';
+import {
+  extendedDayjs,
+  formatDisplayDate,
+} from '@superset-ui/core/utils/dates';
 import type {
   ActivityChangedBy,
   ActivityEntityKind,
@@ -33,12 +36,16 @@ export function parseIssuedAt(issuedAt: string) {
 
 /** e.g. "Dec 5, 2025, 5:18 PM" */
 export function formatVersionDateTime(issuedAt: string): string {
-  return parseIssuedAt(issuedAt).format('MMM D, YYYY, h:mm A');
+  return formatDisplayDate(
+    parseIssuedAt(issuedAt),
+    'MMM D, YYYY, h:mm A',
+    '%-d %B %Y، %H:%M',
+  );
 }
 
 /** e.g. "Dec 5" — used for fork (copy) names. */
 export function formatVersionMonthDay(issuedAt: string): string {
-  return parseIssuedAt(issuedAt).format('MMM D');
+  return formatDisplayDate(parseIssuedAt(issuedAt), 'MMM D', '%-d %B');
 }
 
 /** Compact datetime for row meta lines, per design spec. */
@@ -46,7 +53,7 @@ export const SHORT_DATETIME_FORMAT = 'M/D/YYYY h:mmA';
 
 /** e.g. "12/5/2025 2:35PM" */
 export function formatVersionDateTimeShort(issuedAt: string): string {
-  return parseIssuedAt(issuedAt).format(SHORT_DATETIME_FORMAT);
+  return formatDisplayDate(parseIssuedAt(issuedAt), SHORT_DATETIME_FORMAT);
 }
 
 export function formatAuthor(changedBy: ActivityChangedBy | null): string {

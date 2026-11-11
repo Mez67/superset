@@ -67,7 +67,7 @@ export const DEFAULT_ANNOTATION_TYPE = ANNOTATION_TYPES.FORMULA;
 export const ANNOTATION_SOURCE_TYPES_METADATA = {
   NATIVE: {
     value: 'NATIVE',
-    label: 'Superset annotation',
+    label: t('Superset annotation'),
   },
 };
 

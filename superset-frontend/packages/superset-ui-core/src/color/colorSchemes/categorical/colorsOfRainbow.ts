@@ -17,6 +17,7 @@
  * under the License.
  */
 
+import { t } from '@apache-superset/core/translation';
 import CategoricalScheme from '../../CategoricalScheme';
 import { ColorSchemeGroup } from '../../types';
 
@@ -24,7 +25,7 @@ import { ColorSchemeGroup } from '../../types';
 const schemes = [
   {
     id: 'colorsOfRainbow',
-    label: 'Colors of rainbow',
+    label: t('Colors of rainbow'),
     group: ColorSchemeGroup.Featured,
     colors: [
       '#41ED86',

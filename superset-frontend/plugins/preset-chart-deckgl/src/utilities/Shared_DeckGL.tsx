@@ -68,15 +68,15 @@ type MetricControlValue = {
 export const DEFAULT_DECKGL_TILES: DeckGLTileChoice[] = [
   [
     'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-    'Light (Carto)',
+    t('Light (Carto)'),
   ],
   [
     'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-    'Dark (Carto)',
+    t('Dark (Carto)'),
   ],
   [
     'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-    'Streets (Carto)',
+    t('Streets (Carto)'),
   ],
   ['https://tiles.openfreemap.org/styles/liberty', 'Liberty (OpenFreeMap)'],
   [OSM_TILE_STYLE_URL, 'Streets (OSM)'],

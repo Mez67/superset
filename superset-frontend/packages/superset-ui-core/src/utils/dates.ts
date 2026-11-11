@@ -132,3 +132,48 @@ export const formatLocalDateTime = (utcDttm: ConfigType): string | null => {
   }
   return parsed.local().format('L LTS');
 };
+
+type DisplayDateInput = ConfigType | Dayjs;
+
+const toDayjs = (value: DisplayDateInput): Dayjs =>
+  dayjs.isDayjs(value) ? (value as Dayjs) : dayjs(value as ConfigType);
+
+/**
+ * Format a timestamp for display in the active calendar.
+ *
+ * `gregorianFormat` is the dayjs format used with the Gregorian calendar;
+ * `jalaliFormat` is the d3 format used with the Jalali calendar. Both render
+ * the value's local time, like the dayjs instance passed in.
+ */
+export const formatDisplayDate = (
+  value: DisplayDateInput,
+  gregorianFormat: string,
+  jalaliFormat = '%Y/%m/%d %H:%M',
+): string => {
+  const date = toDayjs(value);
+  if (!date.isValid()) {
+    return '';
+  }
+  if (getCalendarSystem() === 'jalali') {
+    return getTimeFormatter(`${LOCAL_PREFIX}${jalaliFormat}`)(date.toDate());
+  }
+  return date.format(gregorianFormat);
+};
+
+/**
+ * Relative calendar wording ("Today at 2:30 PM", "Yesterday at ...") for
+ * recent timestamps; older ones fall back to a date in the active calendar.
+ */
+export const formatCalendarDate = (value: DisplayDateInput): string => {
+  const date = toDayjs(value);
+  if (!date.isValid()) {
+    return '';
+  }
+  const daysAway = Math.abs(
+    dayjs().startOf('day').diff(date.startOf('day'), 'day'),
+  );
+  if (getCalendarSystem() === 'jalali' && daysAway >= 7) {
+    return formatDisplayDate(date, 'L', '%Y/%m/%d');
+  }
+  return (date as ExtendedDayjs).calendar();
+};

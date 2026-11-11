@@ -19,7 +19,7 @@
 import { useState } from 'react';
 import { t } from '@apache-superset/core/translation';
 import { styled } from '@apache-superset/core/theme';
-import { extendedDayjs } from '@superset-ui/core/utils/dates';
+import { formatDisplayDate } from '@superset-ui/core/utils/dates';
 import { Icons } from '@superset-ui/core/components';
 import type { SessionLogEntry } from './types';
 import { SHORT_DATETIME_FORMAT } from './display';
@@ -156,7 +156,7 @@ export default function CurrentVersionSection({
           {restoreNotice && <EntryLabel>{restoreNotice}</EntryLabel>}
           {entries.map(entry => {
             // Session log timestamps are local epoch milliseconds.
-            const time = extendedDayjs(entry.ts).format(SHORT_DATETIME_FORMAT);
+            const time = formatDisplayDate(entry.ts, SHORT_DATETIME_FORMAT);
             return (
               <div key={`${entry.controlName}-${entry.ts}`}>
                 <EntryLabel>{entry.label}</EntryLabel>

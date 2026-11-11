@@ -17,6 +17,7 @@
  * under the License.
  */
 
+import { t } from '@apache-superset/core/translation';
 import CategoricalScheme from '../../CategoricalScheme';
 import { ColorSchemeGroup } from '../../types';
 
@@ -24,7 +25,7 @@ import { ColorSchemeGroup } from '../../types';
 const schemes = [
   {
     id: 'supersetColors',
-    label: 'Superset Colors',
+    label: t('Superset Colors'),
     group: ColorSchemeGroup.Featured,
     colors: [
       // Full color

@@ -21,7 +21,7 @@ import { useEffect, useState, FunctionComponent } from 'react';
 import { t } from '@apache-superset/core/translation';
 import { styled, css, useTheme } from '@apache-superset/core/theme';
 import { Dayjs } from 'dayjs';
-import { extendedDayjs } from '../../utils/dates';
+import { extendedDayjs, formatCalendarDate } from '../../utils/dates';
 import 'dayjs/plugin/updateLocale';
 import 'dayjs/plugin/calendar';
 import { Icons } from '../Icons';
@@ -64,7 +64,10 @@ export const LastUpdated: FunctionComponent<LastUpdatedProps> = ({
 
   return (
     <TextStyles>
-      {t('Last Updated %s', timeSince.isValid() ? timeSince.calendar() : '--')}
+      {t(
+        'Last Updated %s',
+        timeSince.isValid() ? formatCalendarDate(timeSince) : '--',
+      )}
       {update && (
         <Icons.SyncOutlined
           css={css`

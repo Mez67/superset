@@ -1074,7 +1074,7 @@ function AnnotationLayer({
               <ControlHeader label={t('Color')} />
               <ColorPicker
                 value={color}
-                presets={[{ label: 'Theme colors', colors: schemeColors }]}
+                presets={[{ label: t('Theme colors'), colors: schemeColors }]}
                 onChangeComplete={colorValue =>
                   setColor(colorValue.toHexString())
                 }

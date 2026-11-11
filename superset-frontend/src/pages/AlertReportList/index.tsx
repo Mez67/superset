@@ -26,7 +26,10 @@ import {
   getExtensionsRegistry,
 } from '@superset-ui/core';
 import { css, styled } from '@apache-superset/core/theme';
-import { extendedDayjs } from '@superset-ui/core/utils/dates';
+import {
+  extendedDayjs,
+  formatDisplayDate,
+} from '@superset-ui/core/utils/dates';
 import {
   Tooltip,
   ConfirmStatusChange,
@@ -336,10 +339,11 @@ function AlertList({
           },
         }: any) =>
           lastEvalDttm
-            ? extendedDayjs
-                .utc(lastEvalDttm)
-                .local()
-                .format(DATETIME_WITH_TIME_ZONE)
+            ? formatDisplayDate(
+                extendedDayjs.utc(lastEvalDttm).local(),
+                DATETIME_WITH_TIME_ZONE,
+                '%Y-%m-%d %H:%M:%S',
+              )
             : '',
         accessor: 'last_eval_dttm',
         Header: t('Last run'),

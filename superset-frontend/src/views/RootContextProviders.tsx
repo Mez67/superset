@@ -26,6 +26,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DynamicPluginProvider } from 'src/components';
 import { EmbeddedUiConfigProvider } from 'src/components/UiConfigContext';
 import { SupersetThemeProvider } from 'src/theme/ThemeProvider';
+import AntdLocaleProvider from 'src/components/AntdLocaleProvider';
 import { ThemeController } from 'src/theme/ThemeController';
 import { store } from './store';
 import '../preamble';
@@ -43,31 +44,33 @@ export const RootContextProviders: React.FC<{ children?: React.ReactNode }> = ({
 
   return (
     <SupersetThemeProvider themeController={themeController}>
-      <ReduxProvider store={store}>
-        {/* @ts-expect-error react-dnd types not updated for React 18 */}
-        <DndProvider backend={HTML5Backend}>
-          <EmbeddedUiConfigProvider>
-            <DynamicPluginProvider>
-              <QueryParamProvider
-                adapter={ReactRouter5Adapter}
-                options={{
-                  searchStringToObject: querystring.parse,
-                  objectToSearchString: (object: Record<string, any>) =>
-                    querystring.stringify(object, { encode: false }),
-                }}
-              >
-                {RootContextProviderExtension ? (
-                  <RootContextProviderExtension>
-                    {children}
-                  </RootContextProviderExtension>
-                ) : (
-                  children
-                )}
-              </QueryParamProvider>
-            </DynamicPluginProvider>
-          </EmbeddedUiConfigProvider>
-        </DndProvider>
-      </ReduxProvider>
+      <AntdLocaleProvider>
+        <ReduxProvider store={store}>
+          {/* @ts-expect-error react-dnd types not updated for React 18 */}
+          <DndProvider backend={HTML5Backend}>
+            <EmbeddedUiConfigProvider>
+              <DynamicPluginProvider>
+                <QueryParamProvider
+                  adapter={ReactRouter5Adapter}
+                  options={{
+                    searchStringToObject: querystring.parse,
+                    objectToSearchString: (object: Record<string, any>) =>
+                      querystring.stringify(object, { encode: false }),
+                  }}
+                >
+                  {RootContextProviderExtension ? (
+                    <RootContextProviderExtension>
+                      {children}
+                    </RootContextProviderExtension>
+                  ) : (
+                    children
+                  )}
+                </QueryParamProvider>
+              </DynamicPluginProvider>
+            </EmbeddedUiConfigProvider>
+          </DndProvider>
+        </ReduxProvider>
+      </AntdLocaleProvider>
     </SupersetThemeProvider>
   );
 };

@@ -47,7 +47,7 @@ function makeFontSizeControl(
     name,
     config: {
       type: 'SelectControl',
-      label: t(label),
+      label,
       renderTrigger: true,
       clearable: false,
       default: defaultValue,
@@ -58,28 +58,28 @@ function makeFontSizeControl(
 
 export const headerFontSize = makeFontSizeControl(
   'header_font_size',
-  'Big Number Font Size',
+  t('Big Number Font Size'),
   0.4,
   FONT_SIZE_OPTIONS_LARGE,
 );
 
 export const subtitleFontSize = makeFontSizeControl(
   'subtitle_font_size',
-  'Subtitle Font Size',
+  t('Subtitle Font Size'),
   0.15,
   FONT_SIZE_OPTIONS_SMALL,
 );
 
 export const subheaderFontSize = makeFontSizeControl(
   'subheader_font_size',
-  'Subheader Font Size',
+  t('Subheader Font Size'),
   0.15,
   FONT_SIZE_OPTIONS_SMALL,
 );
 
 export const metricNameFontSize = makeFontSizeControl(
   'metric_name_font_size',
-  'Metric Name Font Size',
+  t('Metric Name Font Size'),
   0.15,
   FONT_SIZE_OPTIONS_SMALL,
 );

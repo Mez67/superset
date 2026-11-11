@@ -17,6 +17,7 @@
  * under the License.
  */
 
+import { t } from '@apache-superset/core/translation';
 import { getCalendarTimeFormatLocale } from '../calendar';
 import { utcUtils, localTimeUtils } from '../utils/d3Time';
 import TimeFormatter from '../TimeFormatter';
@@ -81,7 +82,7 @@ export default function finestTemporalGrain(
       'Use the finest grain in an array of dates to format all dates in the array',
     formatFunc,
     id: 'finest_temporal_grain',
-    label: 'Format temporal columns with the finest grain',
+    label: t('Format temporal columns with the finest grain'),
     useLocalTime,
   });
 }

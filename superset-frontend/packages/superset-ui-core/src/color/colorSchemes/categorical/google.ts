@@ -17,13 +17,14 @@
  * under the License.
  */
 
+import { t } from '@apache-superset/core/translation';
 import CategoricalScheme from '../../CategoricalScheme';
 
 // TODO: add the colors to the theme while working on SIP https://github.com/apache/superset/issues/20159
 const schemes = [
   {
     id: 'googleCategory10c',
-    label: 'Google Category 10c',
+    label: t('Google Category 10c'),
     colors: [
       '#3366cc',
       '#dc3912',
@@ -39,7 +40,7 @@ const schemes = [
   },
   {
     id: 'googleCategory20c',
-    label: 'Google Category 20c',
+    label: t('Google Category 20c'),
     colors: [
       '#3366cc',
       '#dc3912',

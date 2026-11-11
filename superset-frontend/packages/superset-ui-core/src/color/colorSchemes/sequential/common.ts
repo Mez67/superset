@@ -17,12 +17,13 @@
  * under the License.
  */
 
+import { t } from '@apache-superset/core/translation';
 import SequentialScheme from '../../SequentialScheme';
 
 const schemes = [
   {
     id: 'blue_white_yellow',
-    label: 'blue/white/yellow',
+    label: t('blue/white/yellow'),
     colors: ['#00d1c1', 'white', '#ffb400'],
   },
   {
@@ -31,22 +32,22 @@ const schemes = [
   },
   {
     id: 'white_black',
-    label: 'white/black',
+    label: t('white/black'),
     colors: ['white', 'black'],
   },
   {
     id: 'black_white',
-    label: 'black/white',
+    label: t('black/white'),
     colors: ['black', 'white'],
   },
   {
     id: 'dark_blue',
-    label: 'dark blues',
+    label: t('dark blues'),
     colors: ['#EBF5F8', '#6BB1CC', '#357E9B', '#1B4150', '#092935'],
   },
   {
     id: 'pink_grey',
-    label: 'pink/grey',
+    label: t('pink/grey'),
     isDiverging: true,
     colors: ['#E70B81', '#FAFAFA', '#666666'],
   },
@@ -64,25 +65,25 @@ const schemes = [
   },
   {
     id: 'red_yellow_blue',
-    label: 'red/yellow/blue',
+    label: t('red/yellow/blue'),
     isDiverging: true,
     colors: ['#d7191c', '#fdae61', '#ffffbf', '#abd9e9', '#2c7bb6'],
   },
   {
     id: 'brown_white_green',
-    label: 'brown/white/green',
+    label: t('brown/white/green'),
     isDiverging: true,
     colors: ['#a6611a', '#dfc27d', '#f5f5f5', '#80cdc1', '#018571'],
   },
   {
     id: 'purple_white_green',
-    label: 'purple/white/green',
+    label: t('purple/white/green'),
     isDiverging: true,
     colors: ['#7b3294', '#c2a5cf', '#f7f7f7', '#a6dba0', '#008837'],
   },
   {
     id: 'superset_seq_1',
-    label: 'Superset Sequential #1',
+    label: t('Superset Sequential #1'),
     isDiverging: false,
     colors: [
       '#F4FAD4',
@@ -99,7 +100,7 @@ const schemes = [
   },
   {
     id: 'superset_seq_2',
-    label: 'Superset Sequential #2',
+    label: t('Superset Sequential #2'),
     isDiverging: false,
     colors: [
       '#FBF1B4',
@@ -116,7 +117,7 @@ const schemes = [
   },
   {
     id: 'superset_div_1',
-    label: 'Superset Diverging #1',
+    label: t('Superset Diverging #1'),
     isDiverging: false,
     colors: [
       '#E04355',
@@ -132,7 +133,7 @@ const schemes = [
   },
   {
     id: 'superset_div_2',
-    label: 'Superset Diverging #2',
+    label: t('Superset Diverging #2'),
     isDiverging: false,
     colors: [
       '#FF7F44',
@@ -148,7 +149,7 @@ const schemes = [
   },
   {
     id: 'preset_seq_1',
-    label: 'Preset Sequential #1',
+    label: t('Preset Sequential #1'),
     isDiverging: false,
     colors: [
       '#F3FAEB',
@@ -165,7 +166,7 @@ const schemes = [
   },
   {
     id: 'preset_seq_2',
-    label: 'Preset Sequential #2',
+    label: t('Preset Sequential #2'),
     isDiverging: false,
     colors: [
       '#FEECE8',
@@ -182,7 +183,7 @@ const schemes = [
   },
   {
     id: 'preset_div_1',
-    label: 'Preset Diverging #1',
+    label: t('Preset Diverging #1'),
     isDiverging: false,
     colors: [
       '#B17BAA',
@@ -198,7 +199,7 @@ const schemes = [
   },
   {
     id: 'preset_div_2',
-    label: 'Preset Diverging #2',
+    label: t('Preset Diverging #2'),
     isDiverging: false,
     colors: [
       '#CB5171',
@@ -214,13 +215,13 @@ const schemes = [
   },
   {
     id: 'echarts_gradient',
-    label: 'ECharts gradient',
+    label: t('ECharts gradient'),
     isDiverging: false,
     colors: ['#f6EFA6', '#D88273', '#BF444C'],
   },
   {
     id: 'deck_gl_heatmap_gradient',
-    label: 'Deck.gl Heatmap Default',
+    label: t('Deck.gl Heatmap Default'),
     colors: ['#bd0026', '#f03b20', '#fd8d3c', '#feb24c', '#fed976', '#ffffb2'],
   },
 ].map(s => new SequentialScheme(s));

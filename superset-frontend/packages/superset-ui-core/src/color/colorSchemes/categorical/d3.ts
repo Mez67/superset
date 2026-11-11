@@ -17,13 +17,14 @@
  * under the License.
  */
 
+import { t } from '@apache-superset/core/translation';
 import CategoricalScheme from '../../CategoricalScheme';
 
 // TODO: add the colors to the theme while working on SIP https://github.com/apache/superset/issues/20159
 const schemes = [
   {
     id: 'd3Category10',
-    label: 'D3 Category 10',
+    label: t('D3 Category 10'),
     colors: [
       '#1f77b4',
       '#ff7f0e',
@@ -39,7 +40,7 @@ const schemes = [
   },
   {
     id: 'd3Category20',
-    label: 'D3 Category 20',
+    label: t('D3 Category 20'),
     colors: [
       '#1f77b4',
       '#aec7e8',
@@ -65,7 +66,7 @@ const schemes = [
   },
   {
     id: 'd3Category20b',
-    label: 'D3 Category 20b',
+    label: t('D3 Category 20b'),
     colors: [
       '#393b79',
       '#5254a3',
@@ -91,7 +92,7 @@ const schemes = [
   },
   {
     id: 'd3Category20c',
-    label: 'D3 Category 20c',
+    label: t('D3 Category 20c'),
     colors: [
       '#3182bd',
       '#6baed6',
