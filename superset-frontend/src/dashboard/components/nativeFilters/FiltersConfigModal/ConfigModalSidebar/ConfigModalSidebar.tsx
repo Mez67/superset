@@ -35,6 +35,7 @@ import ItemSectionContent from './ItemSection';
 import { FilterRemoval } from '../types';
 import { FILTER_TYPE, CUSTOMIZATION_TYPE } from '../DraggableFilter';
 import { isFilterId, isChartCustomizationId, isDivider } from '../utils';
+import { dndAccessibility } from 'src/utils/dndAccessibility';
 
 // max-height constrains the sidebar so its inner Collapse can scroll when
 // there are many filters (sc-101839). The parent height chain through the
@@ -273,6 +274,7 @@ const ConfigModalSidebar: FC<ConfigModalSidebarProps> = ({
 
   return (
     <DndContext
+      accessibility={dndAccessibility()}
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragStart={handleDragStart}

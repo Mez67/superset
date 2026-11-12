@@ -67,6 +67,7 @@ import {
   DragOverlayContent,
 } from './components';
 import { VirtualizedTreeList } from './VirtualizedTreeList';
+import { dndAccessibility } from 'src/utils/dndAccessibility';
 
 export default function FoldersEditor({
   folders: initialFolders,
@@ -622,6 +623,7 @@ export default function FoldersEditor({
       />
       <FoldersContent ref={contentRef}>
         <DndContext
+          accessibility={dndAccessibility()}
           sensors={sensors}
           collisionDetection={collisionDetection}
           measuring={measuringConfig}

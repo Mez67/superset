@@ -23,7 +23,6 @@ import {
   ControlSubSectionHeader,
   D3_TIME_FORMAT_DOCS,
   DEFAULT_TIME_FORMAT,
-  formatSelectOptions,
   getStandardizedControls,
   sharedControls,
 } from '@superset-ui/chart-controls';
@@ -218,13 +217,13 @@ const config: ControlPanelConfig = {
             config: {
               type: 'SelectControl',
               label: t('X Tick Layout'),
-              choices: formatSelectOptions([
-                'auto',
-                'flat',
-                '45°',
-                '90°',
-                'staggered',
-              ]),
+              choices: [
+                ['auto', t('auto')],
+                ['flat', t('flat')],
+                ['45°', '45°'],
+                ['90°', '90°'],
+                ['staggered', t('staggered')],
+              ],
               default: 'auto',
               clearable: false,
               renderTrigger: true,

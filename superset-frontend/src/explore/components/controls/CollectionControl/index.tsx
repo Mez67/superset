@@ -47,6 +47,7 @@ import {
 import ControlHeader from 'src/explore/components/ControlHeader';
 import CustomListItem from 'src/explore/components/controls/CustomListItem';
 import controlMap from '..';
+import { dndAccessibility } from 'src/utils/dndAccessibility';
 
 interface CollectionItem {
   key?: string;
@@ -302,6 +303,7 @@ function CollectionControl({
     }
     return (
       <DndContext
+        accessibility={dndAccessibility()}
         sensors={sensors}
         collisionDetection={closestCenter}
         modifiers={[restrictToVerticalAxis]}

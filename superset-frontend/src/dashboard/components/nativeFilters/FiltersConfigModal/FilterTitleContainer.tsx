@@ -34,6 +34,7 @@ import {
 } from '@dnd-kit/sortable';
 import { FilterRemoval } from './types';
 import DraggableFilter from './DraggableFilter';
+import { dndAccessibility } from 'src/utils/dndAccessibility';
 
 export const FilterTitle = styled.div`
   ${({ theme }) => `
@@ -235,6 +236,7 @@ const FilterTitleContainer = forwardRef<HTMLDivElement, Props>(
         isDragging={isDragging}
       >
         <DndContext
+          accessibility={dndAccessibility()}
           sensors={[sensor]}
           collisionDetection={closestCenter}
           onDragStart={handleDragStart}

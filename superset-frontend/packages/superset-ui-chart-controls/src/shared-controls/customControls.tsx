@@ -58,25 +58,25 @@ export const aggregationChoices = {
     },
   },
   sum: {
-    label: 'Total (Sum)',
+    label: t('Total (Sum)'),
     compute: (data: number[]) =>
       data.length ? data.reduce((a, b) => a + b, 0) : null,
   },
   mean: {
-    label: 'Average (Mean)',
+    label: t('Average (Mean)'),
     compute: (data: number[]) =>
       data.length ? data.reduce((a, b) => a + b, 0) / data.length : null,
   },
   min: {
-    label: 'Minimum',
+    label: t('Minimum'),
     compute: (data: number[]) => (data.length ? Math.min(...data) : null),
   },
   max: {
-    label: 'Maximum',
+    label: t('Maximum'),
     compute: (data: number[]) => (data.length ? Math.max(...data) : null),
   },
   median: {
-    label: 'Median',
+    label: t('Median'),
     compute: (data: number[]) => {
       if (!data.length) return null;
       const sorted = [...data].sort((a, b) => a - b);

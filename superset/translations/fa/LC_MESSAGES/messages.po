@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Superset VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-11 11:36+0000\n"
+"POT-Creation-Date: 2026-11-12 17:15+0000\n"
 "PO-Revision-Date: 2024-10-20 00:07+0330\n"
 "Last-Translator: Emad Rad <codewithemad@gmail.com>\n"
 "Language: fa\n"
@@ -709,6 +709,10 @@ msgstr "%s — برای بازگشت روی نمودار کلیک کنید"
 msgid "%s%s"
 msgstr "%s%s"
 
+#: superset-frontend/src/features/alerts/components/NotificationMethod.tsx
+msgid "(Bot not in channel)"
+msgstr "(ربات در کانال نیست)"
+
 msgid "(Removed)"
 msgstr ""
 "Dear assistant, your task doesn't contain any text for translation. "
@@ -925,6 +929,7 @@ msgstr "۱۰ ثانیه"
 msgid "10/90 percentiles"
 msgstr "صدک‌های ۱۰/۹۰"
 
+#. do-not-translate
 msgid "10000"
 msgstr "10000"
 
@@ -1565,7 +1570,7 @@ msgstr "آوریل"
 # de, es, fr, ja, lv, mi, nl, pl, pt_BR, ro, ru, sk, sl, sr, sr_Latn, tr, uk,
 # zh, zh_TW]
 msgid "AQE"
-msgstr "AQE"
+msgstr "ناهمگام"
 
 msgid "AUG"
 msgstr "آگوست"
@@ -3163,6 +3168,9 @@ msgstr "حالت‌های مرتب‌سازی در دسترس:"
 msgid "Average"
 msgstr "میانگین"
 
+msgid "Average (Mean)"
+msgstr "میانگین"
+
 msgid "Average value"
 msgstr "ارزش میانگین"
 
@@ -3462,6 +3470,10 @@ msgstr "معیار اندازه حباب باید نامنفی باشد"
 
 msgid "Bucket break points"
 msgstr "نقاط شکسته سطل"
+
+#: superset-frontend/src/features/home/RightMenu.tsx
+msgid "Build"
+msgstr "ساخت"
 
 msgid "Bulk select"
 msgstr "انتخاب گروهی"
@@ -5681,12 +5693,17 @@ msgstr "تاریخ و زمان"
 msgid "DB column %(col_name)s has unknown type: %(value_type)s"
 msgstr "ستون پایگاه داده %(col_name)s نوع ناشناخته دارد: %(value_type)s"
 
+#: superset-frontend/src/components/ErrorMessage/DatabaseErrorMessage.tsx
+msgid "DB engine"
+msgstr "موتور پایگاه داده"
+
 msgid "DD/MM format dates, international and European format"
 msgstr "تاریخ‌ها به فرمت DD/MM، فرمت بین‌المللی و اروپایی"
 
 msgid "DEC"
 msgstr "دسامبر"
 
+#. do-not-translate
 msgid "DELETE"
 msgstr "حذف"
 
@@ -7063,6 +7080,26 @@ msgstr ""
 msgid "Drag to reorder"
 msgstr "برای تغییر ترتیب بکشید"
 
+#, python-format
+msgid "Draggable item %s is no longer over a droppable area."
+msgstr "مورد %s دیگر روی ناحیه‌ای برای رها کردن نیست."
+
+#, python-format
+msgid "Draggable item %s was dropped over droppable area %s."
+msgstr "مورد %s در ناحیه %s رها شد."
+
+#, python-format
+msgid "Draggable item %s was dropped."
+msgstr "مورد %s رها شد."
+
+#, python-format
+msgid "Draggable item %s was moved over droppable area %s."
+msgstr "مورد %s به روی ناحیه %s برده شد."
+
+#, python-format
+msgid "Dragging was cancelled. Draggable item %s was dropped."
+msgstr "جابه‌جایی لغو شد. مورد %s رها شد."
+
 msgid "Draw a marker on data points. Only applicable for line types."
 msgstr "نشان‌گذاری بر روی نقاط داده. فقط برای انواع خطی قابل‌اجرا است."
 
@@ -7260,6 +7297,7 @@ msgstr "به‌صورت پویا تمام مقادیر فیلتر را جستج�
 msgid "Dynamically select grouping columns from a dataset"
 msgstr "انتخاب پویای ستون‌های گروه‌بندی از یک مجموعه داده"
 
+#. do-not-translate
 msgid "ECharts"
 msgstr "ای نمودارس"
 
@@ -7277,6 +7315,7 @@ msgstr "رنگ‌های ECharts v4.x"
 msgid "ECharts v5.x Colors"
 msgstr "رنگ‌های ECharts v5.x"
 
+#. do-not-translate
 msgid "EMAIL_REPORTS_CTA"
 msgstr "ایمیل گزارشات"
 
@@ -8362,6 +8401,10 @@ msgstr ""
 msgid "Failed to fetch API keys"
 msgstr "دریافت کلیدهای API ناموفق بود"
 
+#: superset-frontend/src/pages/UserInfo/index.tsx
+msgid "Failed to fetch user info"
+msgstr "دریافت اطلاعات کاربر ممکن نشد"
+
 msgid "Failed to generate chart edit URL"
 msgstr "عدم توانایی در تولید URL ویرایش نمودار"
 
@@ -9067,6 +9110,7 @@ msgstr "سفارشی‌سازی بیشتر نحوه نمایش هر ستون"
 msgid "Further customize how to display each metric"
 msgstr "نحوه نمایش هر معیار را بیشتر سفارشی‌سازی کنید."
 
+#. do-not-translate
 msgid "GROUP BY"
 msgstr "گروه‌بندی"
 
@@ -10098,6 +10142,14 @@ msgstr ""
 
 msgid "Kilometers"
 msgstr "کیلومترها"
+
+#: superset-frontend/plugins/preset-chart-deckgl/src/layers/Heatmap/Heatmap.tsx
+msgid "LAT"
+msgstr "عرض جغرافیایی"
+
+#: superset-frontend/plugins/preset-chart-deckgl/src/layers/Heatmap/Heatmap.tsx
+msgid "LON"
+msgstr "طول جغرافیایی"
 
 msgid "Label"
 msgstr "برچسب"
@@ -11511,6 +11563,7 @@ msgstr "معیار من"
 msgid "N/A"
 msgstr "غیرقابل انتشار"
 
+#. do-not-translate
 msgid "NOT GROUPED BY"
 msgstr "غیر گروه‌بندی شده توسط"
 
@@ -12061,6 +12114,10 @@ msgstr "ایجاد نشده است"
 msgid "Not up to date"
 msgstr "به‌روز نیست"
 
+#: superset-frontend/plugins/preset-chart-deckgl/src/layers/Heatmap/Heatmap.tsx
+msgid "Note"
+msgstr "یادداشت"
+
 msgid "Nothing here yet"
 msgstr "هنوز چیزی اینجا نیست"
 
@@ -12213,6 +12270,7 @@ msgstr "باشه"
 msgid "OR"
 msgstr "یا"
 
+#. do-not-translate
 msgid "OVERWRITE"
 msgstr "بازنویسی"
 
@@ -12916,6 +12974,10 @@ msgstr ""
 
 msgid "Pick your favorite markup language"
 msgstr "زبان نشانه‌گذاری مورد علاقه خود را انتخاب کنید"
+
+#, python-format
+msgid "Picked up draggable item %s."
+msgstr "مورد %s برداشته شد."
 
 msgid "Pie Chart"
 msgstr "نمودار دایره‌ای"
@@ -14446,6 +14508,10 @@ msgstr "سَت"
 
 msgid "SEP"
 msgstr "سپتامبر"
+
+#: superset-frontend/src/features/home/RightMenu.tsx
+msgid "SHA"
+msgstr "SHA"
 
 msgid "SQL"
 msgstr "اس کیو ال"
@@ -16286,6 +16352,10 @@ msgstr "متأسفم، مشکلی پیش آمد. غیر فعال کردن جاس
 msgid "Sorry, something went wrong. Please try again."
 msgstr "متأسفم، مشکلی پیش آمده است. لطفاً دوباره تلاش کنید."
 
+#: superset-frontend/src/dashboard/components/EmbeddedModal/index.tsx
+msgid "Sorry, something went wrong. The changes could not be saved."
+msgstr "متأسفانه مشکلی پیش آمد و تغییرات ذخیره نشد."
+
 msgid "Sorry, something went wrong. Try again later."
 msgstr "متأسفم، مشکلی پیش آمده است. بعداً تلاش کنید."
 
@@ -16632,6 +16702,10 @@ msgstr "رنگ خط"
 msgid "Stroke Width"
 msgstr "عرض خط"
 
+#: superset-frontend/src/explore/components/controls/ContourControl/ContourOption.tsx
+msgid "Stroke Width:"
+msgstr "ضخامت خط:"
+
 msgid "Stroked"
 msgstr "خط خورده"
 
@@ -16777,6 +16851,10 @@ msgstr "حاشیه‌نویسی Superset"
 msgid "Superset chart"
 msgstr "نمودار سوپرست"
 
+#: superset-frontend/src/dashboard/components/Header/useHeaderActionsDropdownMenu.tsx
+msgid "Superset dashboard"
+msgstr "داشبورد Superset"
+
 msgid "Superset docs link"
 msgstr "پیوند مستندات Superset"
 
@@ -16877,6 +16955,7 @@ msgstr "پوسته پیش‌فرض سیستم حذف شد"
 msgid "TABLES"
 msgstr "جدول‌ها"
 
+#. do-not-translate
 msgid "TEMPORAL_RANGE"
 msgstr "محدوده_زمانی"
 
@@ -19683,8 +19762,8 @@ msgstr "این نوع مشاهده پشتیبانی نمی‌شود."
 
 msgid "This was triggered by:"
 msgid_plural "This may be triggered by:"
-msgstr[0] "این  مورد تریاژ شده توسط:"
-msgstr[1] ""
+msgstr[0] "علت این خطا:"
+msgstr[1] "این خطا ممکن است ناشی از این موارد باشد:"
 
 # Machine-translated via backfill_po.py (claude-sonnet-4-6) [refs: de, sr,
 # sr_Latn]
@@ -19965,6 +20044,15 @@ msgstr "برای فیلتر کردن روی یک معیار، از تب SQL سف
 msgid "To get a readable URL for your dashboard"
 msgstr "برای دریافت یک URL قابل خواندن برای داشبورد شما"
 
+msgid ""
+"To pick up a draggable item, press the space bar. While dragging, use the"
+" arrow keys to move the item. Press space bar again to drop the item in "
+"its new position, or press escape to cancel."
+msgstr ""
+"برای برداشتن یک مورد قابل جابه‌جایی، کلید فاصله را بزنید. هنگام "
+"جابه‌جایی، با کلیدهای جهت‌نما آن را حرکت دهید. برای رها کردن مورد در جای "
+"جدید دوباره کلید فاصله را بزنید، یا برای لغو کلید Escape را بزنید."
+
 msgid "To request access, contact your Superset administrator."
 msgstr "برای درخواست دسترسی با مدیر Superset تماس بگیرید."
 
@@ -20052,6 +20140,9 @@ msgstr "مجموع"
 #, python-format
 msgid "Total (%(aggfunc)s)"
 msgstr "مجموع (%(aggfunc)s)"
+
+msgid "Total (Sum)"
+msgstr "مجموع"
 
 msgid ""
 "Total angle covered by the chart, in degrees. 360° draws a full circle "
@@ -21289,9 +21380,11 @@ msgstr "نوع بصری"
 msgid "WED"
 msgstr "چهارشنبه"
 
+#. do-not-translate
 msgid "WFS"
 msgstr "WFS"
 
+#. do-not-translate
 msgid "WMS"
 msgstr "WMS"
 
@@ -21879,6 +21972,7 @@ msgstr "محور X"
 msgid "X-scale interval"
 msgstr "فاصله مقیاس X"
 
+#. do-not-translate
 msgid "XYZ"
 msgstr "XYZ"
 
@@ -22524,6 +22618,10 @@ msgstr "[بی‌نام]"
 msgid "[asc]"
 msgstr "[صعودی]"
 
+#: superset-frontend/src/dashboard/components/SaveModal.tsx
+msgid "[copy]"
+msgstr "[رونوشت]"
+
 msgid "[dashboard name]"
 msgstr "[نام داشبورد]"
 
@@ -22537,6 +22635,10 @@ msgid ""
 msgstr ""
 "این معیار ثانویه برای تعریف رنگ به عنوان یک نسبت در برابر معیار اولیه "
 "استفاده می‌شود. زمانی که حذف شود، رنگ دسته‌ای و مبتنی بر برچسب‌ها است."
+
+#: superset-frontend/src/explore/components/controls/withAsyncVerification.tsx
+msgid "[unknown error]"
+msgstr "[خطای ناشناخته]"
 
 # Machine-translated via backfill_po.py (claude-sonnet-4-6) [refs: cs, de, ja,
 # lv, ru, sk, sr, sr_Latn, tr, uk]
@@ -22617,6 +22719,10 @@ msgstr "هشدارها"
 msgid "all"
 msgstr "همه"
 
+#: superset-frontend/src/features/semanticViews/AddSemanticViewModal.tsx
+msgid "already added"
+msgstr "قبلاً اضافه شده"
+
 msgid "also copy (duplicate) charts"
 msgstr "همچنین نمودارها را کپی (تکرار) کنید."
 
@@ -22691,6 +22797,7 @@ msgstr "آبی/سفید/زرد"
 msgid "blues"
 msgstr "آبی‌ها"
 
+#. do-not-translate
 msgid "bolt"
 msgstr "بولت"
 
@@ -22754,6 +22861,10 @@ msgstr "کد ISO ۳۱۶۶-۱ الفا-۳ (cca3)"
 msgid "code International Olympic Committee (cioc)"
 msgstr "کد کمیته بین‌المللی المپیک (cioc)"
 
+#: superset-frontend/src/explore/components/controls/ContourControl/ContourOption.tsx
+msgid "color"
+msgstr "رنگ"
+
 msgid "color scheme for comparison"
 msgstr "طرح رنگ برای مقایسه"
 
@@ -22773,6 +22884,10 @@ msgstr "شامل"
 msgid "content type"
 msgstr "نوع محتوا"
 
+#: superset-frontend/src/explore/components/DataTablesPane/components/useGridResultTable.tsx
+msgid "contribution"
+msgstr "سهم"
+
 msgid "count"
 msgstr "شمارش"
 
@@ -22788,6 +22903,7 @@ msgstr "یک نمای معنایی ایجاد کنید"
 msgid "create dataset from SQL query"
 msgstr "ایجاد مجموعه داده از کوئریی SQL"
 
+#. do-not-translate
 msgid "crontab"
 msgstr "کرون‌تب"
 
@@ -22796,6 +22912,10 @@ msgstr "سی‌اس‌اس"
 
 msgid "css_template"
 msgstr "قالب_css"
+
+#: superset-frontend/src/dashboard/util/getSliceHeaderTooltip.tsx
+msgid "ctrl + click"
+msgstr "ctrl + کلیک"
 
 msgid "cumsum"
 msgstr "جمع تجمعی"
@@ -22857,6 +22977,7 @@ msgstr "آرک deck.gl"
 msgid "deck.gl Contour"
 msgstr "کانتور deck.gl"
 
+#. do-not-translate
 msgid "deck.gl Geojson"
 msgstr "deck.gl Geojson"
 
@@ -22892,6 +23013,10 @@ msgstr "deckGL"
 msgid "default"
 msgstr "پیش‌فرض"
 
+#: superset-frontend/src/features/versionHistory/RelatedUpdateRow.tsx
+msgid "deleted"
+msgstr "حذف‌شده"
+
 msgid "descendant"
 msgstr "نسل"
 
@@ -22910,6 +23035,7 @@ msgstr "جداکننده"
 msgid "documentation"
 msgstr "مستندات"
 
+#. do-not-translate
 msgid "dttm"
 msgstr "تاریخ‌وزمان"
 
@@ -22987,6 +23113,7 @@ msgstr "کل ردیف"
 msgid "entries"
 msgstr "ورودی‌ها"
 
+#. do-not-translate
 msgid "error_message"
 msgstr "error_message"
 
@@ -23041,7 +23168,10 @@ msgstr "در حال دریافت اطلاعات"
 # Machine-translated via backfill_po.py (claude-sonnet-4-6) [refs: ar, ca, cs,
 # de, es, fr, ja, lv, mi, nl, pl, pt_BR, ro, ru, sk, sl, sr, sr_Latn, tr, uk]
 msgid "ffill"
-msgstr "ffill"
+msgstr "پر کردن رو به جلو"
+
+msgid "fire"
+msgstr "آتش"
 
 msgid "flat"
 msgstr "ساده"
@@ -23054,6 +23184,10 @@ msgstr "برای اطلاعات بیشتر در مورد چگونگی ساختا
 
 msgid "formatted"
 msgstr "قالب‌بندی‌شده"
+
+#: superset-frontend/packages/superset-ui-core/src/components/RlsBadge/index.tsx
+msgid "from underlying table"
+msgstr "از جدول زیربنایی"
 
 msgid "function type icon"
 msgstr "آیکون نوع عملکرد"
@@ -23280,6 +23414,14 @@ msgstr ""
 msgid "nativeFilters[%(idx)s].nativeFilterId must be a non-empty string"
 msgstr "nativeFilters[%(idx)s].nativeFilterId باید رشته غیرخالی باشد"
 
+#: superset-frontend/src/dashboard/components/nativeFilters/FilterBar/CrossFilters/ScopingModal/ChartsScopingListPanel.tsx
+msgid "new custom scoping"
+msgstr "محدوده سفارشی جدید"
+
+#: superset-frontend/src/dashboard/components/PropertiesModal/sections/LabelColorMapping.tsx
+msgid "new label"
+msgstr "برچسب جدید"
+
 msgid "no SQL validator is configured"
 msgstr "هیچ اعتبارسنجی SQL پیکربندی نشده است"
 
@@ -23331,15 +23473,19 @@ msgstr "کلی"
 msgid "p-value precision"
 msgstr "دقت p-value"
 
+#. do-not-translate
 msgid "p1"
 msgstr "p1"
 
+#. do-not-translate
 msgid "p5"
 msgstr "p5"
 
+#. do-not-translate
 msgid "p95"
 msgstr "p95"
 
+#. do-not-translate
 msgid "p99"
 msgstr "p99"
 
@@ -23362,6 +23508,7 @@ msgstr "صورتی/سبز"
 msgid "pink/grey"
 msgstr "صورتی/خاکستری"
 
+#. do-not-translate
 msgid "pivoted_xlsx"
 msgstr "pivoted_xlsx"
 
@@ -23438,6 +23585,10 @@ msgstr "گیرنده %s مجاز نیست"
 msgid "recipients"
 msgstr "گیرندگان"
 
+#: superset-frontend/plugins/preset-chart-deckgl/src/layers/Screengrid/Screengrid.tsx
+msgid "records"
+msgstr "رکورد"
+
 msgid "red — increase / green — decrease"
 msgstr "قرمز — افزایش / سبز — کاهش"
 
@@ -23490,6 +23641,7 @@ msgstr "ذخیره"
 msgid "schedule \"%s\" runs more often than the minimum interval"
 msgstr "زمان‌بندی «%s» بیشتر از حداقل فاصله مجاز اجرا می‌شود"
 
+#. do-not-translate
 msgid "schema1,schema2"
 msgstr "schema1,schema2"
 
@@ -23530,6 +23682,7 @@ msgstr ""
 "show_values_as فقط برای تجمیع‌های جمع‌پذیر (sum، count) پشتیبانی می‌شود؛ "
 "عملگر(های) غیرجمع‌پذیر دریافت شد برای: %(metrics)s."
 
+#. do-not-translate
 msgid "sql"
 msgstr "sql"
 
@@ -23540,7 +23693,7 @@ msgid "stack"
 msgstr "پشته"
 
 msgid "staggered"
-msgstr "ناهموار"
+msgstr "پلکانی"
 
 msgid "std"
 msgstr "استاندارد"
@@ -23557,12 +23710,17 @@ msgstr "رشته"
 msgid "string type icon"
 msgstr "آیکون نوع رشته"
 
+#: superset-frontend/src/explore/components/controls/ContourControl/ContourOption.tsx
+msgid "stroke width"
+msgstr "ضخامت خط"
+
 msgid "success"
 msgstr "موفقیت"
 
 msgid "sum"
 msgstr "جمع"
 
+#. do-not-translate
 msgid "superset.example.com"
 msgstr "superset.example.com"
 
@@ -23699,6 +23857,7 @@ msgstr "زرد/نارنجی/قهوه‌ای"
 msgid "yellow/orange/red"
 msgstr "زرد/نارنجی/قرمز"
 
+#. do-not-translate
 msgid "your-project-1234-a1"
 msgstr "your-project-1234-a1"
 
@@ -23723,3 +23882,7 @@ msgstr[1] "…و %s نمودار دیگر"
 # sr_Latn]
 msgid "№"
 msgstr "№"
+
+#: superset-frontend/src/dashboard/util/getSliceHeaderTooltip.tsx
+msgid "⌘ + click"
+msgstr "⌘ + کلیک"

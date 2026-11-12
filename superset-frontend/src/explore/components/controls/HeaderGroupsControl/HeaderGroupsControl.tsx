@@ -55,6 +55,7 @@ import {
   Label,
   OptionControlContainer,
 } from '../OptionControls';
+import { dndAccessibility } from 'src/utils/dndAccessibility';
 
 const GroupsContainer = styled.div`
   ${({ theme }) => css`
@@ -247,6 +248,7 @@ export default function HeaderGroupsControl({
       <ControlHeader {...props} />
       <GroupsContainer>
         <DndContext
+          accessibility={dndAccessibility()}
           sensors={sensors}
           collisionDetection={closestCenter}
           modifiers={[restrictToVerticalAxis]}

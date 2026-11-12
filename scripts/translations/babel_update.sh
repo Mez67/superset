@@ -74,6 +74,7 @@ cat $LICENSE_TMP superset/translations/messages.pot > messages.pot.tmp \
 # the do-not-translate status stays consistent across all languages.
 # Fail fast: without this guard the script would continue past a marker-stamping
 # failure and `pybabel update` would publish catalogs missing the markers.
+python scripts/translations/extract_missed_calls.py superset/translations/messages.pot || exit 1
 python scripts/translations/apply_do_not_translate.py superset/translations/messages.pot || exit 1
 
 # --no-fuzzy-matching: when a *new* source string is added, Babel's fuzzy

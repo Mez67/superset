@@ -49,6 +49,7 @@ import HoverMenu from '../../menu/HoverMenu';
 import DragHandle from '../../dnd/DragHandle';
 import DeleteComponentButton from '../../DeleteComponentButton';
 import { StickyTabsOffsetContext } from './StickyTabsOffsetContext';
+import { dndAccessibility } from 'src/utils/dndAccessibility';
 
 // @z-index-above-dashboard-charts: above chart content, below the sticky
 // dashboard header (99) and the filter bar (11)
@@ -379,6 +380,7 @@ const TabsRenderer = memo<TabsRendererProps>(
             {...(editMode && {
               renderTabBar: (tabBarProps, DefaultTabBar) => (
                 <DndContext
+                  accessibility={dndAccessibility()}
                   key={tabIds.join('-')}
                   sensors={[sensor]}
                   onDragStart={onDragStart}

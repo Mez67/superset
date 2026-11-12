@@ -28,6 +28,7 @@ const schemes = [
   },
   {
     id: 'fire',
+    label: t('fire'),
     colors: ['white', 'yellow', 'red', 'black'],
   },
   {
@@ -53,14 +54,17 @@ const schemes = [
   },
   {
     id: 'greens',
+    label: t('greens'),
     colors: ['#ffffcc', '#78c679', '#006837'],
   },
   {
     id: 'purples',
+    label: t('purples'),
     colors: ['#f2f0f7', '#9e9ac8', '#54278f'],
   },
   {
     id: 'oranges',
+    label: t('oranges'),
     colors: ['#fef0d9', '#fc8d59', '#b30000'],
   },
   {

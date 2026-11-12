@@ -20,27 +20,34 @@
 import { t } from '@apache-superset/core/translation';
 import { QueryEditor } from '../types';
 
-const untitledQueryRegex = /^Untitled Query (\d+)$/; // Literal notation isn't recompiled
-const untitledQuery = 'Untitled Query ';
+const escapeRegExp = (text: string) =>
+  text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// Tabs named before the UI language changed keep their English prefix, so
+// both the English and the translated prefix count as "untitled".
+const untitledQueryRegex = () =>
+  new RegExp(
+    `^(?:Untitled Query|${escapeRegExp(t('Untitled Query'))}) (\\d+)$`,
+  );
+const untitledQuery = () => `${t('Untitled Query')} `;
 
 export const newQueryTabName = (
   queryEditors: QueryEditor[],
-  initialTitle = `${untitledQuery}1`,
+  initialTitle = `${untitledQuery()}1`,
 ): string => {
   const resultTitle = t(initialTitle);
 
   if (queryEditors.length > 0) {
-    const mappedUntitled = queryEditors.filter(qe =>
-      qe.name?.match(untitledQueryRegex),
-    );
-    const untitledQueryNumbers = mappedUntitled.map(
-      qe => +qe.name.replace(untitledQuery, ''),
-    );
+    const pattern = untitledQueryRegex();
+    const untitledQueryNumbers = queryEditors
+      .map(qe => qe.name?.match(pattern))
+      .filter((match): match is RegExpMatchArray => !!match)
+      .map(match => +match[1]);
     if (untitledQueryNumbers.length > 0) {
       // When there are query tabs open, and at least one is called "Untitled Query #"
       // Where # is a valid number
       const largestNumber: number = Math.max(...untitledQueryNumbers);
-      return t('%s%s', untitledQuery, largestNumber + 1);
+      return `${untitledQuery()}${largestNumber + 1}`;
     }
     return resultTitle;
   }

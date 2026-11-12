@@ -56,6 +56,7 @@ import {
   StyledMetricOption,
 } from 'src/explore/components/optionRenderers';
 import { DatasourcePanelDndItem } from '../DatasourcePanel/types';
+import { dndAccessibility } from 'src/utils/dndAccessibility';
 
 /**
  * Type for the active drag item data
@@ -453,6 +454,7 @@ export const ExploreDndContextProvider: FC<ExploreDndContextProps> = ({
 
   return (
     <DndContext
+      accessibility={dndAccessibility()}
       sensors={sensors}
       collisionDetection={exploreCollisionDetection}
       onDragStart={handleDragStart}
