@@ -17,6 +17,9 @@
  * under the License.
  */
 
+import { getExtensionsRegistry } from '@superset-ui/core';
+import WelcomeHero from 'src/features/home/WelcomeHero';
+
 /**
  * Configuration options for setting up code overrides in different contexts.
  */
@@ -31,6 +34,11 @@ interface CodeOverrideOptions {
  * Hook for individual deployments to add custom overrides
  * @param options - Configuration options for the setup process
  */
-export default function setupCodeOverrides(
-  _options: CodeOverrideOptions = {},
-) {}
+export default function setupCodeOverrides(_options: CodeOverrideOptions = {}) {
+  const registry = getExtensionsRegistry();
+  // Greeting and quick actions on the home page, unless a deployment
+  // registered its own banner.
+  if (!registry.get('welcome.banner')) {
+    registry.set('welcome.banner', WelcomeHero);
+  }
+}

@@ -91,6 +91,49 @@ export const BrandGlobalStyles = () => {
           padding: ${theme.paddingSM}px ${theme.paddingLG}px;
         }
 
+        /* Page titles above list pages */
+        .ant-row.menu > .header {
+          font-size: ${theme.fontSizeHeading4}px;
+        }
+
+        /* Dashboard and Explore headers: soft edge instead of a hard rule */
+        .header-with-actions {
+          box-shadow: ${theme.boxShadowTertiary};
+        }
+
+        html body [data-test='dashboard-header-container'] {
+          border-bottom-color: ${theme.colorBorderSecondary};
+        }
+
+        /* Explore: side panels on the canvas, the chart on a card */
+        div:has(> .main-explore-content) {
+          background-color: ${theme.colorBgLayout};
+        }
+
+        .explore-column.data-source-selection,
+        .explore-column.controls-column {
+          background-color: ${theme.colorBgContainer};
+        }
+
+        div:has(> .main-explore-content) > .main-explore-content {
+          border-inline-color: transparent;
+          padding: ${theme.padding}px;
+          box-sizing: border-box;
+        }
+
+        .main-explore-content > .chart-container {
+          padding: 0 ${theme.padding}px;
+          background-color: ${theme.colorBgContainer};
+          border: 1px solid ${theme.colorBorderSecondary};
+          border-radius: ${theme.borderRadiusLG}px;
+          box-shadow: ${theme.boxShadowTertiary};
+          box-sizing: border-box;
+        }
+
+        [data-test='control-tabs'] .ant-collapse-header .ant-collapse-title {
+          font-weight: ${theme.fontWeightStrong};
+        }
+
         /* Dashboard tiles rise slightly on hover */
         .dashboard-component-chart-holder:hover {
           box-shadow: ${theme.boxShadowSecondary};

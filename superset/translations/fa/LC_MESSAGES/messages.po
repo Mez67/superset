@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Superset VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-12 17:15+0000\n"
+"POT-Creation-Date: 2026-11-15 09:58+0000\n"
 "PO-Revision-Date: 2024-10-20 00:07+0330\n"
 "Last-Translator: Emad Rad <codewithemad@gmail.com>\n"
 "Language: fa\n"
@@ -3069,6 +3069,9 @@ msgstr ""
 "نمودارهای área مشابه نمودارهای خطی هستند زیرا متغیرها را با مقیاس یکسان "
 "نمایش می‌دهند، اما نمودارهای área مقادیر را بر روی یکدیگر انباشته "
 "می‌کنند."
+
+msgid "Arrange charts and filters on one page"
+msgstr "نمودارها و فیلترها را در یک صفحه کنار هم بچینید"
 
 msgid "Arrow"
 msgstr "فلش"
@@ -9192,6 +9195,27 @@ msgstr "به حالت ویرایش بروید تا داشبورد را پیکر�
 msgid "Gold"
 msgstr "طلا"
 
+msgid "Good afternoon"
+msgstr "روز بخیر"
+
+#, python-format
+msgid "Good afternoon, %s"
+msgstr "روز بخیر، %s"
+
+msgid "Good evening"
+msgstr "عصر بخیر"
+
+#, python-format
+msgid "Good evening, %s"
+msgstr "عصر بخیر، %s"
+
+msgid "Good morning"
+msgstr "صبح بخیر"
+
+#, python-format
+msgid "Good morning, %s"
+msgstr "صبح بخیر، %s"
+
 msgid "Google Category 10c"
 msgstr "Google Category 10c"
 
@@ -10851,6 +10875,9 @@ msgstr ""
 "فیلترها و سفارشی‌سازی‌ها را مدیریت کنید تا محدوده، توضیحات و محدودیت‌ها "
 "را تنظیم کنید. برای بینش بهتر از داشبورد، عناصر جدید ایجاد کنید."
 
+msgid "Manage the tables your charts are built on"
+msgstr "جدول‌هایی را که نمودارها بر پایه آن‌ها ساخته می‌شوند مدیریت کنید"
+
 msgid "Manage your databases"
 msgstr "پایگاه‌های داده خود را مدیریت کنید"
 
@@ -11654,6 +11681,9 @@ msgstr "لایه معنایی جدید"
 
 msgid "New chart"
 msgstr "نمودار جدید"
+
+msgid "New dashboard"
+msgstr "داشبورد جدید"
 
 msgid "New dataset"
 msgstr "مجموعه داده جدید"
@@ -20284,6 +20314,9 @@ msgstr "سه‌شنبه"
 msgid "Tukey"
 msgstr "توکی"
 
+msgid "Turn a dataset into a chart in a few clicks"
+msgstr "با چند کلیک از یک مجموعه داده نمودار بسازید"
+
 msgid "Turn off server pagination"
 msgstr "خاموش کردن صفحه‌بندی سمت سرور"
 
@@ -21573,6 +21606,9 @@ msgstr "باید در برچسب چه چیزی نمایش داده شود؟"
 msgid "What should happen if the table already exists"
 msgstr "اگر جدول از قبل وجود داشته باشد چه باید کرد؟"
 
+msgid "What would you like to work on today?"
+msgstr "امروز روی چه چیزی کار می‌کنید؟"
+
 msgid ""
 "When `Calculation type` is set to \"Percentage change\", the Y Axis "
 "Format is forced to `.1%`"
@@ -21917,6 +21953,9 @@ msgstr "زمان‌‍‍‌بندی کار"
 
 msgid "World Map"
 msgstr "نقشه جهان"
+
+msgid "Write SQL and explore your databases"
+msgstr "SQL بنویسید و پایگاه‌های داده را کاوش کنید"
 
 msgid "Write a description for your query"
 msgstr "توضیحی برای کوئری خود بنویسید."
