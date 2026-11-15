@@ -14514,7 +14514,7 @@ msgid "SHA"
 msgstr "SHA"
 
 msgid "SQL"
-msgstr "اس کیو ال"
+msgstr "SQL"
 
 msgid "SQL Lab"
 msgstr "آزمایشگاه SQL"

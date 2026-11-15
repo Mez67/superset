@@ -127,9 +127,15 @@ RUN --mount=type=cache,target=/root/.npm \
 # Copy translation files
 COPY superset/translations /app/superset/translations
 
-# Build translations if enabled, then cleanup localization files
-RUN if [ "${BUILD_TRANSLATIONS}" = "true" ]; then \
+# Build translations if enabled, then cleanup localization files.
+# CRs are stripped first: a Windows checkout with core.autocrlf gives the
+# shell scripts CRLF line endings, which bash cannot run. A failure stops the
+# build instead of silently shipping an image without frontend translations.
+RUN set -e; \
+    if [ "${BUILD_TRANSLATIONS}" = "true" ]; then \
+        sed -i 's/\r$//' scripts/*.sh; \
         npm run build-translation; \
+        ls /app/superset/translations/*/LC_MESSAGES/messages.json > /dev/null; \
     fi; \
     rm -rf /app/superset/translations/*/*/*.[po,mo];
 
