@@ -23925,4 +23925,3 @@ msgstr "№"
 #: superset-frontend/src/dashboard/util/getSliceHeaderTooltip.tsx
 msgid "⌘ + click"
 msgstr "⌘ + کلیک"
-
