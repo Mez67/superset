@@ -16,7 +16,7 @@
 # under the License.
 from typing import Any
 
-from superset.brand_theme import BRAND_COLOR_SCHEME, with_brand_theme
+from superset.brand_theme import BRAND_COLOR_SCHEME, BRAND_NAME, with_brand_theme
 
 
 def test_with_brand_theme_keeps_unrelated_tokens() -> None:
@@ -56,3 +56,46 @@ def test_config_applies_brand_theme_and_palette() -> None:
     assert config.THEME_DARK["token"]["colorBgLayout"] == "#0f131a"
     assert BRAND_COLOR_SCHEME in config.EXTRA_CATEGORICAL_COLOR_SCHEMES
     assert BRAND_COLOR_SCHEME["isDefault"] is True
+
+
+def test_brand_logo_differs_between_light_and_dark() -> None:
+    light = with_brand_theme({"token": {}})["token"]
+    dark = with_brand_theme({"token": {}}, dark=True)["token"]
+
+    assert light["brandLogoAlt"] == BRAND_NAME
+    assert light["brandLogoUrl"].endswith("/logo-horiz.svg")
+    assert dark["brandLogoUrl"].endswith("/logo-horiz-dark.svg")
+    assert light["brandSpinnerUrl"] == dark["brandSpinnerUrl"]
+
+
+def test_config_uses_brand_name_and_icons() -> None:
+    from superset import config
+
+    assert config.APP_NAME == BRAND_NAME
+    # brandAppName stays at the upstream default so that views/base.py takes
+    # the window title from APP_NAME (and a user's APP_NAME still wins).
+    assert config.THEME_DEFAULT["token"]["brandAppName"] == "Superset"
+    assert config.FAVICONS[0]["href"].endswith("/logo-mark.svg")
+    assert config.PWA_MANIFEST_OVERRIDES["name"] == BRAND_NAME
+
+
+def test_brand_assets_exist() -> None:
+    from pathlib import Path
+
+    from superset.brand_theme import BRAND_FAVICONS, BRAND_PWA_MANIFEST
+
+    images = (
+        Path(__file__).parents[2] / "superset-frontend" / "src" / "assets" / "images"
+    )
+    light = with_brand_theme({"token": {}})["token"]
+    dark = with_brand_theme({"token": {}}, dark=True)["token"]
+    urls = [
+        light["brandLogoUrl"],
+        dark["brandLogoUrl"],
+        light["brandSpinnerUrl"],
+        *(f["href"] for f in BRAND_FAVICONS),
+        *(i["src"] for i in BRAND_PWA_MANIFEST["icons"]),
+    ]
+    for url in urls:
+        relative = url.removeprefix("/static/assets/images/")
+        assert (images / relative).is_file(), url

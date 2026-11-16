@@ -29,6 +29,48 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any
 
+# Product name shown in window titles, the navbar logo and the app manifest.
+BRAND_NAME = "داده\u200cنما"
+
+# Logo files ship with the frontend build (src/assets/images/brand) and are
+# regenerated with scripts/brand/make_logo.py.
+_BRAND_IMAGES = "/static/assets/images/brand"
+BRAND_FAVICONS: list[dict[str, str]] = [
+    {"href": f"{_BRAND_IMAGES}/logo-mark.svg", "type": "image/svg+xml"},
+    {"href": f"{_BRAND_IMAGES}/favicon-64.png", "sizes": "64x64"},
+    {
+        "href": f"{_BRAND_IMAGES}/apple-touch-icon.png",
+        "rel": "apple-touch-icon",
+        "sizes": "180x180",
+    },
+]
+
+# Fields replaced in the PWA manifest (see superset/views/pwa_manifest.py).
+BRAND_PWA_MANIFEST: dict[str, Any] = {
+    "name": BRAND_NAME,
+    "short_name": BRAND_NAME,
+    "description": "داشبورد و گزارش‌های تحلیلی",
+    "lang": "fa",
+    "dir": "rtl",
+    "theme_color": "#3b5bdb",
+    "icons": [
+        {"src": f"{_BRAND_IMAGES}/icon-192.png", "sizes": "192x192", "purpose": "any"},
+        {"src": f"{_BRAND_IMAGES}/icon-512.png", "sizes": "512x512", "purpose": "any"},
+        {
+            "src": f"{_BRAND_IMAGES}/icon-maskable-192.png",
+            "sizes": "192x192",
+            "purpose": "maskable",
+        },
+        {
+            "src": f"{_BRAND_IMAGES}/icon-maskable-512.png",
+            "sizes": "512x512",
+            "purpose": "maskable",
+        },
+    ],
+    # The stock screenshots show the upstream product.
+    "screenshots": [],
+}
+
 # Tokens shared by light and dark: shape, spacing and type.
 _COMMON_TOKENS: dict[str, Any] = {
     "borderRadius": 8,
@@ -47,6 +89,11 @@ _COMMON_TOKENS: dict[str, Any] = {
     "resultsGridHeaderFontWeight": 600,
     "fontWeightStrong": "600",
     "motionDurationMid": "0.2s",
+    # Brand: the horizontal logo (mark + wordmark) and a matching spinner.
+    "brandLogoAlt": BRAND_NAME,
+    "brandLogoHeight": "32px",
+    "brandLogoMargin": "14px 0",
+    "brandSpinnerUrl": f"{_BRAND_IMAGES}/spinner.svg",
 }
 
 _LIGHT_TOKENS: dict[str, Any] = {
@@ -73,6 +120,7 @@ _LIGHT_TOKENS: dict[str, Any] = {
     "dashboardTileBorder": "1px solid #e6eaf1",
     "dashboardTileBoxShadow": "0 1px 2px rgba(16, 24, 40, 0.05)",
     "colorEditorSelection": "#dbe4ff",
+    "brandLogoUrl": f"{_BRAND_IMAGES}/logo-horiz.svg",
 }
 
 _DARK_TOKENS: dict[str, Any] = {
@@ -100,6 +148,8 @@ _DARK_TOKENS: dict[str, Any] = {
     "dashboardTileBorder": "1px solid #262e3b",
     "dashboardTileBoxShadow": "none",
     "colorEditorSelection": "#2f3f75",
+    # Light wordmark for dark surfaces.
+    "brandLogoUrl": f"{_BRAND_IMAGES}/logo-horiz-dark.svg",
 }
 
 

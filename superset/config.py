@@ -1361,8 +1361,19 @@ _THEME_DARK_BASE: Theme = {
 # changes to the defaults above merge cleanly.
 from superset.brand_theme import (  # noqa: E402
     BRAND_COLOR_SCHEME,
+    BRAND_FAVICONS,
+    BRAND_NAME,
+    BRAND_PWA_MANIFEST,
     with_brand_theme,
 )
+
+# The theme keeps brandAppName == "Superset", so superset/views/base.py takes
+# the window title from APP_NAME and an APP_NAME set in superset_config.py
+# still wins.
+APP_NAME = BRAND_NAME
+FAVICONS = BRAND_FAVICONS
+# Fields replaced in the PWA manifest served at /pwa-manifest.json.
+PWA_MANIFEST_OVERRIDES: dict[str, Any] = BRAND_PWA_MANIFEST
 
 _THEME_DEFAULT_BASE = THEME_DEFAULT = with_brand_theme(_THEME_DEFAULT_BASE)
 _THEME_DARK_BASE = with_brand_theme(_THEME_DARK_BASE, dark=True)

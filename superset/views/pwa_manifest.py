@@ -132,6 +132,31 @@ def _build_manifest(application_root: str, static_assets_prefix: str) -> dict[st
     }
 
 
+def _apply_overrides(
+    manifest: dict[str, Any], overrides: dict[str, Any], static_assets_prefix: str
+) -> dict[str, Any]:
+    """Replace top-level manifest fields with ``PWA_MANIFEST_OVERRIDES``.
+
+    Root-relative ``src`` paths of icons and screenshots get the static assets
+    prefix, like the built-in entries.
+    """
+    static_prefix = static_assets_prefix.rstrip("/")
+    result = dict(manifest)
+    for key, value in overrides.items():
+        if key in ("icons", "screenshots"):
+            value = [
+                {**item, "src": f"{static_prefix}{item['src']}"}
+                if item.get("src", "").startswith("/")
+                else dict(item)
+                for item in value
+            ]
+            for item in value:
+                if "type" not in item and item.get("src", "").endswith(".png"):
+                    item["type"] = "image/png"
+        result[key] = value
+    return result
+
+
 class PwaManifestView(BaseSupersetView):
     """Serve the PWA web app manifest with deployment-aware prefixes.
 
@@ -151,7 +176,11 @@ class PwaManifestView(BaseSupersetView):
         static_assets_prefix = (
             current_app.config["STATIC_ASSETS_PREFIX"] or application_root
         )
-        manifest = _build_manifest(application_root, static_assets_prefix)
+        manifest = _apply_overrides(
+            _build_manifest(application_root, static_assets_prefix),
+            current_app.config.get("PWA_MANIFEST_OVERRIDES") or {},
+            static_assets_prefix,
+        )
         return Response(
             json.dumps(manifest, separators=(",", ":")),
             mimetype=_MANIFEST_MIMETYPE,

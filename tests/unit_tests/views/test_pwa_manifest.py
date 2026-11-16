@@ -352,3 +352,32 @@ def test_application_root_rstrip_template_global_is_registered() -> None:
     repo_root = Path(__file__).resolve().parents[3]
     extensions_init = (repo_root / "superset/extensions/__init__.py").read_text()
     assert '"application_root_rstrip"' in extensions_init
+
+
+def test_manifest_route_applies_overrides_with_static_prefix() -> None:
+    """`PWA_MANIFEST_OVERRIDES` replaces fields; icon paths get the prefix."""
+    app = _make_minimal_app(
+        application_root="/superset",
+        static_assets_prefix="https://cdn.example.com",
+    )
+    app.config["PWA_MANIFEST_OVERRIDES"] = {
+        "name": "Brand",
+        "icons": [
+            {"src": "/static/brand/icon.png", "sizes": "192x192"},
+            {"src": "https://img.example.com/icon.svg", "type": "image/svg+xml"},
+        ],
+        "screenshots": [],
+    }
+    parsed = json.loads(app.test_client().get("/pwa-manifest.json").data)
+    assert parsed["name"] == "Brand"
+    assert parsed["short_name"] == "Superset"
+    assert parsed["start_url"] == "/superset/welcome/"
+    assert parsed["icons"] == [
+        {
+            "src": "https://cdn.example.com/static/brand/icon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+        },
+        {"src": "https://img.example.com/icon.svg", "type": "image/svg+xml"},
+    ]
+    assert parsed["screenshots"] == []
