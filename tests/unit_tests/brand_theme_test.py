@@ -99,3 +99,22 @@ def test_brand_assets_exist() -> None:
     for url in urls:
         relative = url.removeprefix("/static/assets/images/")
         assert (images / relative).is_file(), url
+
+
+def test_persian_digits_font_leads_the_font_stack() -> None:
+    from superset.brand_theme import PERSIAN_DIGITS_FONT
+
+    themed = with_brand_theme({"token": {"fontFamily": "Inter, sans-serif"}})
+    assert themed["token"]["fontFamily"] == f"{PERSIAN_DIGITS_FONT}, Inter, sans-serif"
+    # Applying the brand twice does not repeat it.
+    again = with_brand_theme(themed)
+    assert again["token"]["fontFamily"].count(PERSIAN_DIGITS_FONT) == 1
+
+
+def test_config_offers_rial_and_toman() -> None:
+    from superset import config
+
+    assert config.CURRENCIES[:2] == ["IRR", "IRT"]
+    assert config.THEME_DEFAULT["token"]["fontFamily"].startswith("'Persian Digits'")
+    assert config.THEME_DARK is not None
+    assert config.THEME_DARK["token"]["fontFamily"].startswith("'Persian Digits'")

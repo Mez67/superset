@@ -17,7 +17,35 @@
  * under the License.
  */
 
+import { useEffect } from 'react';
 import { css, useTheme, Global } from '@emotion/react';
+import {
+  PERSIAN_DIGITS_FAMILY,
+  PERSIAN_DIGITS_FONTS,
+} from './persianDigitsFont';
+
+/**
+ * Persian UI: declare the digits-only font that the theme lists first in
+ * "fontFamily", so numbers render as ۰-۹ while the data keeps ASCII digits.
+ * Other languages never get the declaration and fall through to Latin digits.
+ */
+const isPersianDocument = () =>
+  typeof document !== 'undefined' &&
+  /^fa\b/i.test(document.documentElement.lang || '');
+
+const persianDigitsFontFaces = Object.entries(PERSIAN_DIGITS_FONTS)
+  .map(
+    ([weight, src]) => `
+      @font-face {
+        font-family: '${PERSIAN_DIGITS_FAMILY}';
+        font-style: normal;
+        font-weight: ${weight};
+        font-display: swap;
+        src: url('${src}') format('woff2');
+        unicode-range: U+0030-0039;
+      }`,
+  )
+  .join('');
 
 /**
  * Visual polish for this distribution that theme tokens cannot express on
@@ -28,10 +56,22 @@ import { css, useTheme, Global } from '@emotion/react';
  */
 export const BrandGlobalStyles = () => {
   const theme = useTheme();
+  const persianDigits = isPersianDocument();
+  useEffect(() => {
+    // Charts draw on canvas once their data arrives; load the font up front
+    // so their labels already use it.
+    if (persianDigits && typeof document.fonts?.load === 'function') {
+      document.fonts
+        .load(`400 1em '${PERSIAN_DIGITS_FAMILY}'`, '0')
+        .catch(() => {});
+    }
+  }, [persianDigits]);
   return (
     <Global
       key={`brand-${theme.colorPrimary}-${theme.colorBgLayout}`}
       styles={css`
+        ${persianDigits ? persianDigitsFontFaces : ''}
+
         /* Soft canvas behind white surfaces */
         body {
           background-color: ${theme.colorBgLayout};

@@ -27,6 +27,7 @@ import { Currency } from '../query';
 import { RowData, RowDataValue } from './types';
 import { AUTO_CURRENCY_SYMBOL, ISO_4217_REGEX } from './CurrencyFormats';
 import { getCurrencyLocale } from './currencyLocale';
+import { getLocalCurrencySymbol } from './localCurrencies';
 import {
   resolveSymbolPosition,
   formatWithSymbolPosition,
@@ -49,6 +50,7 @@ interface CurrencyFormatter {
 }
 
 export const getCurrencySymbol = (currency: Partial<Currency>) =>
+  getLocalCurrencySymbol(currency.symbol) ??
   new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: currency.symbol,

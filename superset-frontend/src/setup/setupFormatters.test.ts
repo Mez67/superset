@@ -21,21 +21,26 @@
 // wiring without exercising real d3/Intl registry setup.
 function chainableRegistryFactory() {
   const registry: Record<string, jest.Mock> = {};
-  ['setD3Format', 'registerValue', 'setDefaultKey'].forEach(method => {
-    registry[method] = jest.fn(() => registry);
-  });
+  ['setD3Format', 'registerValue', 'setDefaultKey', 'remove'].forEach(
+    method => {
+      registry[method] = jest.fn(() => registry);
+    },
+  );
   registry.d3Format = jest.fn() as unknown as jest.Mock;
   return registry;
 }
-const chainableRegistry = chainableRegistryFactory;
 
 const mockSetCurrencyLocale = jest.fn();
 const mockSetCalendarSystem = jest.fn();
 const mockTimeRegistry = chainableRegistryFactory();
+const mockNumberRegistry = chainableRegistryFactory();
+const mockCreatePersianSmartNumberFormatter = jest.fn(() => jest.fn());
 
 jest.mock('@superset-ui/core', () => ({
   setCurrencyLocale: mockSetCurrencyLocale,
-  getNumberFormatterRegistry: jest.fn(() => chainableRegistry()),
+  getNumberFormatterRegistry: jest.fn(() => mockNumberRegistry),
+  createPersianSmartNumberFormatter: mockCreatePersianSmartNumberFormatter,
+  PERSIAN_D3_FORMAT: { decimal: '\u066B', thousands: '\u066C' },
   getTimeFormatterRegistry: jest.fn(() => mockTimeRegistry),
   setCalendarSystem: mockSetCalendarSystem,
   getNumberFormatter: jest.fn(() => jest.fn()),
@@ -46,7 +51,12 @@ jest.mock('@superset-ui/core', () => ({
   createSmartDateDetailedFormatter: jest.fn(() => jest.fn()),
   createLengthFormatter: jest.fn(() => jest.fn()),
   createThroughputFormatter: jest.fn(() => jest.fn()),
-  NumberFormats: { INTEGER: ',d', INTEGER_SIGNED: '+,d' },
+  NumberFormats: {
+    INTEGER: ',d',
+    INTEGER_SIGNED: '+,d',
+    SMART_NUMBER: 'SMART_NUMBER',
+    SMART_NUMBER_SIGNED: 'SMART_NUMBER_SIGNED',
+  },
   SMART_DATE_ID: 'smart_date',
   SMART_DATE_DETAILED_ID: 'smart_date_detailed',
   SMART_DATE_VERBOSE_ID: 'smart_date_verbose',
@@ -123,4 +133,28 @@ test('D3_TIME_FORMAT overrides the built-in language defaults', async () => {
 test('languages without built-in defaults keep the configured format', async () => {
   await runSetupFormatters('de');
   expect(mockTimeRegistry.setD3Format).toHaveBeenCalledWith({});
+});
+
+test('setupFormatters gives Persian its separators and adaptive formatter', async () => {
+  await runSetupFormatters('fa');
+
+  expect(mockNumberRegistry.setD3Format).toHaveBeenCalledWith({
+    decimal: '\u066B',
+    thousands: '\u066C',
+  });
+  expect(mockNumberRegistry.remove).toHaveBeenCalledWith('SMART_NUMBER');
+  expect(mockNumberRegistry.registerValue).toHaveBeenCalledWith(
+    'SMART_NUMBER',
+    expect.anything(),
+  );
+  expect(mockCreatePersianSmartNumberFormatter).toHaveBeenCalledTimes(2);
+});
+
+test('setupFormatters keeps the configured D3 format and default formatter for other languages', async () => {
+  const { default: setupFormatters } = await import('./setupFormatters');
+  setupFormatters({ decimal: ',' }, {}, 'de', undefined);
+
+  expect(mockNumberRegistry.setD3Format).toHaveBeenCalledWith({ decimal: ',' });
+  expect(mockNumberRegistry.remove).not.toHaveBeenCalled();
+  expect(mockCreatePersianSmartNumberFormatter).not.toHaveBeenCalled();
 });

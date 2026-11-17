@@ -39,7 +39,8 @@ export default {
     '[/\\\\]superset-frontend[/\\\\](spec|src|plugins|packages|tools|playwright)[/\\\\].*(_spec|\\.test)\\.[jt]sx?$',
   moduleNameMapper: {
     '\\.(css|less|geojson)$': '<rootDir>/spec/__mocks__/mockExportObject.js',
-    '\\.(gif|ttf|eot|png|jpg)$': '<rootDir>/spec/__mocks__/mockExportString.js',
+    '\\.(gif|ttf|eot|png|jpg|woff2)$':
+      '<rootDir>/spec/__mocks__/mockExportString.js',
     '\\.svg$': '<rootDir>/spec/__mocks__/svgrMock.tsx',
     // lodash-es is ESM (type: module) which jest.mock cannot intercept; alias to
     // the CJS lodash build (identical API) so module mocks work in tests.

@@ -35,6 +35,8 @@ import {
   FormatLocaleDefinition,
   setCalendarSystem,
   type CalendarSystem,
+  createPersianSmartNumberFormatter,
+  PERSIAN_D3_FORMAT,
 } from '@superset-ui/core';
 import { TimeLocaleDefinition } from 'd3-time-format';
 import { getLanguageTimeFormat } from './languageTimeFormats';
@@ -53,8 +55,28 @@ export default function setupFormatters(
   // the deployment locale's conventions when a chart leaves it unset.
   setCurrencyLocale(locale);
 
-  getNumberFormatterRegistry()
-    .setD3Format(d3NumberFormat)
+  // Persian: Persian separators unless D3_FORMAT sets its own, and large
+  // numbers read "1.2 میلیون" instead of "1.2M".
+  const isPersian = /^fa\b/i.test(locale || '');
+  const numberFormatterRegistry = getNumberFormatterRegistry().setD3Format(
+    isPersian ? { ...PERSIAN_D3_FORMAT, ...d3NumberFormat } : d3NumberFormat,
+  );
+  if (isPersian) {
+    const { d3Format } = numberFormatterRegistry;
+    numberFormatterRegistry
+      .remove(NumberFormats.SMART_NUMBER)
+      .remove(NumberFormats.SMART_NUMBER_SIGNED)
+      .registerValue(
+        NumberFormats.SMART_NUMBER,
+        createPersianSmartNumberFormatter({ locale: d3Format }),
+      )
+      .registerValue(
+        NumberFormats.SMART_NUMBER_SIGNED,
+        createPersianSmartNumberFormatter({ signed: true, locale: d3Format }),
+      );
+  }
+
+  numberFormatterRegistry
     // Add shims for format strings that are deprecated or common typos.
     // Temporary solution until performing a db migration to fix this.
     .registerValue(',0', getNumberFormatter(',.4~f'))

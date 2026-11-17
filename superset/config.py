@@ -1372,6 +1372,8 @@ from superset.brand_theme import (  # noqa: E402
 # still wins.
 APP_NAME = BRAND_NAME
 FAVICONS = BRAND_FAVICONS
+# Rial and Toman (IRT: not ISO 4217, values are shown as stored) first.
+CURRENCIES = ["IRR", "IRT", *CURRENCIES]
 # Fields replaced in the PWA manifest served at /pwa-manifest.json.
 PWA_MANIFEST_OVERRIDES: dict[str, Any] = BRAND_PWA_MANIFEST
 

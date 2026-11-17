@@ -74,3 +74,33 @@ test('brand styles are mounted with every Superset theme and follow its tokens',
     ),
   ).toBe(true);
 });
+
+test('the Persian digits font is declared only for a Persian document', () => {
+  const fontFaces = () =>
+    ruleTexts().filter(
+      r => r.startsWith('@font-face') && r.includes('Persian Digits'),
+    );
+  const themeObject = Theme.fromConfig({ token: { colorPrimary: '#3b5bdb' } });
+
+  document.documentElement.lang = 'en';
+  const { unmount } = render(
+    <themeObject.SupersetThemeProvider>
+      <div />
+    </themeObject.SupersetThemeProvider>,
+  );
+  expect(fontFaces()).toHaveLength(0);
+  unmount();
+
+  document.documentElement.lang = 'fa';
+  render(
+    <themeObject.SupersetThemeProvider>
+      <div />
+    </themeObject.SupersetThemeProvider>,
+  );
+  const declared = fontFaces();
+  expect(declared.length).toBeGreaterThanOrEqual(9);
+  expect(
+    declared.every(r => /unicode-range:\s*U\+(0)?030-(0)?039/i.test(r)),
+  ).toBe(true);
+  document.documentElement.lang = '';
+});

@@ -27,3 +27,11 @@ declare module 'jed';
  * silences TS2882 under TypeScript 6.0's stricter module-resolution rules.
  */
 declare module '@fontsource/*';
+
+/**
+ * Font files imported as URLs (webpack asset/resource).
+ */
+declare module '*.woff2' {
+  const url: string;
+  export default url;
+}

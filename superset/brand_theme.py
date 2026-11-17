@@ -273,11 +273,26 @@ def _merge(base: dict[str, Any], overlay: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
+# Font that draws the digits 0-9 as Persian digits (۰-۹). The frontend declares
+# it only when the UI language is Persian, so other languages keep Latin
+# digits. Remove it from the "fontFamily" token (in superset_config.py or a
+# system theme) to show Latin digits in Persian too.
+PERSIAN_DIGITS_FONT = "'Persian Digits'"
+
+
+def _with_persian_digits(font_family: str | None) -> str:
+    families = font_family or "Inter, Vazirmatn, Helvetica, Arial, sans-serif"
+    if PERSIAN_DIGITS_FONT in families:
+        return families
+    return f"{PERSIAN_DIGITS_FONT}, {families}"
+
+
 def with_brand_theme(theme: dict[str, Any], dark: bool = False) -> dict[str, Any]:
     """Return ``theme`` with the brand tokens layered on top."""
     tokens = {
         **_COMMON_TOKENS,
         **(_DARK_TOKENS if dark else _LIGHT_TOKENS),
         "echartsOptionsOverrides": _echarts_overrides(dark),
+        "fontFamily": _with_persian_digits(theme.get("token", {}).get("fontFamily")),
     }
     return _merge(theme, {"token": tokens, "components": _components(dark)})

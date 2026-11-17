@@ -18,6 +18,7 @@
  */
 
 import { getCurrencyLocale } from './currencyLocale';
+import { getLocalCurrencyPosition } from './localCurrencies';
 
 export type SymbolPosition = 'prefix' | 'suffix';
 
@@ -51,6 +52,11 @@ export function resolveSymbolPosition(
 ): SymbolPosition {
   if (symbolPosition === 'prefix' || symbolPosition === 'suffix') {
     return symbolPosition;
+  }
+
+  const localPosition = getLocalCurrencyPosition(currencyCode);
+  if (localPosition) {
+    return localPosition;
   }
 
   if (currencyCode) {

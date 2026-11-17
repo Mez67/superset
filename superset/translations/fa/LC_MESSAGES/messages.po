@@ -14311,6 +14311,10 @@ msgstr "ابطال این کلید API"
 msgid "Revoked"
 msgstr "باطل‌شده"
 
+#: superset-frontend/packages/superset-ui-core/src/currency-format/localCurrencies.ts
+msgid "Rial"
+msgstr "ریال"
+
 msgid "Rich Tooltip"
 msgstr "ابزاری با اطلاعات غنی"
 
@@ -20099,6 +20103,10 @@ msgstr "نمایش/پنهان کردن دکمه‌های «همه/معکوس» �
 # lv, ru, sk, sr, sr_Latn, tr, uk]
 msgid "Token Request URI"
 msgstr "نشانی درخواست توکن (Token Request URI)"
+
+#: superset-frontend/packages/superset-ui-core/src/currency-format/localCurrencies.ts
+msgid "Toman"
+msgstr "تومان"
 
 msgid "Too many preview requests for this dataset. Wait a moment and try again."
 msgstr ""
