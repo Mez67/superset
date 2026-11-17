@@ -172,6 +172,128 @@ export const BrandGlobalStyles = () => {
           text-align: center;
         }
 
+        /* Dashboard filter bar (vertical, beside the dashboard) */
+        [data-test='dashboard-filters-panel'] {
+          background-color: ${theme.colorBgContainer};
+        }
+
+        /* Header: title, settings and collapse, separated from the filters */
+        [data-test='dashboard-filters-panel']
+          div:has(> div > [data-test='filter-bar__collapse-button']) {
+          padding: ${theme.paddingSM}px ${theme.padding}px;
+          margin-bottom: ${theme.paddingXS}px;
+          border-bottom: 1px solid ${theme.colorBorderSecondary};
+        }
+
+        [data-test='dashboard-filters-panel']
+          div:has(> [data-test='filter-bar__collapse-button']) {
+          gap: ${theme.sizeXXS}px;
+          padding: 0;
+        }
+
+        [data-test='dashboard-filters-panel']
+          div:has(> [data-test='filter-bar__collapse-button'])
+          > span {
+          font-size: ${theme.fontSize + 1}px;
+        }
+
+        [data-test='dashboard-filters-panel']
+          div:has(> [data-test='filter-bar__collapse-button'])
+          .ant-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 28px;
+          height: 28px;
+          padding: 0;
+          border-radius: ${theme.borderRadiusSM}px;
+          color: ${theme.colorTextSecondary};
+          transition:
+            background-color ${theme.motionDurationMid},
+            color ${theme.motionDurationMid};
+
+          .anticon {
+            color: inherit;
+            font-size: ${theme.fontSizeLG}px;
+          }
+
+          &:hover {
+            color: ${theme.colorText};
+            background-color: ${theme.colorFillTertiary};
+          }
+        }
+
+        /* Filter names lead each control */
+        [data-test='dashboard-filters-panel']
+          [data-test='filter-control-name'] {
+          font-size: ${theme.fontSizeSM + 1}px;
+          font-weight: ${theme.fontWeightStrong};
+          color: ${theme.colorText};
+        }
+
+        [data-test='dashboard-filters-panel']
+          .filter-bar-scroll
+          .ant-form-item {
+          margin-bottom: ${theme.marginXS}px;
+        }
+
+        /* Footer: full-width actions on a solid, separated strip */
+        [data-test='dashboard-filters-panel']
+          [data-test='filterbar-action-buttons'] {
+          align-items: stretch;
+          gap: ${theme.sizeXS}px;
+          padding: ${theme.paddingSM}px ${theme.padding}px;
+          background: ${theme.colorBgContainer};
+          border-top: 1px solid ${theme.colorBorderSecondary};
+
+          [data-test='filter-bar__apply-button'] {
+            width: 100%;
+            height: 36px;
+            margin-bottom: 0;
+          }
+
+          > div {
+            justify-content: center;
+          }
+
+          [data-test='filter-bar__clear-button'] {
+            flex: 1;
+          }
+        }
+
+        /* Collapsed bar: a themed strip that reads as a button */
+        [data-test='dashboard-filters-panel']
+          [data-test='filter-bar__collapsable'] {
+          width: 100%;
+          height: auto;
+          padding: ${theme.paddingSM}px 0;
+          gap: ${theme.sizeSM}px;
+          color: ${theme.colorTextSecondary};
+          background: transparent;
+          border-radius: 0;
+          transition:
+            background-color ${theme.motionDurationMid},
+            color ${theme.motionDurationMid};
+
+          .anticon {
+            color: inherit;
+          }
+
+          &:hover {
+            color: ${theme.colorPrimary};
+            background-color: ${theme.colorPrimaryBg};
+          }
+        }
+
+        /* In RTL the bar sits on the right, so the arrows point the other way */
+        html[dir='rtl'] [data-test='filter-bar__collapse-button'] .anticon {
+          transform: rotate(90deg);
+        }
+
+        html[dir='rtl'] [data-test='filter-bar__expand-button'] {
+          transform: rotate(-90deg);
+        }
+
         /* Keyboard focus is always visible */
         a:focus-visible,
         button:focus-visible,

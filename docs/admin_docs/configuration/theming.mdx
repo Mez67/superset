@@ -90,7 +90,7 @@ THEME_DARK = {
 
 ### Built-in Brand Theme
 
-This distribution layers a brand theme over the built-in light and dark themes. It sets the indigo palette, softer surfaces and borders, 8–12px corner radii, light shadows, per-component tokens (tables, menus, tabs, modals, inputs), card-style chart tooltips and a default categorical color scheme, `brandIndigo`. The values live in `superset/brand_theme.py`. Visual polish that tokens cannot express, such as the lifted navbar, card-style list tables and home page sections, and the sign-in page, lives in `superset-frontend/packages/superset-core/src/theme/BrandGlobalStyles.tsx` and reads every color from the active theme.
+This distribution layers a brand theme over the built-in light and dark themes. It sets the indigo palette, softer surfaces and borders, 8–12px corner radii, light shadows, per-component tokens (tables, menus, tabs, modals, inputs), card-style chart tooltips and a default categorical color scheme, `brandIndigo`. The values live in `superset/brand_theme.py`. Visual polish that tokens cannot express, such as the lifted navbar, card-style list tables and home page sections, the dashboard filter bar, and the sign-in page, lives in `superset-frontend/packages/superset-core/src/theme/BrandGlobalStyles.tsx` and reads every color from the active theme.
 
 The home page also shows a greeting with shortcuts to create a dashboard or chart, open SQL Lab and manage datasets; each shortcut appears only for users with the matching permission. It is registered as the `welcome.banner` extension in `superset-frontend/src/setup/setupCodeOverrides.ts`, so a deployment that registers its own `welcome.banner` replaces it.
 

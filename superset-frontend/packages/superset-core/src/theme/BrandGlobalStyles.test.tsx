@@ -57,4 +57,20 @@ test('brand styles are mounted with every Superset theme and follow its tokens',
     ),
   ).toBe(true);
   expect(rules.some(r => r.includes('.welcome-sections'))).toBe(true);
+  // Vertical filter bar: scoped to the side panel, RTL arrows flipped.
+  const filterBarRules = rules.filter(r =>
+    /dashboard-filters-panel['"]\]/.test(r),
+  );
+  expect(filterBarRules.length).toBeGreaterThan(3);
+  expect(filterBarRules.some(r => r.includes('filterbar-action-buttons'))).toBe(
+    true,
+  );
+  expect(
+    rules.some(
+      r =>
+        /html\[dir=['"]rtl['"]\]/.test(r) &&
+        r.includes('filter-bar__expand-button') &&
+        /rotate\(-90deg\)/.test(r),
+    ),
+  ).toBe(true);
 });
