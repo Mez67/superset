@@ -24,7 +24,9 @@ for every day from 1925 to 2125.
 
 from __future__ import annotations
 
-from datetime import date, timedelta
+import re
+from datetime import date, datetime, timedelta
+from typing import TypeVar
 
 from superset.db_engine_specs.jalali import JALALI_EPOCH_DAY_NUMBER
 
@@ -75,3 +77,91 @@ def jalali_period(unit: str, day: date, shift: int = 0) -> tuple[date, date]:
             else start_of(start + timedelta(days=longest))
         )
     return start, start_of(start + timedelta(days=longest))
+
+
+# Months 1-6 have 31 days, 7-11 have 30 and Esfand (12) has 29 or 30.
+_MONTH_OFFSETS = tuple(31 * m if m <= 6 else 186 + 30 * (m - 6) for m in range(12))
+
+
+def _nowruz(jalali_year: int) -> date:
+    """First day (1 Farvardin) of ``jalali_year``; Nowruz falls in March."""
+    return jalali_year_start(date(jalali_year + 621, 4, 1))
+
+
+def jalali_month_length(jalali_year: int, month: int) -> int:
+    if month <= 6:
+        return 31
+    if month <= 11:
+        return 30
+    year_length = (_nowruz(jalali_year + 1) - _nowruz(jalali_year)).days
+    return year_length - 336
+
+
+def to_jalali(day: date) -> tuple[int, int, int]:
+    """``(year, month, day)`` in the Jalali calendar."""
+    if isinstance(day, datetime):
+        day = day.date()
+    start = jalali_year_start(day)
+    day_of_year = (day - start).days
+    month = max(m for m in range(12) if _MONTH_OFFSETS[m] <= day_of_year)
+    return start.year - 621, month + 1, day_of_year - _MONTH_OFFSETS[month] + 1
+
+
+def from_jalali(year: int, month: int, day: int) -> date:
+    """Gregorian date of the Jalali ``year``-``month``-``day``."""
+    if not 1 <= month <= 12 or not 1 <= day <= jalali_month_length(year, month):
+        raise ValueError(f"Invalid Jalali date: {year}-{month}-{day}")
+    return _nowruz(year) + timedelta(days=_MONTH_OFFSETS[month - 1] + day - 1)
+
+
+_D = TypeVar("_D", bound=date)
+
+
+def add_jalali_months(value: _D, months: int) -> _D:
+    """Move ``value`` by ``months`` Jalali months, keeping the time of day.
+
+    The day of the month is clamped to the target month's length, so
+    31 Shahrivar plus one month is 30 Mehr, and 30 Esfand of a leap year
+    minus one year is 29 Esfand.
+    """
+    year, month, day = to_jalali(value)
+    index = year * 12 + month - 1 + months
+    year, month = divmod(index, 12)
+    month += 1
+    target = from_jalali(year, month, min(day, jalali_month_length(year, month)))
+    return value + timedelta(days=(target - _as_date(value)).days)
+
+
+def _as_date(value: date) -> date:
+    return value.date() if isinstance(value, datetime) else value
+
+
+_OFFSET_PATTERN = re.compile(
+    r"^\s*(\d+)\s+(month|quarter|year)s?(?:\s+(ago|later))?\s*$", re.IGNORECASE
+)
+
+
+def jalali_offset_months(offset: str | None) -> int | None:
+    """Signed number of months in a relative offset such as "1 year ago".
+
+    Returns ``None`` for offsets that are not whole months, quarters or years
+    ("7 days ago", "inherit", dates), which shift the same way in every
+    calendar.
+    """
+    matched = _OFFSET_PATTERN.match(offset or "")
+    if not matched:
+        return None
+    months = (
+        int(matched[1]) * {"month": 1, "quarter": 3, "year": 12}[matched[2].lower()]
+    )
+    return -months if (matched[3] or "").lower() == "ago" else months
+
+
+def jalali_bucket_key(value: date, unit: str) -> str:
+    """Join key of the Jalali month, quarter or year containing ``value``."""
+    year, month, _ = to_jalali(value)
+    if unit == "month":
+        return f"{year}-{month:02d}"
+    if unit == "quarter":
+        return f"{year}-Q{(month - 1) // 3 + 1}"
+    return str(year)

@@ -21,10 +21,30 @@ import pandas as pd
 from flask_babel import gettext as _
 from pandas import DataFrame
 
+from superset.db_engine_specs.jalali import JalaliTimeGrain
 from superset.exceptions import InvalidPostProcessingError
 from superset.utils.core import DTTM_ALIAS
 from superset.utils.decorators import suppress_logging
+from superset.utils.jalali import add_jalali_months, jalali_month_start
 from superset.utils.pandas_postprocessing.utils import PROPHET_TIME_GRAIN_MAP
+
+# Jalali grains have no pandas frequency: their future buckets are the next
+# Jalali month, quarter or year starts, this many Jalali months apart.
+_JALALI_GRAIN_MONTHS: dict[str, int] = {
+    JalaliTimeGrain.MONTH: 1,
+    JalaliTimeGrain.QUARTER: 3,
+    JalaliTimeGrain.YEAR: 12,
+}
+
+
+def _jalali_future_dataframe(
+    history: DataFrame, periods: int, step_months: int
+) -> DataFrame:
+    """History dates followed by the next ``periods`` Jalali bucket starts."""
+    last = pd.Timestamp(history["ds"].max())
+    start = pd.Timestamp(jalali_month_start(last.date())) + (last - last.normalize())
+    future = [add_jalali_months(start, step_months * i) for i in range(1, periods + 1)]
+    return DataFrame({"ds": [*history["ds"], *future]})
 
 
 def _prophet_parse_seasonality(
@@ -47,7 +67,8 @@ def _prophet_fit_and_predict(  # pylint: disable=too-many-arguments
     weekly_seasonality: Union[bool, str, int],
     daily_seasonality: Union[bool, str, int],
     periods: int,
-    freq: str,
+    freq: str | None,
+    jalali_step_months: int | None = None,
 ) -> DataFrame:
     """
     Fit a prophet model and return a DataFrame with predicted results.
@@ -73,7 +94,10 @@ def _prophet_fit_and_predict(  # pylint: disable=too-many-arguments
         df["ds"] = df["ds"].dt.tz_convert(None)
     try:
         model.fit(df)
-        future = model.make_future_dataframe(periods=periods, freq=freq)
+        if jalali_step_months:
+            future = _jalali_future_dataframe(df, periods, jalali_step_months)
+        else:
+            future = model.make_future_dataframe(periods=periods, freq=freq)
         forecast = model.predict(future)[["ds", "yhat", "yhat_lower", "yhat_upper"]]
     except Exception as ex:  # noqa: BLE001
         raise InvalidPostProcessingError(
@@ -124,14 +148,15 @@ def prophet(  # pylint: disable=too-many-arguments  # noqa: C901
     # validate inputs
     if not time_grain:
         raise InvalidPostProcessingError(_("Time grain missing"))
-    if time_grain not in PROPHET_TIME_GRAIN_MAP:
+    jalali_step_months = _JALALI_GRAIN_MONTHS.get(time_grain)
+    if time_grain not in PROPHET_TIME_GRAIN_MAP and not jalali_step_months:
         raise InvalidPostProcessingError(
             _(
                 "Unsupported time grain: %(time_grain)s",
                 time_grain=time_grain,
             )
         )
-    freq = PROPHET_TIME_GRAIN_MAP[time_grain]
+    freq = PROPHET_TIME_GRAIN_MAP.get(time_grain)
     # check type at runtime due to marshmallow schema not being able to handle
     # union types
     if not isinstance(periods, int) or periods < 0:
@@ -178,6 +203,7 @@ def prophet(  # pylint: disable=too-many-arguments  # noqa: C901
             daily_seasonality=_prophet_parse_seasonality(daily_seasonality),
             periods=periods,
             freq=freq,
+            jalali_step_months=jalali_step_months,
         )
         new_columns = [
             f"{column}__yhat",

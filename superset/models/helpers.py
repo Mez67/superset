@@ -129,6 +129,7 @@ from superset.constants import (
 )
 from superset.db_engine_specs.base import TimestampExpression
 from superset.db_engine_specs.exceptions import SupersetDBAPIError
+from superset.db_engine_specs.jalali import JalaliTimeGrain
 from superset.errors import ErrorLevel, SupersetError, SupersetErrorType
 from superset.exceptions import (
     AdvancedDataTypeResponseError,
@@ -196,6 +197,11 @@ from superset.utils.date_parser import (
     TimeDeltaAmbiguousError,
 )
 from superset.utils.dates import datetime_to_epoch
+from superset.utils.jalali import (
+    add_jalali_months,
+    jalali_bucket_key,
+    jalali_offset_months,
+)
 from superset.utils.rls import apply_rls, get_predicates_for_table, get_rls_schema
 
 
@@ -2202,6 +2208,39 @@ WEEK_GRAINS = (
     TimeGrain.WEEK_ENDING_SUNDAY,
 )
 
+# Grains whose buckets follow the Gregorian calendar (or whole weeks): time
+# comparisons on them keep Gregorian month arithmetic so that the shifted
+# buckets line up, even when CALENDAR = "jalali".
+_GREGORIAN_OFFSET_GRAINS = (
+    TimeGrain.MONTH,
+    TimeGrain.QUARTER,
+    TimeGrain.QUARTER_YEAR,
+    TimeGrain.YEAR,
+    *WEEK_GRAINS,
+)
+
+_JALALI_GRAIN_UNITS: dict[str, str] = {
+    JalaliTimeGrain.MONTH: "month",
+    JalaliTimeGrain.QUARTER: "quarter",
+    JalaliTimeGrain.YEAR: "year",
+}
+
+
+def offset_calendar(time_grain: str | None) -> str:
+    """Calendar in which a time comparison's month, quarter and year offsets
+    ("1 year ago") are counted for ``time_grain``.
+
+    With ``CALENDAR = "jalali"`` they are Jalali months, except on Gregorian
+    month/quarter/year and week grains, whose buckets need Gregorian shifts.
+    """
+    if app.config.get("CALENDAR") != "jalali" or time_grain in _GREGORIAN_OFFSET_GRAINS:
+        return "gregorian"
+    return "jalali"
+
+
+def _jalali_offset_months(offset: str | None, calendar: str) -> int | None:
+    return jalali_offset_months(offset) if calendar == "jalali" else None
+
 
 class ExploreMixin:  # pylint: disable=too-many-public-methods
     """
@@ -3443,12 +3482,14 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
                                 offset=offset,
                             )
                         )
+                    calendar = offset_calendar(time_grain)
                     query_object_clone.from_dttm = get_past_or_future(
                         offset,
                         outer_from_dttm,
+                        calendar=calendar,
                     )
                     query_object_clone.to_dttm = get_past_or_future(
-                        offset, outer_to_dttm
+                        offset, outer_to_dttm, calendar=calendar
                     )
 
                     query_object_clone.inner_from_dttm = outer_from_dttm
@@ -3985,7 +4026,15 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
             delta = None
 
         column_name = OFFSET_JOIN_COLUMN_SUFFIX + offset
-        shifted = _shift_grainless_temporal_source(source, offset, delta)
+        jalali_months = _jalali_offset_months(offset, offset_calendar(None))
+        if jalali_months is not None:
+            shifted = source.map(
+                lambda value: (
+                    value if pd.isna(value) else add_jalali_months(value, jalali_months)
+                )
+            )
+        else:
+            shifted = _shift_grainless_temporal_source(source, offset, delta)
 
         # Join on string values so that mismatched key dtypes (e.g. an empty
         # offset series materializes its join keys as NaN floats) cannot break
@@ -4138,7 +4187,11 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
 
             if use_outer_join:
                 df = self._coalesce_offset_index(
-                    df, offset, join_keys, resolved_week_offset
+                    df,
+                    offset,
+                    join_keys,
+                    resolved_week_offset,
+                    calendar=offset_calendar(time_grain),
                 )
 
             df = self._apply_cleanup_logic(
@@ -4162,6 +4215,7 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
         offset: str,
         join_keys: list[str],
         resolved_week_offset: DateOffset | None = None,
+        calendar: str = "gregorian",
     ) -> pd.DataFrame:
         """
         Rebuild the temporal x-axis after an outer join with an offset DataFrame.
@@ -4181,6 +4235,17 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
         x_axis = join_keys[0]
         offset_x_axis = f"{x_axis}{R_SUFFIX}"
         if x_axis not in df.columns or offset_x_axis not in df.columns:
+            return df
+
+        if (jalali_months := _jalali_offset_months(offset, calendar)) is not None:
+            shifted_back = df[offset_x_axis].map(
+                lambda value: (
+                    value
+                    if pd.isna(value)
+                    else add_jalali_months(value, -jalali_months)
+                )
+            )
+            df[x_axis] = df[x_axis].fillna(shifted_back)
             return df
 
         if resolved_week_offset is not None:
@@ -4308,12 +4373,35 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
                 resolved_week_offset = self._resolve_week_grain_offset(
                     df, time_grain, time_offset
                 )
+            calendar = offset_calendar(time_grain)
             df[name] = df.apply(
                 lambda row: self.generate_join_column(
-                    row, 0, time_grain, time_offset, resolved_week_offset
+                    row,
+                    0,
+                    time_grain,
+                    time_offset,
+                    resolved_week_offset,
+                    calendar=calendar,
                 ),
                 axis=1,
             )
+
+    @staticmethod
+    def _shift_join_value(
+        value: Any,
+        time_offset: str,
+        resolved_week_offset: DateOffset | None,
+        calendar: str,
+    ) -> Any:
+        """Shift a main-series timestamp by a relative offset for the join."""
+        jalali_months = (
+            None if pd.isna(value) else _jalali_offset_months(time_offset, calendar)
+        )
+        if jalali_months is not None:
+            return add_jalali_months(value, jalali_months)
+        if resolved_week_offset is not None:
+            return value + resolved_week_offset
+        return value + DateOffset(**normalize_time_delta(time_offset))
 
     @staticmethod
     def generate_join_column(
@@ -4322,15 +4410,15 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
         time_grain: str,
         time_offset: str | None = None,
         resolved_week_offset: DateOffset | None = None,
+        calendar: str = "gregorian",
     ) -> str:
         value = row.iloc[column_index]
 
         if hasattr(value, "strftime"):
             if time_offset and not ExploreMixin.is_valid_date_range_static(time_offset):
-                if resolved_week_offset is not None:
-                    value = value + resolved_week_offset
-                else:
-                    value = value + DateOffset(**normalize_time_delta(time_offset))
+                value = ExploreMixin._shift_join_value(
+                    value, time_offset, resolved_week_offset, calendar
+                )
 
             if time_grain in (
                 TimeGrain.WEEK_STARTING_SUNDAY,
@@ -4353,6 +4441,9 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
 
             if time_grain == TimeGrain.YEAR:
                 return value.strftime("%Y")
+
+            if time_grain in _JALALI_GRAIN_UNITS and not pd.isna(value):
+                return jalali_bucket_key(value, _JALALI_GRAIN_UNITS[time_grain])
 
         return str(value)
 

@@ -146,14 +146,35 @@ def _rewrite_quarters_as_months(human_readable: str | None) -> str:
     )
 
 
+def _resolve_calendar(calendar: str | None) -> str:
+    if calendar:
+        return calendar
+    if has_app_context():
+        return current_app.config.get("CALENDAR") or "gregorian"
+    return "gregorian"
+
+
 def get_past_or_future(
     human_readable: str | None,
     source_time: datetime | None = None,
+    calendar: str | None = None,
 ) -> datetime:
+    """Shift ``source_time`` (default: now) by a phrase such as "1 month ago".
+
+    With the Jalali calendar (``calendar`` or, when it is ``None``, the
+    ``CALENDAR`` setting), whole months, quarters and years move by Jalali
+    months, so "1 month ago" from 15 Aban is 15 Mehr.
+    """
     cal = parsedatetime.Calendar()
     source_dttm = dttm_from_timetuple(
         source_time.timetuple() if source_time else datetime.now().timetuple()
     )
+    if _resolve_calendar(calendar) == "jalali":
+        from superset.utils.jalali import add_jalali_months, jalali_offset_months
+
+        months = jalali_offset_months(human_readable)
+        if months is not None:
+            return add_jalali_months(source_dttm, months)
     human_readable = _rewrite_quarters_as_months(human_readable)
     return dttm_from_timetuple(cal.parse(human_readable, source_dttm)[0])
 
@@ -191,7 +212,7 @@ def is_constant_human_timedelta(human_readable: str | None) -> bool:
     if not is_parseable_human_timedelta(human_readable):
         return False
     deltas = {
-        get_past_or_future(human_readable, probe) - probe
+        get_past_or_future(human_readable, probe, calendar="gregorian") - probe
         for probe in _SHIFT_PROBE_TIMES
     }
     return len(deltas) == 1
@@ -526,6 +547,21 @@ def _jalali_calendar_range(time_range: str) -> str | None:
     return f"{start.isoformat()}T00:00:00 : {end.isoformat()}T00:00:00"
 
 
+def _jalali_time_shift_months(time_shift: str) -> int | None:
+    """With the Jalali calendar, the Jalali months a ``time_shift`` such as
+    "1 year ago" moves by. A time shift points to the past unless it says
+    "later", like ``parse_past_timedelta``. ``None`` when it does not apply.
+    """
+    if _resolve_calendar(None) != "jalali":
+        return None
+    from superset.utils.jalali import jalali_offset_months
+
+    months = jalali_offset_months(time_shift)
+    if months is None or "later" in time_shift.lower():
+        return months
+    return -abs(months)
+
+
 def get_since_until(  # pylint: disable=too-many-arguments,too-many-locals,too-many-branches,too-many-statements  # noqa: C901
     time_range: str | None = None,
     since: str | None = None,
@@ -750,6 +786,15 @@ def get_since_until(  # pylint: disable=too-many-arguments,too-many-locals,too-m
             since_part, until_part = (part.strip() for part in parts)
             _since = parse_human_datetime(since_part)
             _until = parse_human_datetime(until_part)
+        elif (jalali_months := _jalali_time_shift_months(time_shift)) is not None:
+            from superset.utils.jalali import add_jalali_months
+
+            _since = (
+                _since if _since is None else add_jalali_months(_since, jalali_months)
+            )
+            _until = (
+                _until if _until is None else add_jalali_months(_until, jalali_months)
+            )
         else:
             time_delta_since = parse_past_timedelta(time_shift, _since)
             time_delta_until = parse_past_timedelta(time_shift, _until)

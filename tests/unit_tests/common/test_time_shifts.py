@@ -1466,3 +1466,140 @@ def test_join_offset_dfs_no_time_grain_temporal_key_not_first() -> None:
     )
 
     assert_frame_equal(expected, result)
+
+
+# Jalali calendar: month, quarter and year offsets move by Jalali months.
+# 1403 month starts: Mehr 2024-09-22, Aban 2024-10-22, Azar 2024-11-21.
+_MEHR_1403 = Timestamp("2024-09-22")
+_ABAN_1403 = Timestamp("2024-10-22")
+_AZAR_1403 = Timestamp("2024-11-21")
+
+
+@fixture
+def jalali_calendar():
+    from unittest.mock import patch
+
+    with patch.dict(current_app.config, {"CALENDAR": "jalali"}):
+        yield
+
+
+def test_join_offset_dfs_jalali_month_grain_month_offset(jalali_calendar) -> None:
+    """Each Jalali month lines up with the previous Jalali month. Gregorian
+    arithmetic would pair Azar (2024-11-21) with 2024-10-21, a day before
+    Aban starts, and lose the row."""
+    df = DataFrame({"ds": [_ABAN_1403, _AZAR_1403], "D": [1, 2]})
+    offset_df = DataFrame({"ds": [_MEHR_1403, _ABAN_1403], "B": [5, 7]})
+
+    result = query_context_processor.join_offset_dfs(
+        df, {"1 month ago": offset_df}, "JALALI_MONTH", join_keys=["ds"]
+    )
+
+    assert result["B"].tolist() == [5, 7]
+    assert result["ds"].tolist() == [_ABAN_1403, _AZAR_1403]
+
+
+@mark.parametrize(
+    ("time_grain", "offset", "current", "previous"),
+    [
+        # Q3 1403 (Mehr) <- Q2 1403 (Tir, 2024-06-21)
+        ("JALALI_QUARTER", "1 quarter ago", _MEHR_1403, Timestamp("2024-06-21")),
+        # 1403 (2024-03-20) <- 1402 (2023-03-21)
+        ("JALALI_YEAR", "1 year ago", Timestamp("2024-03-20"), Timestamp("2023-03-21")),
+        # Aban 1403 <- Aban 1402 (2023-10-23)
+        ("JALALI_MONTH", "1 year ago", _ABAN_1403, Timestamp("2023-10-23")),
+    ],
+)
+def test_join_offset_dfs_jalali_grains(
+    jalali_calendar,
+    time_grain: str,
+    offset: str,
+    current: Timestamp,
+    previous: Timestamp,
+) -> None:
+    df = DataFrame({"ds": [current], "D": [1]})
+    offset_df = DataFrame({"ds": [previous], "B": [5]})
+
+    result = query_context_processor.join_offset_dfs(
+        df, {offset: offset_df}, time_grain, join_keys=["ds"]
+    )
+
+    assert result["B"].tolist() == [5]
+
+
+def test_join_offset_dfs_jalali_full_range_rebuilds_axis(jalali_calendar) -> None:
+    """Offset-only rows move forward by a Jalali month onto the main axis."""
+    df = DataFrame({"ds": [_ABAN_1403], "D": [1]})
+    offset_df = DataFrame({"ds": [_MEHR_1403, _ABAN_1403], "B": [5, 7]})
+
+    result = query_context_processor.join_offset_dfs(
+        df,
+        {"1 month ago": offset_df},
+        "JALALI_MONTH",
+        join_keys=["ds"],
+        full_range=True,
+    )
+
+    assert sorted(zip(result["ds"], result["B"], strict=True)) == [
+        (_ABAN_1403, 5),
+        (_AZAR_1403, 7),
+    ]
+
+
+def test_join_offset_dfs_jalali_day_grain_month_offset(jalali_calendar) -> None:
+    """Daily data: 16 Aban compares with 16 Mehr (Gregorian: 6 Oct)."""
+    df = DataFrame({"ds": [Timestamp("2024-11-06")], "D": [1]})
+    offset_df = DataFrame({"ds": [Timestamp("2024-10-07")], "B": [5]})
+
+    result = query_context_processor.join_offset_dfs(
+        df, {"1 month ago": offset_df}, TimeGrain.DAY, join_keys=["ds"]
+    )
+
+    assert result["B"].tolist() == [5]
+
+
+def test_join_offset_dfs_jalali_without_grain(jalali_calendar) -> None:
+    df = DataFrame({"ds": [Timestamp("2024-11-06")], "D": [1]})
+    offset_df = DataFrame({"ds": [Timestamp("2024-10-07")], "B": [5]})
+
+    result = query_context_processor.join_offset_dfs(
+        df, {"1 month ago": offset_df}, None, join_keys=["ds"]
+    )
+
+    assert result["B"].tolist() == [5]
+
+
+def test_join_offset_dfs_jalali_calendar_keeps_gregorian_month_grain(
+    jalali_calendar,
+) -> None:
+    """Gregorian month buckets keep Gregorian shifts, even in Jalali mode."""
+    df = DataFrame({"ds": [Timestamp("2024-11-01")], "D": [1]})
+    offset_df = DataFrame({"ds": [Timestamp("2024-10-01")], "B": [5]})
+
+    result = query_context_processor.join_offset_dfs(
+        df, {"1 month ago": offset_df}, TimeGrain.MONTH, join_keys=["ds"]
+    )
+
+    assert result["B"].tolist() == [5]
+
+
+@mark.parametrize(
+    ("calendar", "time_grain", "expected"),
+    [
+        ("jalali", "JALALI_MONTH", "jalali"),
+        ("jalali", TimeGrain.DAY, "jalali"),
+        ("jalali", None, "jalali"),
+        ("jalali", TimeGrain.MONTH, "gregorian"),
+        ("jalali", TimeGrain.WEEK, "gregorian"),
+        ("gregorian", "JALALI_MONTH", "gregorian"),
+        (None, TimeGrain.DAY, "gregorian"),
+    ],
+)
+def test_offset_calendar(
+    calendar: str | None, time_grain: str | None, expected: str
+) -> None:
+    from unittest.mock import patch
+
+    from superset.models.helpers import offset_calendar
+
+    with patch.dict(current_app.config, {"CALENDAR": calendar}):
+        assert offset_calendar(time_grain) == expected

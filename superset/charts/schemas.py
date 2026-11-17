@@ -39,6 +39,7 @@ from superset.common.chart_data import ChartDataResultFormat, ChartDataResultTyp
 from superset.common.chart_data_timing import CHART_DATA_TIMING_VERSION
 from superset.constants import SemanticCacheStatus
 from superset.db_engine_specs.base import builtin_time_grains
+from superset.db_engine_specs.jalali import JalaliTimeGrain
 from superset.semantic_layers.bundle_schemas import SemanticViewReferenceSchema
 from superset.subjects.schemas import SubjectReferenceField, SubjectResponseSchema
 from superset.tags.models import TagType
@@ -93,9 +94,10 @@ def get_prophet_time_grain_choices() -> list[str]:
     resolves a grain through the static ``PROPHET_TIME_GRAIN_MAP``, so an
     operator-configured ``TIME_GRAIN_ADDONS`` key has no pandas frequency to
     resolve to. Advertising one here would document a forecast the API
-    cannot serve.
+    cannot serve. The Jalali grains are included: ``prophet()`` steps them
+    by Jalali months.
     """
-    return list(PROPHET_TIME_GRAIN_MAP)
+    return [*PROPHET_TIME_GRAIN_MAP, *JalaliTimeGrain]
 
 
 # Fallback upper bound for the number of Prophet forecast periods when the

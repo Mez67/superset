@@ -48,6 +48,7 @@ from superset.charts.schemas import (
     MAX_VIZ_TYPE_LENGTH,
     MAX_VIZ_TYPE_ORDER_LENGTH,
 )
+from superset.db_engine_specs.jalali import JalaliTimeGrain
 from superset.utils.pandas_postprocessing.utils import PROPHET_TIME_GRAIN_MAP
 
 
@@ -695,7 +696,8 @@ def test_prophet_schema_advertises_only_resolvable_grains(app_context: None) -> 
         if isinstance(validator, OneOf)
         for choice in validator.choices
     }
-    assert advertised == set(PROPHET_TIME_GRAIN_MAP)
+    # prophet() maps the pandas-frequency grains and steps the Jalali ones.
+    assert advertised == {*PROPHET_TIME_GRAIN_MAP, *JalaliTimeGrain}
     assert advertised == set(get_prophet_time_grain_choices())
 
 

@@ -438,3 +438,46 @@ def test_prophet_alias_time_grains_match_their_canonical_form():
         PROPHET_TIME_GRAIN_MAP[TimeGrain.QUARTER_YEAR]
         == PROPHET_TIME_GRAIN_MAP[TimeGrain.QUARTER]
     )
+
+
+@pytest.mark.skipif(not find_spec("prophet"), reason="requires prophet")
+@pytest.mark.parametrize(
+    "time_grain,step,expected_future",
+    [
+        # 24 months from Farvardin 1401 -> Farvardin, Ordibehesht, Khordad 1403
+        ("JALALI_MONTH", 1, [(1403, 1, 1), (1403, 2, 1), (1403, 3, 1)]),
+        # 8 quarters from 1401 -> Q1 and Q2 1403
+        ("JALALI_QUARTER", 3, [(1403, 1, 1), (1403, 4, 1)]),
+        # 4 years from 1399 -> 1403 and 1404
+        ("JALALI_YEAR", 12, [(1403, 1, 1), (1404, 1, 1)]),
+    ],
+)
+def test_prophet_jalali_grains_forecast_jalali_buckets(
+    time_grain: str, step: int, expected_future: list[tuple[int, int, int]]
+) -> None:
+    """Jalali grains have no pandas frequency; the forecast continues on the
+    next Jalali month, quarter or year starts."""
+    from superset.utils.jalali import add_jalali_months, from_jalali, to_jalali
+
+    count = 4 if time_grain == "JALALI_YEAR" else 24 // step
+    first = pd.Timestamp(
+        from_jalali(1399 if time_grain == "JALALI_YEAR" else 1401, 1, 1)
+    )
+    df = pd.DataFrame(
+        {
+            DTTM_ALIAS: [add_jalali_months(first, step * i) for i in range(count)],
+            "sales": [100.0 + 10 * i + (i % 3) for i in range(count)],
+        }
+    )
+
+    result = prophet(
+        df=df,
+        time_grain=time_grain,
+        periods=len(expected_future),
+        confidence_interval=0.8,
+    )
+
+    future = result.iloc[count:]
+    assert [to_jalali(ts.date()) for ts in future[DTTM_ALIAS]] == expected_future
+    assert future["sales__yhat"].notna().all()
+    assert result["sales"].iloc[:count].tolist() == df["sales"].tolist()

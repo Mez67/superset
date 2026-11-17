@@ -611,16 +611,22 @@ Oracle, SQLite, DuckDB, Presto and Trino, and ClickHouse. Hide any of them
 with `TIME_GRAIN_DENYLIST`, for example
 `TIME_GRAIN_DENYLIST = ["JALALI_QUARTER"]`.
 
+### Time comparison and forecasting
+
+- **Time comparison** offsets in months, quarters or years ("1 month ago",
+  "1 year ago") move by Jalali months: Aban is compared with Mehr, and
+  15 Aban with 15 Mehr. This applies to the Jalali grains, to day and
+  shorter grains, and to charts without a time grain or temporal x-axis
+  (such as Big Number with Time Comparison). The Gregorian Month, Quarter,
+  Year and Week grains keep Gregorian offsets, so their buckets still line
+  up. When a day does not exist in the target month, the comparison uses
+  its last day (31 Shahrivar becomes 30 Mehr). Offsets in days and weeks
+  are the same in both calendars.
+- **Forecasting** works with the Jalali grains: the forecast continues on
+  the next Jalali month, quarter or year starts.
+
 ### Limitations
 
-- **Forecasting** is not available with the Jalali grains: the forecasting
-  model needs a fixed, Gregorian frequency (such as "month end"). Use a
-  Gregorian grain, such as Month, to forecast.
-- **Time comparison** offsets such as "1 month ago" or "1 year ago" are
-  applied in the Gregorian calendar. A "1 month ago" comparison of a Jalali
-  month is therefore shifted by a Gregorian month, which can straddle two
-  Jalali months. Comparisons in days, weeks, and "1 year ago" on daily data
-  are not affected.
 - **Partition filter mapping** does not mirror time-range filters through a
   Jalali grain.
 

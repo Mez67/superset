@@ -1175,3 +1175,59 @@ def test_get_since_until_gregorian_calendar_ranges_unchanged(
     assert until is not None
     assert since.day == 1
     assert until.day == 1
+
+
+@pytest.mark.parametrize(
+    "offset,expected",
+    [
+        # 16 Aban 1403 -> 16 Mehr 1403
+        ("1 month ago", datetime(2024, 10, 7, 13, 30)),
+        # -> 16 Aban 1402
+        ("1 year ago", datetime(2023, 11, 7, 13, 30)),
+        # -> 16 Bahman 1403
+        ("1 quarter later", datetime(2025, 2, 4, 13, 30)),
+        # Days are the same in every calendar.
+        ("7 days ago", datetime(2024, 10, 30, 13, 30)),
+    ],
+)
+def test_get_past_or_future_jalali(offset: str, expected: datetime) -> None:
+    source = datetime(2024, 11, 6, 13, 30)
+    assert get_past_or_future(offset, source, calendar="jalali") == expected
+
+
+def test_get_past_or_future_follows_calendar_setting(app_context: None) -> None:
+    from flask import current_app
+
+    source = datetime(2024, 11, 6)
+    with patch.dict(current_app.config, {"CALENDAR": "jalali"}):
+        assert get_past_or_future("1 month ago", source) == datetime(2024, 10, 7)
+        # An explicit calendar wins over the setting.
+        assert get_past_or_future(
+            "1 month ago", source, calendar="gregorian"
+        ) == datetime(2024, 10, 6)
+    with patch.dict(current_app.config, {"CALENDAR": "gregorian"}):
+        assert get_past_or_future("1 month ago", source) == datetime(2024, 10, 6)
+
+
+@pytest.mark.parametrize(
+    "time_shift,expected",
+    [
+        # Aban 1403 -> Mehr 1403
+        ("1 month ago", (datetime(2024, 9, 22), datetime(2024, 10, 22))),
+        ("1 month", (datetime(2024, 9, 22), datetime(2024, 10, 22))),
+        # Aban 1403 -> Aban 1402
+        ("1 year ago", (datetime(2023, 10, 23), datetime(2023, 11, 22))),
+    ],
+)
+def test_get_since_until_jalali_time_shift(
+    app_context: None, time_shift: str, expected: tuple[datetime, datetime]
+) -> None:
+    from flask import current_app
+
+    with patch.dict(current_app.config, {"CALENDAR": "jalali"}):
+        assert (
+            get_since_until(
+                "2024-10-22T00:00:00 : 2024-11-21T00:00:00", time_shift=time_shift
+            )
+            == expected
+        )
