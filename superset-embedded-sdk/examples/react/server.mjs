@@ -77,8 +77,16 @@ async function requestGuestToken(body, retry = true) {
 function currentUser(url) {
   const user = url.searchParams.get('user') ?? 'demo';
   const country = url.searchParams.get('country');
+  // The viewer's groups (e.g. from Active Directory), read by RLS rules that
+  // use {{ current_user_group_filter("branch", prefix="Branch-") }}.
+  const groups = url.searchParams.getAll('group');
   return {
-    user: { username: user, first_name: user, last_name: '' },
+    user: {
+      username: user,
+      first_name: user,
+      last_name: '',
+      attributes: { groups },
+    },
     // Row level security: limit every dataset on the dashboard to one
     // country for this user. Use your own rules, per user or per tenant.
     rls: country ? [{ clause: `country = '${country.replace(/'/g, "''")}'` }] : [],

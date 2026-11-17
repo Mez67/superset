@@ -270,6 +270,37 @@ If you have caching enabled in your Superset configuration, then the list of RLS
 by Superset when calculating the cache key. A cache key is a unique identifier that determines if there's a
 cache hit in the future and Superset can retrieve cached data.
 
+### Current User Groups
+
+The `{{ current_user_groups() }}` macro returns the sorted names of the logged in
+user's groups, such as the Active Directory groups synced at sign-in with
+`AUTH_GROUPS_SYNC_AT_LOGIN`. For the guest user of an embedded dashboard, it
+returns the `groups` attribute of the guest token's user (a list of names).
+
+With `prefix`, only groups whose name starts with it (ignoring case) are
+returned, without the prefix. If the user belongs to `Branch-Tehran`,
+`Branch-Shiraz` and `BI-Analysts`:
+
+```python
+{{ current_user_groups(prefix="Branch-") }}
+```
+
+returns `['Shiraz', 'Tehran']`. The macro returns `None` when no group matches.
+Like `current_user_roles`, the value is part of the cache key unless
+`add_to_cache_keys=False` is passed.
+
+`{{ current_user_group_filter(column, prefix=None) }}` turns those groups into a
+predicate for a row level security rule, so one rule can restrict every
+branch, region or department to its own rows:
+
+```python
+{{ current_user_group_filter("branch", prefix="Branch-") }}
+```
+
+renders `branch IN ('Shiraz', 'Tehran')`, and `1 = 0` (no rows) for a user
+without a matching group. Row level security clauses are only rendered with
+Jinja when `ENABLE_TEMPLATE_PROCESSING` is enabled.
+
 ### Custom URL Parameters
 
 The `{{ url_param('custom_variable') }}` macro lets you define arbitrary URL

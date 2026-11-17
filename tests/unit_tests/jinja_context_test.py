@@ -3867,3 +3867,101 @@ def test_render_for_discovery_custom_processors(mocker: MockerFixture) -> None:
     )
     with pytest.raises(OpaqueTemplateError):
         processor.render_for_discovery("{{ value.now() }}")
+
+
+def _user_with_groups(mocker: MockerFixture, names: list[str]) -> None:
+    from types import SimpleNamespace
+
+    mocker.patch("superset.utils.core.g").user.id = 1
+    mocker.patch(
+        "superset.jinja_context.security_manager.get_user_by_id",
+        return_value=SimpleNamespace(
+            groups=[SimpleNamespace(name=name) for name in names]
+        ),
+    )
+
+
+def test_current_user_groups(mocker: MockerFixture) -> None:
+    _user_with_groups(mocker, ["Branch-Tehran", "BI-Users", "branch-Shiraz"])
+    wrapper = mocker.patch("superset.jinja_context.ExtraCache.cache_key_wrapper")
+    cache = ExtraCache(table=mocker.MagicMock())
+
+    assert cache.current_user_groups() == ["BI-Users", "Branch-Tehran", "branch-Shiraz"]
+    # The prefix is matched ignoring case and stripped.
+    assert cache.current_user_groups(prefix="Branch-") == ["Shiraz", "Tehran"]
+    assert cache.current_user_groups(prefix="Region-") is None
+    # Every list that shapes a query is part of its cache key.
+    assert [call.args[0] for call in wrapper.call_args_list] == [
+        '["BI-Users", "Branch-Tehran", "branch-Shiraz"]',
+        '["Shiraz", "Tehran"]',
+    ]
+    assert cache.current_user_groups(add_to_cache_keys=False) is not None
+    assert wrapper.call_count == 2
+
+
+def test_current_user_groups_without_user(mocker: MockerFixture) -> None:
+    mocker.patch("superset.utils.core.g").user = None
+    assert ExtraCache(table=mocker.MagicMock()).current_user_groups() is None
+
+
+def test_current_user_group_filter(mocker: MockerFixture) -> None:
+    from sqlalchemy.dialects import postgresql
+
+    _user_with_groups(mocker, ["Branch-Tehran", "Branch-O'Hare", "Finance"])
+    cache = ExtraCache(table=mocker.MagicMock(), dialect=postgresql.dialect())
+
+    assert (
+        cache.current_user_group_filter("branch", prefix="Branch-")
+        == "branch IN ('O''Hare', 'Tehran')"
+    )
+    # No matching group: the rule hides every row instead of failing open.
+    assert cache.current_user_group_filter("region", prefix="Region-") == "1 = 0"
+
+
+def test_group_macros_are_cache_key_calls() -> None:
+    """RLS clauses using the group macros make the cache key per viewer."""
+    assert ExtraCache.regex.search('{{ current_user_group_filter("branch") }}')
+    assert ExtraCache.regex.search("{% if current_user_groups() %}x{% endif %}")
+
+
+def test_group_macros_render_in_templates(mocker: MockerFixture) -> None:
+    from superset.jinja_context import JinjaTemplateProcessor
+
+    _user_with_groups(mocker, ["Branch-Tehran"])
+    database = mocker.MagicMock()
+    database.db_engine_spec = mocker.MagicMock()
+    from sqlalchemy.dialects import sqlite
+
+    database.get_dialect.return_value = sqlite.dialect()
+    processor = JinjaTemplateProcessor(database=database)
+
+    assert (
+        processor.process_template(
+            '{{ current_user_group_filter("branch", prefix="Branch-") }}'
+        )
+        == "branch IN ('Tehran')"
+    )
+
+
+@pytest.mark.parametrize(
+    "attributes,expected",
+    [
+        ({"groups": ["Branch-Tehran", "Branch-Shiraz", 7]}, ["Shiraz", "Tehran"]),
+        ({"groups": "Branch-Tehran"}, ["Tehran"]),
+        ({"groups": {"Branch-Tehran": True}}, None),
+        ({}, None),
+    ],
+)
+def test_current_user_groups_for_guest_users(
+    mocker: MockerFixture, attributes: dict[str, Any], expected: list[str] | None
+) -> None:
+    """Embedded viewers carry their groups in the guest token."""
+    mocker.patch(
+        "superset.jinja_context.security_manager.is_guest_user", return_value=True
+    )
+    mocker.patch("superset.jinja_context.g").user.guest_token = {
+        "user": {"username": "viewer", "attributes": attributes}
+    }
+    cache = ExtraCache(table=mocker.MagicMock())
+
+    assert cache.current_user_groups(prefix="Branch-") == expected

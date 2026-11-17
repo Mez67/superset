@@ -200,6 +200,8 @@ class ExtraCache:
         r"current_user_email\([^)]*\)|"
         r"current_user_rls_rules\([^)]*\)|"
         r"current_user_roles\([^)]*\)|"
+        r"current_user_groups\([^)]*\)|"
+        r"current_user_group_filter\([^)]*\)|"
         r"cache_key_wrapper\([^)]*\)|"
         r"url_param\([^)]*\)|"
         r"get_guest_user_attribute\([^)]*\)"
@@ -308,6 +310,79 @@ class ExtraCache:
             return None
         except Exception:  # pylint: disable=broad-except
             return None
+
+    def current_user_groups(
+        self, prefix: str | None = None, add_to_cache_keys: bool = True
+    ) -> list[str] | None:
+        """
+        Return the sorted names of the groups of the user who is currently logged
+        in, e.g. the Active Directory groups synced with
+        ``AUTH_GROUPS_SYNC_AT_LOGIN``. For an embedded dashboard's guest
+        viewer, the ``groups`` attribute of the guest token's user is used.
+
+        With ``prefix``, only groups whose name starts with it (ignoring case)
+        are returned, without the prefix: ``prefix="Branch-"`` turns
+        ``Branch-Tehran`` into ``Tehran``. This lets one row level security
+        rule serve every branch, region or department.
+
+        :param prefix: Keep only groups starting with this and strip it
+        :param add_to_cache_keys: Whether the value should be included in the cache key
+        :returns: List of group names, or ``None`` when there are none
+        """
+        try:
+            names = sorted(set(self._current_user_group_names()))
+        except SQLAlchemyError:
+            db.session.rollback()  # pylint: disable=consider-using-transaction
+            return None
+        if prefix:
+            folded = prefix.casefold()
+            names = [
+                name[len(prefix) :].strip()
+                for name in names
+                if name.casefold().startswith(folded)
+            ]
+            names = sorted({name for name in names if name})
+        if not names:
+            return None
+        if add_to_cache_keys:
+            self.cache_key_wrapper(json.dumps(names))
+        return names
+
+    @staticmethod
+    def _current_user_group_names() -> list[str]:
+        """Group names of the signed-in user, or for an embedded (guest) viewer
+        the ``groups`` attribute of the guest token's user, which the embedding
+        application sets, e.g. from the viewer's Active Directory groups."""
+        if security_manager.is_guest_user():
+            token: GuestToken = g.user.guest_token
+            groups = (token.get("user", {}).get("attributes") or {}).get("groups")
+            if isinstance(groups, str):
+                groups = [groups]
+            if not isinstance(groups, list):
+                return []
+            return [group for group in groups if isinstance(group, str)]
+        user_id = get_user_id()
+        user = security_manager.get_user_by_id(user_id) if user_id else None
+        return [group.name for group in getattr(user, "groups", None) or []]
+
+    def current_user_group_filter(self, column: str, prefix: str | None = None) -> str:
+        """
+        Return a SQL predicate restricting ``column`` to the current user's
+        groups (see ``current_user_groups``), for row level security rules:
+
+            {{ current_user_group_filter("branch", prefix="Branch-") }}
+
+        renders ``branch IN ('Shiraz', 'Tehran')``. A user without a matching
+        group gets ``1 = 0`` and sees no rows.
+
+        :param column: The column (or SQL expression) to restrict
+        :param prefix: Keep only groups starting with this and strip it
+        :returns: A SQL predicate
+        """
+        values = self.current_user_groups(prefix=prefix)
+        if not values or self.dialect is None:
+            return "1 = 0"
+        return f"{column} IN {WhereInMacro(self.dialect)(values)}"
 
     def current_user_rls_rules(self) -> list[str] | None:
         """
@@ -1343,6 +1418,12 @@ class JinjaTemplateProcessor(BaseTemplateProcessor):
                 ),
                 "current_user_rls_rules": partial(
                     safe_proxy, extra_cache.current_user_rls_rules
+                ),
+                "current_user_groups": partial(
+                    safe_proxy, extra_cache.current_user_groups
+                ),
+                "current_user_group_filter": partial(
+                    safe_proxy, extra_cache.current_user_group_filter
                 ),
                 "cache_key_wrapper": partial(safe_proxy, extra_cache.cache_key_wrapper),
                 "filter_values": partial(safe_proxy, extra_cache.filter_values),

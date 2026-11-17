@@ -726,6 +726,39 @@ Additional settings:
   DN to search for groups, which can speed up the lookup in large
   directories.
 
+### Row level security from AD groups
+
+To let each branch, region or department see only its own rows, name the AD
+groups after the values in your data with a common prefix (for example
+`Branch-Tehran` and `Branch-Shiraz` for a `branch` column) and sync groups at
+sign-in:
+
+```python
+AUTH_GROUPS_SYNC_AT_LOGIN = True
+AUTH_AUTO_CREATE_GROUPS = True
+FEATURE_FLAGS = {"ENABLE_TEMPLATE_PROCESSING": True}
+```
+
+Then add a single row level security rule (**Settings > Row Level Security**)
+on the datasets that have the column:
+
+- **Filter type**: Base, so it applies to everyone except the roles or groups
+  you exclude, such as `Admin` or a managers group that sees every branch.
+- **Clause**: `{{ current_user_group_filter("branch", prefix="Branch-") }}`
+
+A user in `Branch-Tehran` gets `branch IN ('Tehran')`, a user in several branch
+groups sees all of them, and a user in none sees no rows. Group membership is
+read from AD at every sign-in, including nested groups, and each user's groups
+are part of the chart cache key, so cached results are never shared between
+branches. New branches need no change in Superset: create the AD group and
+assign users.
+
+Embedded dashboards use the same rule: the application that requests the
+guest token passes the viewer's groups as a user attribute, for example
+`"user": {"username": "ali", "attributes": {"groups": ["Branch-Tehran"]}}`.
+If an embedded deployment does not pass groups, exclude its guest role
+(`GUEST_ROLE_NAME`) from the rule and use the token's own `rls` rules instead.
+
 ## Flask app Configuration Hook
 
 `FLASK_APP_MUTATOR` is a configuration function that can be provided in your environment, receives
