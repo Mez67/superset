@@ -1,0 +1,92 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Offline deployment: every service runs from an image loaded with
+# `docker load` (see README.fa.md); nothing is built or pulled.
+# Settings live in .env (secrets, ports) and config/superset_config_docker.py.
+
+x-superset: &superset
+  image: ${SUPERSET_IMAGE:?set SUPERSET_IMAGE in .env}
+  pull_policy: never
+  env_file: .env
+  restart: unless-stopped
+  volumes:
+    - ./config:/app/docker/pythonpath_dev:ro
+    - superset_home:/app/superset_home
+
+services:
+  redis:
+    image: ${REDIS_IMAGE:-redis:7}
+    pull_policy: never
+    restart: unless-stopped
+    volumes:
+      - redis:/data
+
+  db:
+    image: ${POSTGRES_IMAGE:-postgres:17}
+    pull_policy: never
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      - db_home:/var/lib/postgresql/data
+
+  superset-init:
+    <<: *superset
+    command: ["/app/docker/docker-init.sh"]
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+    healthcheck:
+      disable: true
+
+  superset:
+    <<: *superset
+    command: ["/app/docker/docker-bootstrap.sh", "app-gunicorn"]
+    ports:
+      - "${SUPERSET_HOST_PORT:-8088}:8088"
+    depends_on:
+      superset-init:
+        condition: service_completed_successfully
+
+  superset-worker:
+    <<: *superset
+    command: ["/app/docker/docker-bootstrap.sh", "worker"]
+    depends_on:
+      superset-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "celery -A superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME",
+        ]
+
+  superset-worker-beat:
+    <<: *superset
+    command: ["/app/docker/docker-bootstrap.sh", "beat"]
+    depends_on:
+      superset-init:
+        condition: service_completed_successfully
+    healthcheck:
+      disable: true
+
+volumes:
+  superset_home:
+  db_home:
+  redis:

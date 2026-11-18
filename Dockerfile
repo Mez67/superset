@@ -362,6 +362,14 @@ RUN /app/docker/apt-install.sh \
 RUN --mount=type=cache,target=${SUPERSET_HOME}/.cache/uv \
     /app/docker/pip-install.sh --requires-build-essential .[postgres,mysql,fastmcp]
 
+# This distribution: Active Directory sign-in (python-ldap, built against the
+# libldap2-dev/libsasl2-dev headers installed in python-common) and chart
+# forecasting with the Jalali time grains (prophet). Kept as its own step so
+# upstream changes to the line above merge cleanly.
+RUN --mount=type=cache,target=${SUPERSET_HOME}/.cache/uv \
+    /app/docker/pip-install.sh --requires-build-essential \
+        "python-ldap>=3.4.8,<4" ".[prophet]"
+
 # Bundle Playwright + a headless Chromium so Alerts & Reports and thumbnail
 # generation work out of the box. Installed directly (rather than via the
 # INCLUDE_CHROMIUM build arg on python-common) because this stage builds
