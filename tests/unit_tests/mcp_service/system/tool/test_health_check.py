@@ -24,7 +24,7 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 from fastmcp import Client, FastMCP
-from flask import Flask
+from flask import current_app, Flask
 
 from superset.mcp_service.app import mcp
 from superset.mcp_service.system.schemas import HealthCheckResponse
@@ -107,7 +107,7 @@ async def test_health_check_success_via_client(mcp_server: FastMCP) -> None:
 
     data = json.loads(result.content[0].text)
     assert data["status"] == "healthy"
-    assert data["service"] == "Superset MCP Service"
+    assert data["service"] == f"{current_app.config['APP_NAME']} MCP Service"
     assert data["version"] == "4.1.0"
     assert data["timestamp"] is not None
     assert data["uptime_seconds"] is not None
@@ -164,7 +164,7 @@ async def test_health_check_returns_error_status_when_version_metadata_raises(
     # uptime_seconds is only set on the success path.
     assert data["uptime_seconds"] is None
     # Fields computed before the try block are unaffected by the failure.
-    assert data["service"] == "Superset MCP Service"
+    assert data["service"] == f"{current_app.config['APP_NAME']} MCP Service"
     assert data["python_version"]
     assert data["platform"]
     assert data["timestamp"] is not None

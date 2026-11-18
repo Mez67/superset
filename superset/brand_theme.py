@@ -45,6 +45,9 @@ BRAND_FAVICONS: list[dict[str, str]] = [
     },
 ]
 
+# Navbar logo (light theme); the dark theme uses the light-text variant.
+BRAND_LOGO_URL = f"{_BRAND_IMAGES}/logo-horiz.svg"
+
 # Fields replaced in the PWA manifest (see superset/views/pwa_manifest.py).
 BRAND_PWA_MANIFEST: dict[str, Any] = {
     "name": BRAND_NAME,
@@ -120,7 +123,7 @@ _LIGHT_TOKENS: dict[str, Any] = {
     "dashboardTileBorder": "1px solid #e6eaf1",
     "dashboardTileBoxShadow": "0 1px 2px rgba(16, 24, 40, 0.05)",
     "colorEditorSelection": "#dbe4ff",
-    "brandLogoUrl": f"{_BRAND_IMAGES}/logo-horiz.svg",
+    "brandLogoUrl": BRAND_LOGO_URL,
 }
 
 _DARK_TOKENS: dict[str, Any] = {

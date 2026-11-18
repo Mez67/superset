@@ -1362,6 +1362,7 @@ _THEME_DARK_BASE: Theme = {
 from superset.brand_theme import (  # noqa: E402
     BRAND_COLOR_SCHEME,
     BRAND_FAVICONS,
+    BRAND_LOGO_URL,
     BRAND_NAME,
     BRAND_PWA_MANIFEST,
     with_brand_theme,
@@ -1371,6 +1372,7 @@ from superset.brand_theme import (  # noqa: E402
 # the window title from APP_NAME and an APP_NAME set in superset_config.py
 # still wins.
 APP_NAME = BRAND_NAME
+APP_ICON = BRAND_LOGO_URL
 FAVICONS = BRAND_FAVICONS
 # Rial and Toman (IRT: not ISO 4217, values are shown as stored) first.
 CURRENCIES = ["IRR", "IRT", *CURRENCIES]

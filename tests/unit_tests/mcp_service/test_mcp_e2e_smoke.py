@@ -68,6 +68,7 @@ import httpx
 import pytest
 from fastmcp import Client, FastMCP
 from fastmcp.client.transports import StreamableHttpTransport
+from flask import current_app
 from starlette.applications import Starlette
 
 from superset.mcp_service.app import mcp
@@ -265,7 +266,7 @@ async def test_tools_call_health_check_over_real_asgi_transport() -> None:
 
     data = json.loads(result.content[0].text)
     assert data["status"] == "healthy"
-    assert data["service"] == "Superset MCP Service"
+    assert data["service"] == f"{current_app.config['APP_NAME']} MCP Service"
     assert result.structured_content == data
 
 
