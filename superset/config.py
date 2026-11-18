@@ -1637,6 +1637,21 @@ EXPLORE_FORM_DATA_CACHE_CONFIG: CacheConfig = {
     "CODEC": JsonKeyValueCodec(),
 }
 
+# Registry backing Explore's Stop button (synchronous chart-data query
+# cancellation). `CACHE_TYPE` defaults to `SupersetMetastoreCache` that stores
+# the values in the key-value table in the Superset metastore, as it's
+# required for Stop to work correctly (the general-purpose `CACHE_CONFIG`
+# defaults to `NullCache`, which would make Stop silently a no-op), but can be
+# replaced by any `Flask-Caching` backend.
+CHART_QUERY_CANCEL_CACHE_CONFIG: CacheConfig = {
+    "CACHE_TYPE": "SupersetMetastoreCache",
+    # Entries are always written with an explicit, shorter timeout scoped to
+    # the webserver timeout (see `_registry_ttl` in `query_cancel.py`); this
+    # default only bounds the leak if a worker dies mid-query.
+    "CACHE_DEFAULT_TIMEOUT": int(timedelta(minutes=10).total_seconds()),
+    "CODEC": JsonKeyValueCodec(),
+}
+
 # Extension Tier 2: Ephemeral State - Server-side cache with TTL.
 # Short-lived KV storage that automatically expires. Not guaranteed to
 # survive server restarts. Use for temporary state like job progress,
@@ -3313,6 +3328,12 @@ STATIC_ASSETS_PREFIX = ""
 # Typically these should not be allowed.
 PREVENT_UNSAFE_DB_CONNECTIONS = True
 
+# Number of trailing characters of each masked `encrypted_extra` field that users
+# who can edit a database may reveal as a hint. Never more than 25% of a value is
+# revealed: a value shorter than four times this number reveals nothing. 0 disables
+# the hints.
+ENCRYPTED_EXTRA_HINT_CHARS = 0
+
 # If true all default urls on datasets will be handled as relative URLs by the frontend
 PREVENT_UNSAFE_DEFAULT_URLS_ON_DATASET = True
 
@@ -3503,6 +3524,16 @@ GUEST_TOKEN_VALIDATOR_HOOK = None
 # tokens minted before this feature (which carry no version claim) are treated as
 # version 0, so nothing is revoked until an admin explicitly bumps the version.
 GUEST_TOKEN_REVOCATION_ENABLED = False
+
+# Enforces validation of the identity strings (username, first_name, last_name)
+# carried in a guest token's user claim: at most 255 characters, no control
+# characters or Unicode line/paragraph separators.
+#
+# While False (warn-first), an invalid identity is logged and counted under the
+# `security.GuestTokenIdentityViolation` metric but still accepted. When True,
+# minting such a token returns HTTP 400 and an already-issued token carrying one
+# is treated as unauthenticated.
+GUEST_TOKEN_IDENTITY_ENFORCE = False
 
 # A SQL dataset health check. Note if enabled it is strongly advised that the callable
 # be memoized to aid with performance, i.e.,

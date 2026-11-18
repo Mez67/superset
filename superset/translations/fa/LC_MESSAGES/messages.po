@@ -1424,6 +1424,10 @@ msgstr "یک مجموعه داده قابل استفاده مجدد با نمو�
 msgid "A rule with this name already exists."
 msgstr "قانونی با این نام از قبل وجود دارد."
 
+#: superset/commands/query/exceptions.py
+msgid "A saved query with this name already exists"
+msgstr "کوئری ذخیره‌شده‌ای با این نام از قبل وجود دارد"
+
 msgid ""
 "A semantic query filter is invalid. Check its operator and values, then "
 "try again."
@@ -1818,6 +1822,10 @@ msgstr "افزودن پوشه"
 msgid "Add group"
 msgstr "افزودن گروه"
 
+#: superset-frontend/src/explore/components/controls/IntervalColorsControl/index.tsx
+msgid "Add interval bounds above to configure colors here."
+msgstr "برای تنظیم رنگ‌ها در اینجا، ابتدا در بالا کران بازه‌ها را اضافه کنید."
+
 msgid "Add item"
 msgstr "افزودن مورد"
 
@@ -1844,6 +1852,10 @@ msgstr "افزودن یا ویرایش کنترل‌های نمایش"
 
 msgid "Add or edit filters and controls"
 msgstr "افزودن یا ویرایش فیلترها و کنترل‌ها"
+
+#: superset-frontend/src/explore/components/controls/BulletRangeColorsControl/index.tsx
+msgid "Add ranges above to configure their colors here."
+msgstr "برای تنظیم رنگ‌ها در اینجا، ابتدا در بالا بازه اضافه کنید."
 
 msgid "Add report"
 msgstr "افزودن گزارش"
@@ -3253,6 +3265,10 @@ msgstr "جهت‌گیری نوار"
 msgid "Base"
 msgstr "پایه"
 
+#: superset-frontend/src/features/themes/ThemeColorPickers.tsx
+msgid "Base background"
+msgstr "پس‌زمینهٔ پایه"
+
 msgid "Base exponent"
 msgstr "نمای پایه"
 
@@ -3333,6 +3349,10 @@ msgstr "بلوک %(block_num)s از %(block_count)s"
 
 msgid "Blue to green"
 msgstr "آبی به سبز"
+
+#: superset-frontend/src/features/themes/ThemeColorPickers.tsx
+msgid "Border"
+msgstr "حاشیه"
 
 msgid "Border color"
 msgstr "رنگ حاشیه"
@@ -4627,6 +4647,24 @@ msgstr "رنگ میله‌های سمت راست نمودار"
 msgid "Color for breakpoint"
 msgstr "رنگ نقطه شکست"
 
+#: superset-frontend/plugins/plugin-chart-echarts/src/BigNumber/BigNumberPeriodOverPeriod/controlPanel.ts
+msgid "Color for decrease"
+msgstr "رنگ کاهش"
+
+#: superset-frontend/plugins/plugin-chart-echarts/src/BigNumber/BigNumberPeriodOverPeriod/controlPanel.ts
+msgid "Color for increase"
+msgstr "رنگ افزایش"
+
+#: superset-frontend/src/explore/components/controls/IntervalColorsControl/index.tsx
+#, python-format
+msgid "Color for interval up to %s"
+msgstr "رنگ بازه تا %s"
+
+#: superset-frontend/src/explore/components/controls/BulletRangeColorsControl/index.tsx
+#, python-format
+msgid "Color for range up to %s"
+msgstr "رنگ بازه تا %s"
+
 msgid "Color metric"
 msgstr "معیار رنگ"
 
@@ -4642,6 +4680,22 @@ msgstr "طرح رنگ"
 #, python-format
 msgid "Color scheme: %s"
 msgstr "طرح رنگ: %s"
+
+#: superset-frontend/plugins/plugin-chart-echarts/src/BigNumber/BigNumberPeriodOverPeriod/controlPanel.ts
+msgid ""
+"Color used for the arrow and symbols when the metric decreased from the "
+"comparison value. Defaults to red."
+msgstr ""
+"رنگ پیکان و نمادها وقتی معیار نسبت به مقدار مقایسه کاهش یافته است. "
+"پیش‌فرض قرمز است."
+
+#: superset-frontend/plugins/plugin-chart-echarts/src/BigNumber/BigNumberPeriodOverPeriod/controlPanel.ts
+msgid ""
+"Color used for the arrow and symbols when the metric increased from the "
+"comparison value. Defaults to green."
+msgstr ""
+"رنگ پیکان و نمادها وقتی معیار نسبت به مقدار مقایسه افزایش یافته است. "
+"پیش‌فرض سبز است."
 
 msgid ""
 "Color used when the close value is greater than or equal to the open "
@@ -5054,6 +5108,10 @@ msgstr "اتصال برقرار است!"
 
 msgid "Contact the report owner for error details."
 msgstr "برای جزئیات خطا با مالک گزارش تماس بگیرید."
+
+#: superset-frontend/src/features/themes/ThemeColorPickers.tsx
+msgid "Container background"
+msgstr "پس‌زمینهٔ محفظه"
 
 msgid "Contains"
 msgstr "شامل"
@@ -7551,6 +7609,16 @@ msgstr ""
 "اعتبارنامه مهمان برای جاسازی نامعتبر یا ناقص است. همه فیلدهای الزامی را "
 "وارد کنید یا آن‌ها را پاک کنید تا بینندگان جاسازی‌شده پیکربندی نشوند."
 
+#: superset/databases/schemas.py
+msgid ""
+"Embedded guest credentials can't be added or changed while the embedded "
+"credential fallback is turned off. Leave the stored credentials unchanged"
+" or clear them."
+msgstr ""
+"تا وقتی جایگزین اعتبارنامهٔ جاسازی‌شده خاموش است، نمی‌توان اعتبارنامه‌های"
+" مهمان جاسازی‌شده را افزود یا تغییر داد. اعتبارنامه‌های ذخیره‌شده را بدون"
+" تغییر بگذارید یا پاکشان کنید."
+
 msgid ""
 "Embedded guest credentials only apply to connections that use OAuth2 with"
 " \"Impersonate logged in user\" turned on. Configure OAuth2 client "
@@ -8859,6 +8927,14 @@ msgstr "تطبیق با داده‌ها"
 msgid "Fix the Extra JSON to edit certification"
 msgstr "برای ویرایش گواهی، JSON فیلد Extra را اصلاح کنید"
 
+#: superset-frontend/src/features/themes/ThemeColorPickers.tsx
+msgid ""
+"Fix the JSON errors below to edit colors here; your changes sync "
+"automatically once the JSON is valid again."
+msgstr ""
+"برای ویرایش رنگ‌ها در اینجا، خطاهای JSON زیر را برطرف کنید؛ وقتی JSON "
+"دوباره معتبر شد، تغییرات شما خودکار هماهنگ می‌شوند."
+
 msgid ""
 "Fix the trend line to the full time range specified in case filtered "
 "results do not include the start or end dates"
@@ -9977,6 +10053,11 @@ msgstr "وضعیت نامعتبر."
 msgid "Invalid tab ids: %(tab_ids)s"
 msgstr "شناسه‌های زبانه نامعتبر: %(tab_ids)s"
 
+#: superset/models/helpers.py
+#, python-format
+msgid "Invalid temporal filter value for column %(column)s"
+msgstr "مقدار فیلتر زمانی برای ستون %(column)s نامعتبر است"
+
 #, python-format
 msgid "Invalid time range boundary for resample: %(value)s"
 msgstr "مرز بازه زمانی نامعتبر برای نمونه‌برداری مجدد: %(value)s"
@@ -10609,6 +10690,10 @@ msgstr "ستون خطوط"
 
 msgid "Lines encoding"
 msgstr "رمزگذاری خطوط"
+
+#: superset-frontend/src/features/themes/ThemeColorPickers.tsx
+msgid "Link"
+msgstr "پیوند"
 
 msgid "Link Copied!"
 msgstr "پیوند کپی شد!"
@@ -11643,6 +11728,15 @@ msgstr "نام پایگاه داده خود را وارد کنید"
 msgid "Name your folder and to edit it later, click on the folder name"
 msgstr "نام پوشه را وارد کنید؛ برای ویرایش بعدی روی نام پوشه کلیک کنید"
 
+#: superset/db_engine_specs/mssql.py
+msgid ""
+"Named instances can't be entered as the host. Enter only the host and the"
+" port the instance listens on, or connect with a SQLAlchemy URI instead."
+msgstr ""
+"نمونه‌های نام‌دار را نمی‌توان به‌عنوان میزبان وارد کرد. فقط میزبان و "
+"درگاهی را که نمونه روی آن گوش می‌دهد وارد کنید، یا با یک URI از "
+"SQLAlchemy متصل شوید."
+
 msgid "Native filter column is required"
 msgstr "ستون فیلتر داشبورد الزامی است"
 
@@ -12531,6 +12625,14 @@ msgstr ""
 "محتویات CA_BUNDLE اختیاری برای اعتبارسنجی درخواست‌های HTTPS. فقط در برخی "
 "موتورهای پایگاه داده موجود است."
 
+#: superset-frontend/plugins/plugin-chart-echarts/src/Bullet/controlPanel.tsx
+msgid ""
+"Optional custom color for each range band, e.g. to match a brand palette."
+" Bands left unset use the default shading."
+msgstr ""
+"رنگ دلخواه اختیاری برای هر نوار بازه، مثلاً برای هماهنگی با رنگ‌های برند."
+" نوارهای بدون رنگ از سایه‌زنی پیش‌فرض استفاده می‌کنند."
+
 msgid "Optional d3 date format string"
 msgstr "رشته فرمت تاریخ d3 اختیاری"
 
@@ -12982,6 +13084,17 @@ msgstr "فیزیکی"
 
 msgid "Physical (table or view)"
 msgstr "فیزیکی (جدول یا نمایه)"
+
+#: superset-frontend/plugins/plugin-chart-echarts/src/Gauge/controlPanel.tsx
+msgid ""
+"Pick a color for each interval band defined above by its upper bound. "
+"Charts saved with the legacy 1-indexed \"Interval colors\" text field "
+"keep following the chosen color scheme until an interval color is edited."
+msgstr ""
+"برای هر نوار بازه که در بالا با کران بالایش تعریف شده یک رنگ انتخاب کنید."
+" نمودارهایی که با فیلد متنی قدیمی «رنگ‌های بازه» (شماره‌گذاری از ۱) ذخیره"
+" شده‌اند تا وقتی رنگ یک بازه ویرایش نشود، از طرح رنگی انتخاب‌شده پیروی "
+"می‌کنند."
 
 msgid "Pick a dimension from which categorical colors are defined"
 msgstr "یک بعد را انتخاب کنید که رنگ‌های دسته‌ای از آن تعریف شده‌اند."
@@ -13597,6 +13710,10 @@ msgstr "ورودی‌های بازه"
 msgid "Range Type"
 msgstr "نوع بازه"
 
+#: superset-frontend/plugins/plugin-chart-echarts/src/Bullet/controlPanel.tsx
+msgid "Range colors"
+msgstr "رنگ‌های بازه"
+
 msgid "Range filter"
 msgstr "فیلتر محدوده"
 
@@ -14134,6 +14251,14 @@ msgid ""
 "Requires OAuth2 client information and “Impersonate logged in user” "
 "(Advanced → Security)."
 msgstr "نیازمند اطلاعات کلاینت OAuth2 و «جانشینی کاربر واردشده» (پیشرفته ← امنیت)."
+
+#: superset-frontend/src/features/databases/DatabaseModal/DatabaseConnectionForm/EmbeddedCredentialsField.tsx
+msgid ""
+"Requires an OAuth2 client ID and secret, and “Impersonate logged in user”"
+" (Advanced → Security)."
+msgstr ""
+"به شناسه و رمز کلاینت OAuth2 و گزینه «جعل هویت کاربر واردشده» (پیشرفته ← "
+"امنیت) نیاز دارد."
 
 msgid "Resample"
 msgstr "نمونه‌برداری مجدد"
@@ -15011,6 +15136,10 @@ msgstr "معیار ثانویه"
 msgid "Secondary currency format"
 msgstr "قالب ارز ثانویه"
 
+#: superset-frontend/src/features/themes/ThemeColorPickers.tsx
+msgid "Secondary text"
+msgstr "متن ثانویه"
+
 msgid "Secondary y-axis Bounds"
 msgstr "محدودیت‌های محور ثانویه y"
 
@@ -15538,6 +15667,10 @@ msgstr "نماهای معنایی"
 
 msgid "Semantic cache"
 msgstr "کش معنایی"
+
+#: superset-frontend/plugins/plugin-chart-echarts/src/BigNumber/BigNumberPeriodOverPeriod/controlPanel.ts
+msgid "Semantic colors"
+msgstr "رنگ‌های معنایی"
 
 #, python-format
 msgid ""
@@ -19131,6 +19264,18 @@ msgstr ""
 "این می‌تواند یک آدرس آی‌پی (مانند ۱۲۷.۰.۰.۱) یا یک نام دامنه (مانند "
 "mydatabase.com) باشد."
 
+#: superset-frontend/src/features/databases/DatabaseModal/DatabaseConnectionForm/MssqlParameters.tsx
+msgid ""
+"This can be either an IP address (e.g. 127.0.0.1) or a domain name (e.g. "
+"mydatabase.com). For a named instance (host\\INSTANCE), enter only the "
+"host here and the port the instance listens on below, or connect with a "
+"SQLAlchemy URI instead."
+msgstr ""
+"می‌تواند نشانی IP (مثلاً 127.0.0.1) یا نام دامنه (مثلاً mydatabase.com) "
+"باشد. برای نمونهٔ نام‌دار (host\\INSTANCE) فقط میزبان را اینجا و درگاهی "
+"را که نمونه روی آن گوش می‌دهد در پایین وارد کنید، یا با یک URI از "
+"SQLAlchemy متصل شوید."
+
 msgid "This cannot be undone."
 msgstr "این کار قابل بازگشت نیست."
 
@@ -19194,6 +19339,15 @@ msgstr "این نمودار دیگر وجود ندارد."
 msgid "This chart only"
 msgstr "فقط این نمودار"
 
+#: superset-frontend/src/explore/components/controls/IntervalColorsControl/index.tsx
+msgid ""
+"This chart uses legacy color positions past the end of the selected color"
+" scheme, so its band colors cannot be previewed or edited here."
+msgstr ""
+"این نمودار از موقعیت‌های رنگ قدیمی فراتر از انتهای طرح رنگی انتخاب‌شده "
+"استفاده می‌کند، بنابراین رنگ نوارهایش را نمی‌توان اینجا پیش‌نمایش یا "
+"ویرایش کرد."
+
 msgid ""
 "This chart version can't be restored because the dataset it used has been"
 " permanently deleted. Restore a version that uses an existing dataset, or"
@@ -19241,6 +19395,16 @@ msgstr "این ستون ممکن است با داده‌های فعلی سازگ
 
 msgid "This column must contain date/time information."
 msgstr "این ستون باید شامل اطلاعات تاریخ/زمان باشد."
+
+#: superset/databases/schemas.py
+msgid ""
+"This connection stores embedded guest credentials, which only apply with "
+"\"Impersonate logged in user\" turned on. Clear the embedded credentials "
+"before turning impersonation off."
+msgstr ""
+"این اتصال اعتبارنامه‌های مهمانِ جاسازی‌شده را نگه می‌دارد که فقط وقتی "
+"«جعل هویت کاربر واردشده» روشن باشد اعمال می‌شوند. پیش از خاموش کردن جعل "
+"هویت، اعتبارنامه‌های جاسازی‌شده را پاک کنید."
 
 msgid ""
 "This control filters the whole chart based on the selected time range. "
@@ -20792,6 +20956,12 @@ msgstr "کوئری بی‌عنوان"
 msgid "Unverified"
 msgstr "تأییدنشده"
 
+#: superset-frontend/src/explore/components/controls/BulletRangeColorsControl/index.tsx
+#: superset-frontend/src/explore/components/controls/IntervalColorsControl/index.tsx
+#, python-format
+msgid "Up to %s"
+msgstr "تا %s"
+
 msgid "Update"
 msgstr "به‌روزرسانی"
 
@@ -20914,6 +21084,10 @@ msgstr "استفاده از گستره فعلی"
 msgid "Use date formatting even when metric value is not a timestamp"
 msgstr "از فرمت تاریخ استفاده کنید حتی زمانی که مقدار معیار زمان‌سنج نیست."
 
+#: superset-frontend/src/explore/components/controls/BulletRangeColorsControl/index.tsx
+msgid "Use default"
+msgstr "استفاده از پیش‌فرض"
+
 msgid ""
 "Use each metric’s own definition for cells and summaries (the default "
 "since SIP-216), or aggregate a second time over the metric’s own grouped "
@@ -20947,6 +21121,10 @@ msgstr ""
 
 msgid "Use only a single value."
 msgstr "فقط از یک مقدار استفاده کنید."
+
+#: superset-frontend/src/explore/components/controls/IntervalColorsControl/index.tsx
+msgid "Use scheme colors"
+msgstr "استفاده از رنگ‌های طرح"
 
 msgid "Use the Advanced Analytics options below"
 msgstr "از گزینه‌های تجزیه و تحلیل پیشرفته زیر استفاده کنید"
@@ -23091,6 +23269,10 @@ msgstr "به عنوان مثال ********"
 
 msgid "e.g. 127.0.0.1"
 msgstr "به عنوان مثال 127.0.0.1"
+
+#: superset-frontend/src/features/databases/DatabaseModal/DatabaseConnectionForm/MssqlParameters.tsx
+msgid "e.g. 1433"
+msgstr "مثلاً 1433"
 
 msgid "e.g. 5432"
 msgstr "به عنوان مثال ۵۴۳۲"
